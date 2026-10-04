@@ -2,6 +2,16 @@ import { loadEnv, defineConfig } from '@medusajs/framework/utils'
 
 loadEnv(process.env.NODE_ENV || 'development', process.cwd())
 
+const stripeModule = process.env.STRIPE_API_KEY
+  ? {
+      resolve: '@medusajs/payment-stripe',
+      options: {
+        apiKey: process.env.STRIPE_API_KEY,
+        webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+      },
+    }
+  : null
+
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
@@ -12,5 +22,6 @@ module.exports = defineConfig({
       jwtSecret: process.env.JWT_SECRET || "supersecret",
       cookieSecret: process.env.COOKIE_SECRET || "supersecret",
     }
-  }
+  },
+  modules: stripeModule ? [stripeModule] : [],
 })

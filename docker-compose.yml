@@ -46,6 +46,8 @@ services:
       STORE_CORS: ${STORE_CORS:-*}
       ADMIN_CORS: ${ADMIN_CORS:-*}
       AUTH_CORS: ${AUTH_CORS:-*}
+      STRIPE_API_KEY: ${STRIPE_API_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
       NODE_ENV: production
     ports:
       - "127.0.0.1:9000:9000"
