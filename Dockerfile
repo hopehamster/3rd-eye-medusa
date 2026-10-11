@@ -5,7 +5,7 @@ RUN corepack enable
 
 FROM base AS deps
 WORKDIR /app/backend
-COPY backend/package.json ./
+COPY backend/package.json backend/.yarnrc.yml ./
 # No yarn.lock shipped (exceeds push API limits) — yarn resolves fresh and
 # writes its own lockfile in the image. Medusa deps are pinned in package.json.
 RUN yarn install
@@ -13,6 +13,7 @@ RUN yarn install
 FROM base AS builder
 WORKDIR /app/backend
 COPY --from=deps /app/backend/node_modules ./node_modules
+COPY --from=deps /app/backend/yarn.lock ./yarn.lock
 COPY backend/ ./
 RUN yarn build
 
@@ -22,7 +23,10 @@ ENV NODE_ENV=production
 COPY --from=builder /app/backend/node_modules ./node_modules
 COPY --from=builder /app/backend/.medusa ./.medusa
 COPY --from=builder /app/backend/package.json ./package.json
+COPY --from=builder /app/backend/yarn.lock ./yarn.lock
+COPY --from=builder /app/backend/.yarnrc.yml ./.yarnrc.yml
 COPY --from=builder /app/backend/medusa-config.ts ./medusa-config.ts
+COPY --from=builder /app/backend/tsconfig.json ./tsconfig.json
 COPY --from=builder /app/backend/src ./src
 EXPOSE 9000
 # Migrations are idempotent — safe to run on every start

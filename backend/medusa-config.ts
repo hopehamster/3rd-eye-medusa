@@ -24,4 +24,7 @@ module.exports = defineConfig({
     }
   },
   modules: stripeModule ? [stripeModule] : [],
+  admin: {
+    disable: true,
+  },
 })
