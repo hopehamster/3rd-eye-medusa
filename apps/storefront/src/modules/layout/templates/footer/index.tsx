@@ -112,6 +112,35 @@ export default async function Footer() {
               </div>
             )}
             <div className="flex flex-col gap-y-2">
+              <span className="txt-small-plus text-cosmos-text">Explore</span>
+              <ul className="grid grid-cols-1 gap-y-2 text-cosmos-muted txt-small">
+                <li>
+                  <LocalizedClientLink
+                    href="/oracle"
+                    className="hover:text-cosmos-goldBright transition-colors"
+                  >
+                    The Oracle
+                  </LocalizedClientLink>
+                </li>
+                <li>
+                  <LocalizedClientLink
+                    href="/ritual-builder"
+                    className="hover:text-cosmos-goldBright transition-colors"
+                  >
+                    Ritual Builder
+                  </LocalizedClientLink>
+                </li>
+                <li>
+                  <LocalizedClientLink
+                    href="/guides"
+                    className="hover:text-cosmos-goldBright transition-colors"
+                  >
+                    Guides
+                  </LocalizedClientLink>
+                </li>
+              </ul>
+            </div>
+            <div className="flex flex-col gap-y-2">
               <span className="txt-small-plus text-cosmos-text">Studio</span>
               <ul className="grid grid-cols-1 gap-y-2 text-cosmos-muted txt-small">
                 <li>

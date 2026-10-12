@@ -17,6 +17,7 @@ import { PRODUCT_INDEX_NAME, searchClient } from "@lib/search-client"
 import { Text } from "@modules/common/components/ui"
 import SearchDrawer from "./drawer"
 import SearchHit, { ProductHit } from "./hit"
+import SemanticFallback from "./semantic-fallback"
 
 const HITS_PER_PAGE = 12
 const DEBOUNCE_MS = 250
@@ -101,12 +102,7 @@ const SearchPanel = ({ onNavigate }: { onNavigate: () => void }) => {
             Searching&hellip;
           </Text>
         ) : (
-          <Text
-            className="px-4 py-6 text-center text-ui-fg-subtle"
-            data-testid="search-no-results"
-          >
-            No products found for &quot;{query}&quot;
-          </Text>
+          <SemanticFallback query={query} onNavigate={onNavigate} />
         )}
       </div>
     </>

@@ -11,13 +11,20 @@ export const metadata: Metadata = {
 
 export default async function StorePage(props: {
   params: Promise<{ countryCode: string }>
+  searchParams: Promise<{ intent?: string }>
 }) {
   const { countryCode } = await props.params
+  const { intent } = await props.searchParams
   const region = await getRegion(countryCode)
 
   if (!region) {
     notFound()
   }
 
-  return <StoreTemplate currencyCode={region.currency_code} />
+  return (
+    <StoreTemplate
+      currencyCode={region.currency_code}
+      initialIntent={intent}
+    />
+  )
 }
