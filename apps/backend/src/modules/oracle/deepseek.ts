@@ -1,0 +1,179 @@
+/**
+ * DeepSeek client for the Oracle. OpenAI-compatible chat completions API.
+ * DeepSeek is the house LLM standard — do not add another provider here.
+ */
+import { MedusaError } from "@medusajs/framework/utils"
+
+const DEEPSEEK_API_URL = "https://api.deepseek.com/chat/completions"
+const MODEL = process.env.ORACLE_MODEL || "deepseek-v4-pro"
+
+function apiKey(): string {
+  const key = process.env.DEEPSEEK_API_KEY
+  if (!key) {
+    throw new MedusaError(
+      MedusaError.Types.UNEXPECTED_STATE,
+      "DEEPSEEK_API_KEY is not set — the Oracle cannot think without it."
+    )
+  }
+  return key
+}
+
+interface ChatMessage {
+  role: "system" | "user"
+  content: string
+}
+
+async function chat(
+  messages: ChatMessage[],
+  jsonMode = false
+): Promise<string> {
+  const body: Record<string, unknown> = {
+    model: MODEL,
+    messages,
+    temperature: 0.7,
+  }
+  if (jsonMode) {
+    body.response_format = { type: "json_object" }
+  }
+
+  const res = await fetch(DEEPSEEK_API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey()}`,
+    },
+    body: JSON.stringify(body),
+  })
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "")
+    throw new MedusaError(
+      MedusaError.Types.UNEXPECTED_STATE,
+      `DeepSeek API error ${res.status}: ${text.slice(0, 200)}`
+    )
+  }
+
+  const data = (await res.json()) as {
+    choices?: { message?: { content?: string } }[]
+  }
+  const content = data.choices?.[0]?.message?.content
+  if (!content) {
+    throw new MedusaError(
+      MedusaError.Types.UNEXPECTED_STATE,
+      "DeepSeek returned an empty response"
+    )
+  }
+  return content
+}
+
+export interface Classification {
+  intents: string[]
+  mode: "guidance" | "knowledge"
+}
+
+const CLASSIFY_SYSTEM = `You are the intent classifier for the Oracle of 3rd Eye Supply, a metaphysical shop.
+Given a visitor's message, classify it into 1-3 intents from this exact list (use the ids verbatim, never invent new ones):
+protection, cleansing-purification, grounding, clarity-focus, calm-soothing, love-self, love-romantic, abundance-prosperity, intuition-third-eye, sleep-dreams, energy-chakra-balancing, grief-healing, confidence-courage, creativity-inspiration, spiritual-connection-ritual
+Also choose the mode:
+- "guidance" if the visitor expresses a need, feeling, or situation where a product could help
+- "knowledge" if they ask a purely informational metaphysical question with no buying intent
+Respond with JSON only: {"intents": ["id1", "id2"], "mode": "guidance"}`
+
+export async function classifyQuestion(
+  question: string
+): Promise<Classification> {
+  const raw = await chat(
+    [
+      { role: "system", content: CLASSIFY_SYSTEM },
+      { role: "user", content: question },
+    ],
+    true
+  )
+  const parsed = JSON.parse(raw) as Partial<Classification>
+  const intents = Array.isArray(parsed.intents)
+    ? parsed.intents.filter((i): i is string => typeof i === "string")
+    : []
+  const mode = parsed.mode === "knowledge" ? "knowledge" : "guidance"
+  return { intents, mode }
+}
+
+const VOICE_AND_RULES = `Voice: mystical, warm, plain-language. A guide, not a guru. Explain jargon before using it.
+Hard rules:
+- Never claim medical, financial, or legal outcomes. Use "traditionally associated with" / "used in ritual to support", never "cures", "treats", "will bring you money".
+- Never diagnose the visitor's mental or emotional state. Reflect their words; don't label them.
+- Stay PC: avoid politics and controversial topics entirely. If a question heads there, gently redirect to the metaphysical topic.
+- Never mention suppliers, CJ, or dropshipping. Products are ours; shipping is our shipping.
+- Never invent products, prices, or availability. Only mention products from the provided list, with their given prices.
+- Keep answers 150-250 words unless the question clearly needs more.`
+
+export interface OracleProduct {
+  id: string
+  title: string
+  price: string
+  variantId?: string | null
+}
+
+export interface GuidanceResult {
+  answer: string
+  picks: { product_id: string; why_it_fits: string }[]
+}
+
+export async function composeGuidance(params: {
+  question: string
+  intents: string[]
+  canonExcerpts: string[]
+  products: OracleProduct[]
+}): Promise<GuidanceResult> {
+  const productList =
+    params.products.length > 0
+      ? params.products
+          .map((p) => `- id: ${p.id} | ${p.title} (${p.price})`)
+          .join("\n")
+      : "(no in-stock products match right now)"
+
+  const system = `You are the Oracle of 3rd Eye Supply, a mystical shop guide. ${VOICE_AND_RULES}
+The visitor asked: "${params.question}"
+Their needs map to: ${params.intents.join(", ")}.
+Relevant reference material:
+${params.canonExcerpts.join("\n---\n") || "(no reference material)"}
+Products you may recommend (in stock now — use ONLY these, by id):
+${productList}
+Respond with JSON only: {"answer_markdown": string, "picks": [{"product_id": string, "why_it_fits": string}]}
+The answer_markdown: a short reflection tying their words to the need, then your recommendations woven in naturally (mention each by title), then one free ritual tip they can do tonight with no purchase. If no products match, give the guidance and the free tip honestly — never force a product.
+The picks array: 1-3 products, each with a one-line why_it_fits written in the VISITOR's language (their words, their need). Empty array if nothing genuinely fits.`
+
+  const raw = await chat([{ role: "system", content: system }], true)
+  const parsed = JSON.parse(raw) as {
+    answer_markdown?: string
+    picks?: { product_id?: string; why_it_fits?: string }[]
+  }
+  const validIds = new Set(params.products.map((p) => p.id))
+  const picks = (Array.isArray(parsed.picks) ? parsed.picks : [])
+    .filter(
+      (p) =>
+        typeof p?.product_id === "string" &&
+        validIds.has(p.product_id) &&
+        typeof p?.why_it_fits === "string"
+    )
+    .slice(0, 3)
+    .map((p) => ({
+      product_id: p.product_id as string,
+      why_it_fits: p.why_it_fits as string,
+    }))
+  return { answer: parsed.answer_markdown ?? "", picks }
+}
+
+export async function composeKnowledge(params: {
+  question: string
+  intents: string[]
+  canonExcerpts: string[]
+}): Promise<string> {
+  const system = `You are the Oracle of 3rd Eye Supply, a mystical teacher. ${VOICE_AND_RULES}
+The visitor asked a knowledge question: "${params.question}"
+Related topics: ${params.intents.join(", ")}.
+Reference material (ground your answer here; where it is silent you may use general metaphysical knowledge, but present that as general knowledge, not canon):
+${params.canonExcerpts.join("\n---\n") || "(no reference material — answer from general metaphysical knowledge)"}
+Write the answer in markdown: definition first, then correspondences, then a short practical how-to. End with at most one gentle bridge to practice ("If you want to work with this practically...") — no product names, no selling.`
+
+  return chat([{ role: "system", content: system }])
+}
