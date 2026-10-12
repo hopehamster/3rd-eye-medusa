@@ -48,7 +48,11 @@ interface ProductHit extends OracleProduct {
 const retrieveProductsStep = createStep(
   "retrieve-products",
   async (
-    { intents, mode }: Classified,
+    {
+      intents,
+      mode,
+      question,
+    }: Classified & { question: string },
     { container }
   ): Promise<StepResponse<{ products: ProductHit[] }>> => {
     if (mode === "knowledge" || intents.length === 0) {
@@ -139,6 +143,40 @@ const retrieveProductsStep = createStep(
           variantId: variant.id ?? null,
         }
       })
+
+    // Semantic fallback: if tag matching found nothing, ask Voyage for
+    // products whose meaning matches the question.
+    if (hits.length === 0 && question.trim()) {
+      try {
+        const search = await query.search({
+          entity: "product",
+          fields: ["id", "title", "handle", "thumbnail"],
+          filters: {},
+          search_options: {
+            vector: {
+              query: question.trim().slice(0, 2000),
+              field: "semantic",
+            },
+          },
+          pagination: { take: 6 },
+        })
+        const docs = (search as { data?: any[] }).data ?? []
+        for (const d of docs.slice(0, 6)) {
+          if (d?.id && !hits.some((h) => h.id === d.id)) {
+            hits.push({
+              id: d.id,
+              title: d.title,
+              handle: d.handle,
+              thumbnail: d.thumbnail ?? null,
+              price: "",
+              variantId: null,
+            })
+          }
+        }
+      } catch {
+        // Semantic search unavailable — return tag results (empty)
+      }
+    }
 
     return new StepResponse({ products: hits })
   }
@@ -240,6 +278,7 @@ export const oracleConsultationWorkflow = createWorkflow(
     const retrieved = retrieveProductsStep({
       intents: classified.intents,
       mode: classified.mode,
+      question: input.question,
     })
     const composed = composeStep({
       question: input.question,

@@ -9,6 +9,7 @@ import {
 import { ProductOptionRow, toOptionValues } from "./helpers/option-values";
 import { loadPricing, priceFields, toProductPricing } from "./helpers/pricing";
 import { resolveProductIds } from "./helpers/resolve-product-ids";
+import { VOYAGE_DIMENSIONS } from "./voyage-embedder";
 
 const PRODUCT_GRAPH_FIELDS = [
   "id",
@@ -18,6 +19,7 @@ const PRODUCT_GRAPH_FIELDS = [
   "thumbnail",
   "status",
   "created_at",
+  "metadata",
   "sales_channels.id",
   "categories.name",
   "tags.value",
@@ -34,6 +36,7 @@ type ProductRow = {
   status?: string | null;
   created_at?: string | Date | null;
   deleted_at?: string | Date | null;
+  metadata?: Record<string, unknown> | null;
   sales_channels?: ({ id?: string | null } | null)[] | null;
   categories?: ({ name?: string | null } | null)[] | null;
   tags?: ({ value?: string | null } | null)[] | null;
@@ -60,6 +63,14 @@ const productFields = search.define({
     .filterable()
     .facetable()
     .retrievable(),
+  // Metaphysical intent tags from product metadata (set by the Oracle
+  // tagging flow). Powers intent-filtered search for the Oracle and
+  // storefront collections.
+  intents: search.keyword().array().filterable().facetable().retrievable(),
+  // Engine-embedded vector for semantic search, produced by the Voyage AI
+  // embedder configured on the postgres search provider in medusa-config.ts.
+  // voyage-3-large outputs 1024 dimensions.
+  semantic: search.vector(VOYAGE_DIMENSIONS).embed(),
   ...priceFields,
 });
 
@@ -80,6 +91,12 @@ function toDocument(
   const salesChannelIds = (product.sales_channels ?? [])
     .map((salesChannel) => salesChannel?.id?.trim())
     .filter((id): id is string => Boolean(id));
+  const metadata = product.metadata ?? {};
+  const intents = Array.isArray(metadata.intents)
+    ? (metadata.intents as unknown[]).filter(
+        (intent): intent is string => typeof intent === "string",
+      )
+    : [];
 
   return {
     id: product.id,
@@ -93,6 +110,9 @@ function toDocument(
     category,
     labels,
     option_values: toOptionValues(product.options),
+    intents,
+    // Embedded by the engine when an embedder is configured; text until then.
+    semantic: [product.title, product.description].filter(Boolean).join("\n"),
     ...toProductPricing(pricing),
   };
 }
