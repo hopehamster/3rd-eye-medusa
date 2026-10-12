@@ -302,8 +302,14 @@ export default function OracleChat({
           ))}
           {loading && (
             <div className="flex justify-start">
-              <div className="rounded-2xl px-4 py-3 text-sm bg-purple-950/60 border border-purple-400/10 text-purple-300/70">
-                The Oracle is consulting the unseen…
+              <div
+                className="rounded-2xl px-4 py-3 bg-purple-950/60 border border-purple-400/10 flex items-center gap-1.5"
+                role="status"
+                aria-label="Oracle is thinking"
+              >
+                <span className="w-2 h-2 rounded-full bg-purple-300/70 animate-bounce [animation-delay:-0.3s]" />
+                <span className="w-2 h-2 rounded-full bg-purple-300/70 animate-bounce [animation-delay:-0.15s]" />
+                <span className="w-2 h-2 rounded-full bg-purple-300/70 animate-bounce" />
               </div>
             </div>
           )}
@@ -337,11 +343,14 @@ export default function OracleChat({
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask the Oracle…"
             maxLength={500}
+            aria-label="Ask the Oracle a question"
+            autoComplete="off"
             className="flex-1 rounded-full bg-purple-950/60 border border-purple-400/20 px-4 py-2.5 text-sm text-purple-50 placeholder:text-purple-400/50 focus:outline-none focus:border-purple-300/50"
           />
           <button
             type="submit"
             disabled={loading || !input.trim()}
+            aria-label="Send question"
             className="px-5 py-2.5 rounded-full bg-purple-500/80 hover:bg-purple-500 text-white text-sm transition disabled:opacity-50"
           >
             Ask

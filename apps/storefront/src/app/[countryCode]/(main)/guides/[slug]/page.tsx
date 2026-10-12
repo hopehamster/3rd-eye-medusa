@@ -1,6 +1,7 @@
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { getCanonGuide, getCanonGuides } from "@lib/canon"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 export async function generateStaticParams() {
   const guides = await getCanonGuides()
@@ -82,12 +83,12 @@ export default async function GuidePage({
           Ask the Oracle — describe what you need, and it will guide you to the
           right knowledge or the right piece.
         </p>
-        <a
-          href="/us/oracle"
+        <LocalizedClientLink
+          href="/oracle"
           className="inline-block rounded bg-violet-600 px-4 py-2 text-sm font-medium text-white"
         >
           Consult the Oracle
-        </a>
+        </LocalizedClientLink>
       </div>
     </div>
   )
