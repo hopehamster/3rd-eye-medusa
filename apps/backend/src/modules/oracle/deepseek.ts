@@ -3,6 +3,7 @@
  * DeepSeek is the house LLM standard — do not add another provider here.
  */
 import { MedusaError } from "@medusajs/framework/utils"
+import { EXPERT_PERSONAS, getExpert, type ExpertId } from "./experts"
 
 const DEEPSEEK_API_URL = "https://api.deepseek.com/chat/completions"
 const MODEL = process.env.ORACLE_MODEL || "deepseek-v4-pro"
@@ -123,7 +124,9 @@ export async function composeGuidance(params: {
   intents: string[]
   canonExcerpts: string[]
   products: OracleProduct[]
+  expertId?: string
 }): Promise<GuidanceResult> {
+  const expert = getExpert(params.expertId)
   const productList =
     params.products.length > 0
       ? params.products
@@ -131,7 +134,9 @@ export async function composeGuidance(params: {
           .join("\n")
       : "(no in-stock products match right now)"
 
-  const system = `You are the Oracle of 3rd Eye Supply, a mystical shop guide. ${VOICE_AND_RULES}
+  const system = `${expert.identity} ${expert.voice}
+Your expertise: ${expert.expertise}
+${VOICE_AND_RULES}
 The visitor asked: "${params.question}"
 Their needs map to: ${params.intents.join(", ")}.
 Relevant reference material:
@@ -139,7 +144,7 @@ ${params.canonExcerpts.join("\n---\n") || "(no reference material)"}
 Products you may recommend (in stock now — use ONLY these, by id):
 ${productList}
 Respond with JSON only: {"answer_markdown": string, "picks": [{"product_id": string, "why_it_fits": string}]}
-The answer_markdown: a short reflection tying their words to the need, then your recommendations woven in naturally (mention each by title), then one free ritual tip they can do tonight with no purchase. If no products match, give the guidance and the free tip honestly — never force a product.
+The answer_markdown: a short reflection tying their words to the need, then your recommendations woven in naturally (mention each by title), then one free ritual tip they can do tonight with no purchase. If no products match, give the guidance and the free tip honestly — never force a product. Be conversational — ask a follow-up question if it feels natural, like a real guide would.
 The picks array: 1-3 products, each with a one-line why_it_fits written in the VISITOR's language (their words, their need). Empty array if nothing genuinely fits.`
 
   const raw = await chat([{ role: "system", content: system }], true)
@@ -167,13 +172,17 @@ export async function composeKnowledge(params: {
   question: string
   intents: string[]
   canonExcerpts: string[]
+  expertId?: string
 }): Promise<string> {
-  const system = `You are the Oracle of 3rd Eye Supply, a mystical teacher. ${VOICE_AND_RULES}
+  const expert = getExpert(params.expertId)
+  const system = `${expert.identity} ${expert.voice}
+Your expertise: ${expert.expertise}
+${VOICE_AND_RULES}
 The visitor asked a knowledge question: "${params.question}"
 Related topics: ${params.intents.join(", ")}.
 Reference material (ground your answer here; where it is silent you may use general metaphysical knowledge, but present that as general knowledge, not canon):
 ${params.canonExcerpts.join("\n---\n") || "(no reference material — answer from general metaphysical knowledge)"}
-Write the answer in markdown: definition first, then correspondences, then a short practical how-to. End with at most one gentle bridge to practice ("If you want to work with this practically...") — no product names, no selling.`
+Write the answer in markdown: definition first, then correspondences, then a short practical how-to. End with at most one gentle bridge to practice ("If you want to work with this practically...") — no product names, no selling. Be conversational — this is a dialogue, not a lecture.`
 
   return chat([{ role: "system", content: system }])
 }

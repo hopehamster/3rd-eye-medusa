@@ -9,11 +9,15 @@ const ORACLE_MISHEARD =
 
 /**
  * POST /store/oracle/ask
- * Body: { question: string, sessionId?: string }
+ * Body: { question: string, sessionId?: string, expertId?: string }
  */
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const body = (req.body ?? {}) as { question?: unknown; sessionId?: unknown }
-  const { question, sessionId } = body
+  const body = (req.body ?? {}) as {
+    question?: unknown
+    sessionId?: unknown
+    expertId?: unknown
+  }
+  const { question, sessionId, expertId } = body
 
   if (
     typeof question !== "string" ||
@@ -36,6 +40,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       input: {
         question: question.trim(),
         sessionId: typeof sessionId === "string" ? sessionId : undefined,
+        expertId: typeof expertId === "string" ? expertId : undefined,
       },
     })
     res.json(result)

@@ -136,10 +136,11 @@ export default function OracleChat({
   countryCode: string
   initialQuestion?: string
 }) {
+  const [expertId, setExpertId] = useState<string>("crystal")
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "oracle",
-      text: "Welcome, seeker. What brings you to the Oracle today? Speak plainly — a feeling, a question, a need — and I will guide you.",
+      text: "Hey, I'm Sage. I help people find the right stones — whether you know exactly what you need or you're just starting to get curious. What's on your mind?",
     },
   ])
   const [input, setInput] = useState("")
@@ -191,6 +192,7 @@ export default function OracleChat({
         body: {
           question: knowledgeOnly ? `[knowledge only] ${q}` : q,
           sessionId: sessionId.current,
+          expertId,
         },
       })
       const productById = new Map(res.products.map((p) => [p.id, p]))
@@ -231,7 +233,45 @@ export default function OracleChat({
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="flex justify-end mb-3">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex gap-2">
+          <button
+            onClick={() => {
+              setExpertId("crystal")
+              setMessages([
+                {
+                  role: "oracle",
+                  text: "Hey, I'm Sage. I help people find the right stones — whether you know exactly what you need or you're just starting to get curious. What's on your mind?",
+                },
+              ])
+            }}
+            className={`text-xs px-3 py-1.5 rounded-full border transition ${
+              expertId === "crystal"
+                ? "border-amber-200/50 bg-amber-200/10 text-amber-200"
+                : "border-purple-400/20 text-purple-300/60 hover:border-purple-400/40"
+            }`}
+          >
+            💎 Sage · Crystal Guide
+          </button>
+          <button
+            onClick={() => {
+              setExpertId("general")
+              setMessages([
+                {
+                  role: "oracle",
+                  text: "Welcome, seeker. What brings you to the Oracle today? Speak plainly — a feeling, a question, a need — and I will guide you.",
+                },
+              ])
+            }}
+            className={`text-xs px-3 py-1.5 rounded-full border transition ${
+              expertId === "general"
+                ? "border-purple-300/50 bg-purple-400/10 text-purple-200"
+                : "border-purple-400/20 text-purple-300/60 hover:border-purple-400/40"
+            }`}
+          >
+            🔮 Oracle · General Guide
+          </button>
+        </div>
         <label className="inline-flex items-center gap-2 text-xs text-purple-300/80 cursor-pointer">
           <input
             type="checkbox"
@@ -239,7 +279,7 @@ export default function OracleChat({
             onChange={(e) => setKnowledgeOnly(e.target.checked)}
             className="accent-purple-400"
           />
-          Knowledge only — teach me, don&apos;t sell me
+          Knowledge only
         </label>
       </div>
 

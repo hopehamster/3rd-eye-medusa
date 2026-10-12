@@ -197,7 +197,10 @@ const composeStep = createStep(
       intents,
       mode,
       products,
-    }: { question: string } & Classified & { products: ProductHit[] }
+      expertId,
+    }: { question: string; expertId?: string } & Classified & {
+      products: ProductHit[]
+    }
   ): Promise<StepResponse<Composed>> => {
     const canonDocs = await retrieveCanon(intents)
     const excerpts = canonDocs.map((d) => `### ${d.title}\n${d.excerpt}`)
@@ -207,6 +210,7 @@ const composeStep = createStep(
         question,
         intents,
         canonExcerpts: excerpts,
+        expertId,
       })
       return new StepResponse({
         answer,
@@ -221,6 +225,7 @@ const composeStep = createStep(
       intents,
       canonExcerpts: excerpts,
       products,
+      expertId,
     })
     return new StepResponse({
       answer,
@@ -241,9 +246,11 @@ const logStep = createStep(
       picks,
       needsCanon,
       sessionId,
+      expertId,
     }: {
       question: string
       sessionId?: string
+      expertId?: string
     } & Classified &
       Pick<Composed, "picks" | "needsCanon">,
     { container }
@@ -257,6 +264,7 @@ const logStep = createStep(
         productIds: picks.map((p) => p.product_id),
         needsCanon,
         sessionId: sessionId ?? null,
+        expertId: expertId ?? null,
       })
       return new StepResponse({ logId: created?.id ?? null })
     } catch {
@@ -269,6 +277,7 @@ const logStep = createStep(
 export interface OracleConsultationInput {
   question: string
   sessionId?: string
+  expertId?: string
 }
 
 export const oracleConsultationWorkflow = createWorkflow(
@@ -282,6 +291,7 @@ export const oracleConsultationWorkflow = createWorkflow(
     })
     const composed = composeStep({
       question: input.question,
+      expertId: input.expertId,
       intents: classified.intents,
       mode: classified.mode,
       products: retrieved.products,
@@ -289,6 +299,7 @@ export const oracleConsultationWorkflow = createWorkflow(
     const logged = logStep({
       question: input.question,
       sessionId: input.sessionId,
+      expertId: input.expertId,
       intents: classified.intents,
       mode: classified.mode,
       picks: composed.picks,

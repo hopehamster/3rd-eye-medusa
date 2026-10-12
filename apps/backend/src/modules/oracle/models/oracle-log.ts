@@ -15,6 +15,7 @@ export const OracleLog = model.define("oracle_log", {
   needsCanon: model.boolean().default(false),
   sessionId: model.text().nullable(),
   customerId: model.text().nullable(),
+  expertId: model.text().nullable(), // crystal | tarot | numerology | general
 })
 
 export default OracleLog
