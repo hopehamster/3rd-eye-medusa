@@ -15,6 +15,7 @@ import {
   classifyQuestion,
   composeGuidance,
   composeKnowledge,
+  extractMemorableFacts,
   type OracleProduct,
 } from "../modules/oracle/deepseek"
 import { retrieveCanon } from "../modules/oracle/canon"
@@ -198,12 +199,29 @@ const composeStep = createStep(
       mode,
       products,
       expertId,
-    }: { question: string; expertId?: string } & Classified & {
+      customerId,
+    }: {
+      question: string
+      expertId?: string
+      customerId?: string
+    } & Classified & {
       products: ProductHit[]
-    }
+    },
+    { container }
   ): Promise<StepResponse<Composed>> => {
+    const oracle = container.resolve(ORACLE_MODULE) as OracleModuleService
     const canonDocs = await retrieveCanon(intents)
     const excerpts = canonDocs.map((d) => `### ${d.title}\n${d.excerpt}`)
+
+    // Load user memory if they're signed in
+    let userProfile: Record<string, unknown> = {}
+    if (customerId && expertId) {
+      try {
+        userProfile = await oracle.getUserProfile(customerId, expertId)
+      } catch {
+        // Memory is best-effort — never block the consultation
+      }
+    }
 
     if (mode === "knowledge") {
       const answer = await composeKnowledge({
@@ -211,6 +229,7 @@ const composeStep = createStep(
         intents,
         canonExcerpts: excerpts,
         expertId,
+        userProfile,
       })
       return new StepResponse({
         answer,
@@ -226,6 +245,7 @@ const composeStep = createStep(
       canonExcerpts: excerpts,
       products,
       expertId,
+      userProfile,
     })
     return new StepResponse({
       answer,
@@ -278,7 +298,49 @@ export interface OracleConsultationInput {
   question: string
   sessionId?: string
   expertId?: string
+  customerId?: string
 }
+
+const memorizeStep = createStep(
+  "memorize",
+  async (
+    {
+      question,
+      answer,
+      expertId,
+      customerId,
+    }: {
+      question: string
+      answer: string
+      expertId?: string
+      customerId?: string
+    },
+    { container }
+  ): Promise<StepResponse<{ updated: boolean }>> => {
+    // Only memorize for signed-in users with an expert
+    if (!customerId || !expertId) {
+      return new StepResponse({ updated: false })
+    }
+    try {
+      const oracle = container.resolve(ORACLE_MODULE) as OracleModuleService
+      const current = await oracle.getUserProfile(customerId, expertId)
+      const facts = await extractMemorableFacts({
+        question,
+        answer,
+        expertId,
+        currentProfile: current,
+      })
+      if (Object.keys(facts).length > 0) {
+        await oracle.updateUserProfile(customerId, expertId, facts)
+        return new StepResponse({ updated: true })
+      }
+      return new StepResponse({ updated: false })
+    } catch {
+      // Memory is best-effort — never break anything
+      return new StepResponse({ updated: false })
+    }
+  }
+)
 
 export const oracleConsultationWorkflow = createWorkflow(
   "oracle-consultation",
@@ -292,6 +354,7 @@ export const oracleConsultationWorkflow = createWorkflow(
     const composed = composeStep({
       question: input.question,
       expertId: input.expertId,
+      customerId: input.customerId,
       intents: classified.intents,
       mode: classified.mode,
       products: retrieved.products,
@@ -304,6 +367,14 @@ export const oracleConsultationWorkflow = createWorkflow(
       mode: classified.mode,
       picks: composed.picks,
       needsCanon: composed.needsCanon,
+    })
+
+    // Background: update user memory (fire-and-forget, never blocks response)
+    const memorized = memorizeStep({
+      question: input.question,
+      answer: composed.answer,
+      expertId: input.expertId,
+      customerId: input.customerId,
     })
 
     return new WorkflowResponse({

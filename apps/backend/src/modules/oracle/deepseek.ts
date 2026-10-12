@@ -125,6 +125,7 @@ export async function composeGuidance(params: {
   canonExcerpts: string[]
   products: OracleProduct[]
   expertId?: string
+  userProfile?: Record<string, unknown>
 }): Promise<GuidanceResult> {
   const expert = getExpert(params.expertId)
   const productList =
@@ -133,10 +134,15 @@ export async function composeGuidance(params: {
           .map((p) => `- id: ${p.id} | ${p.title} (${p.price})`)
           .join("\n")
       : "(no in-stock products match right now)"
+  const memoryBlock =
+    params.userProfile && Object.keys(params.userProfile).length > 0
+      ? `What you remember about this visitor: ${JSON.stringify(params.userProfile)}. Weave this in naturally — like a good reader would, not like a database lookup.`
+      : ""
 
   const system = `${expert.identity} ${expert.voice}
 Your expertise: ${expert.expertise}
 ${VOICE_AND_RULES}
+${memoryBlock}
 The visitor asked: "${params.question}"
 Their needs map to: ${params.intents.join(", ")}.
 Relevant reference material:
@@ -173,11 +179,17 @@ export async function composeKnowledge(params: {
   intents: string[]
   canonExcerpts: string[]
   expertId?: string
+  userProfile?: Record<string, unknown>
 }): Promise<string> {
   const expert = getExpert(params.expertId)
+  const memoryBlock =
+    params.userProfile && Object.keys(params.userProfile).length > 0
+      ? `What you remember about this visitor: ${JSON.stringify(params.userProfile)}. Weave this in naturally — like a good reader would, not like a database lookup.`
+      : ""
   const system = `${expert.identity} ${expert.voice}
 Your expertise: ${expert.expertise}
 ${VOICE_AND_RULES}
+${memoryBlock}
 The visitor asked a knowledge question: "${params.question}"
 Related topics: ${params.intents.join(", ")}.
 Reference material (ground your answer here; where it is silent you may use general metaphysical knowledge, but present that as general knowledge, not canon):
@@ -185,4 +197,44 @@ ${params.canonExcerpts.join("\n---\n") || "(no reference material — answer fro
 Write the answer in markdown: definition first, then correspondences, then a short practical how-to. End with at most one gentle bridge to practice ("If you want to work with this practically...") — no product names, no selling. Be conversational — this is a dialogue, not a lecture.`
 
   return chat([{ role: "system", content: system }])
+}
+
+/**
+ * Extract memorable facts from a consultation to update the user's profile.
+ * Runs as a background job after the consultation — never blocks the response.
+ * Returns a flat object of facts/preferences worth remembering, or empty object.
+ */
+export async function extractMemorableFacts(params: {
+  question: string
+  answer: string
+  expertId?: string
+  currentProfile: Record<string, unknown>
+}): Promise<Record<string, unknown>> {
+  const expert = getExpert(params.expertId)
+  const system = `You are helping ${expert.name}, ${expert.title} at 3rd Eye Supply, remember their customer.
+Current profile: ${JSON.stringify(params.currentProfile) || "(empty)"}
+Recent exchange:
+Visitor: "${params.question}"
+${expert.name}: "${params.answer.slice(0, 1000)}"
+Extract NEW facts, preferences, or context worth remembering for future conversations. Focus on: stone/crystal preferences, intentions they care about, life context they shared, what resonated.
+Respond with JSON only: flat object like {"favorite_stone": "amethyst", "seeking": "better sleep"}. Empty object {} if nothing new worth keeping. Never store sensitive personal data (full names, addresses, health details).`
+
+  try {
+    const raw = await chat([{ role: "system", content: system }], true)
+    const parsed = JSON.parse(raw) as Record<string, unknown>
+    // Sanitize: only keep string/number/boolean values, drop anything suspicious
+    const clean: Record<string, unknown> = {}
+    for (const [k, v] of Object.entries(parsed)) {
+      if (
+        typeof k === "string" &&
+        k.length < 50 &&
+        ["string", "number", "boolean"].includes(typeof v)
+      ) {
+        clean[k] = v
+      }
+    }
+    return clean
+  } catch {
+    return {}
+  }
 }

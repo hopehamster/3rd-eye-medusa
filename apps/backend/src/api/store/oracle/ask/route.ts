@@ -9,15 +9,18 @@ const ORACLE_MISHEARD =
 
 /**
  * POST /store/oracle/ask
- * Body: { question: string, sessionId?: string, expertId?: string }
+ * Body: { question: string, sessionId?: string, expertId?: string, customerId?: string }
+ * Note: customerId should come from auth middleware in production. For now
+ * it's accepted as an optional parameter for signed-in users.
  */
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const body = (req.body ?? {}) as {
     question?: unknown
     sessionId?: unknown
     expertId?: unknown
+    customerId?: unknown
   }
-  const { question, sessionId, expertId } = body
+  const { question, sessionId, expertId, customerId } = body
 
   if (
     typeof question !== "string" ||
@@ -41,6 +44,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         question: question.trim(),
         sessionId: typeof sessionId === "string" ? sessionId : undefined,
         expertId: typeof expertId === "string" ? expertId : undefined,
+        customerId: typeof customerId === "string" ? customerId : undefined,
       },
     })
     res.json(result)
