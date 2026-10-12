@@ -1,5 +1,9 @@
 import { listProducts } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
+import {
+  findSimilarProducts,
+  getProductsByIds,
+} from "@lib/data/semantic-search"
 import { HttpTypes } from "@medusajs/types"
 import Product from "../product-preview"
 
@@ -18,7 +22,7 @@ export default async function RelatedProducts({
     return null
   }
 
-  // edit this function to define your related products logic
+  // Primary: collection + tag matching (curated relationships)
   const queryParams: HttpTypes.StoreProductListParams = {}
   if (region?.id) {
     queryParams.region_id = region.id
@@ -33,7 +37,7 @@ export default async function RelatedProducts({
   }
   queryParams.is_giftcard = false
 
-  const products = await listProducts({
+  let products = await listProducts({
     queryParams,
     countryCode,
   }).then(({ response }) => {
@@ -41,6 +45,28 @@ export default async function RelatedProducts({
       (responseProduct) => responseProduct.id !== product.id
     )
   })
+
+  // Semantic fallback: if curated matching is thin, use Voyage embeddings
+  // to find products with similar meaning/intention.
+  if (products.length < 4) {
+    const semanticText = [product.title, product.description]
+      .filter(Boolean)
+      .join("\n")
+    const similarIds = await findSimilarProducts(
+      semanticText,
+      product.id,
+      4 - products.length
+    )
+    if (similarIds.length) {
+      const existingIds = new Set(products.map((p) => p.id))
+      const semanticProducts = await getProductsByIds(
+        similarIds.filter((id) => !existingIds.has(id)),
+        countryCode,
+        region.id
+      )
+      products = [...products, ...semanticProducts]
+    }
+  }
 
   if (!products.length) {
     return null
@@ -58,7 +84,7 @@ export default async function RelatedProducts({
       </div>
 
       <ul className="grid grid-cols-2 small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8">
-        {products.map((product) => (
+        {products.slice(0, 4).map((product) => (
           <li key={product.id}>
             <Product region={region} product={product} />
           </li>

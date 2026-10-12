@@ -4,6 +4,8 @@ export const OPTION_VALUES_ATTRIBUTE = "option_values"
 export const CATEGORY_ATTRIBUTE = "category"
 // The index calls the product's tags "labels".
 export const LABELS_ATTRIBUTE = "labels"
+// Metaphysical intent tags from product metadata (Oracle taxonomy).
+export const INTENTS_ATTRIBUTE = "intents"
 
 export const getSortOptions = (currencyCode: string) => {
   const minPrice = priceAttribute("min_price", currencyCode)

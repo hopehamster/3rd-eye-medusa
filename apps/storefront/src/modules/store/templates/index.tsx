@@ -6,11 +6,26 @@ import { Configure, InstantSearch } from "react-instantsearch"
 import { PRODUCT_INDEX_NAME, searchClient } from "@lib/search-client"
 import StoreHits from "@modules/store/components/store-hits"
 import StoreRefinements from "@modules/store/components/store-refinements"
+import { INTENTS_ATTRIBUTE } from "@modules/store/components/store-refinements/attributes"
 import StoreSearchBox from "@modules/store/components/store-search-box"
 
 const PRODUCT_LIMIT = 12
 
-const StoreTemplate = ({ currencyCode }: { currencyCode: string }) => {
+const StoreTemplate = ({
+  currencyCode,
+  initialIntent,
+}: {
+  currencyCode: string
+  initialIntent?: string
+}) => {
+  const initialUiState = initialIntent
+    ? {
+        [PRODUCT_INDEX_NAME]: {
+          refinementList: { [INTENTS_ATTRIBUTE]: [initialIntent] },
+        },
+      }
+    : undefined
+
   return (
     <div className="py-6 content-container" data-testid="category-container">
       <div className="mb-8 text-2xl-semi">
@@ -22,6 +37,7 @@ const StoreTemplate = ({ currencyCode }: { currencyCode: string }) => {
           indexName={PRODUCT_INDEX_NAME}
           searchClient={searchClient as unknown as SearchClient}
           routing
+          initialUiState={initialUiState}
           future={{ preserveSharedStateOnUnmount: true }}
         >
           <Configure hitsPerPage={PRODUCT_LIMIT} />

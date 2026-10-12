@@ -42,6 +42,27 @@ export default async function Nav() {
               >
                 Collections
               </LocalizedClientLink>
+              <LocalizedClientLink
+                className="hover:text-cosmos-text transition-colors text-[13px] tracking-wide text-cosmos-gold"
+                href="/oracle"
+                data-testid="nav-oracle-link"
+              >
+                Oracle
+              </LocalizedClientLink>
+              <LocalizedClientLink
+                className="hover:text-cosmos-text transition-colors text-[13px] tracking-wide"
+                href="/guides"
+                data-testid="nav-guides-link"
+              >
+                Guides
+              </LocalizedClientLink>
+              <LocalizedClientLink
+                className="hover:text-cosmos-text transition-colors text-[13px] tracking-wide"
+                href="/ritual-builder"
+                data-testid="nav-ritual-link"
+              >
+                Ritual Builder
+              </LocalizedClientLink>
             </div>
           </div>
 

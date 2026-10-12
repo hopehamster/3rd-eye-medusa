@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { sdk } from "@lib/config"
 import { addToCart } from "@lib/data/cart"
 
@@ -129,7 +129,13 @@ function ProductCard({
   )
 }
 
-export default function OracleChat({ countryCode }: { countryCode: string }) {
+export default function OracleChat({
+  countryCode,
+  initialQuestion,
+}: {
+  countryCode: string
+  initialQuestion?: string
+}) {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "oracle",
@@ -139,6 +145,7 @@ export default function OracleChat({ countryCode }: { countryCode: string }) {
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
   const [knowledgeOnly, setKnowledgeOnly] = useState(false)
+  const initialSent = useRef(false)
   const sessionId = useRef(
     `oracle-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
   )
@@ -213,22 +220,26 @@ export default function OracleChat({ countryCode }: { countryCode: string }) {
     }
   }
 
+  // Auto-send the quiz-compiled question once, on mount.
+  useEffect(() => {
+    if (initialQuestion && !initialSent.current) {
+      initialSent.current = true
+      const t = setTimeout(() => ask(initialQuestion), 300)
+      return () => clearTimeout(t)
+    }
+  }, [initialQuestion])
+
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
-      <div className="text-center mb-6">
-        <p className="text-3xl mb-2 text-violet-300">◈</p>
-        <h1 className="text-2xl font-semibold text-purple-100">The Oracle</h1>
-        <p className="text-sm text-purple-300/70 mt-1">
-          Ask for guidance, or simply to learn.
-        </p>
-        <label className="inline-flex items-center gap-2 mt-3 text-xs text-purple-300/80 cursor-pointer">
+    <div className="max-w-2xl mx-auto">
+      <div className="flex justify-end mb-3">
+        <label className="inline-flex items-center gap-2 text-xs text-purple-300/80 cursor-pointer">
           <input
             type="checkbox"
             checked={knowledgeOnly}
             onChange={(e) => setKnowledgeOnly(e.target.checked)}
             className="accent-purple-400"
           />
-          Knowledge only — teach me, don't sell me
+          Knowledge only — teach me, don&apos;t sell me
         </label>
       </div>
 

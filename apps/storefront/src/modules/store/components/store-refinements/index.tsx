@@ -5,6 +5,7 @@ import { useSortBy } from "react-instantsearch"
 import FilterRadioGroup from "@modules/common/components/filter-radio-group"
 import {
   CATEGORY_ATTRIBUTE,
+  INTENTS_ATTRIBUTE,
   LABELS_ATTRIBUTE,
   getSortOptions,
 } from "./attributes"
@@ -39,6 +40,7 @@ const StoreRefinements = ({ currencyCode }: { currencyCode: string }) => {
       <OnSaleToggle currencyCode={currencyCode} />
       <RefinementGroup attribute={CATEGORY_ATTRIBUTE} title="Category" />
       <RefinementGroup attribute={LABELS_ATTRIBUTE} title="Labels" />
+      <RefinementGroup attribute={INTENTS_ATTRIBUTE} title="Intention" />
     </div>
   )
 }
