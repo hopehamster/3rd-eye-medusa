@@ -1,1 +1,0 @@
-{"buildCommand":"cd ../.. && pnpm --filter @dtc/storefront run build","framework":"nextjs","installCommand":"pnpm install","outputDirectory":".next"}
