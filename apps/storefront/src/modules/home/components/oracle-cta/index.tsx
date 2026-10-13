@@ -4,12 +4,12 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 import Reveal from "@modules/common/components/reveal"
 
 /**
- * Oracle CTA — directed light edition.
- * Custom eye sigil, single gold key light, organic drifting dust.
- * No purple wash, no style jsx.
+ * Oracle CTA — monumental moment edition.
+ *
+ * ASKANDRECEIVE: extreme letter-spacing, full viewport, used ONCE.
+ * Custom eye sigil. Copy with teeth. No purple wash.
  */
 
-// Organic dust: varied scale, blur, opacity — no lattice
 const DUST = [
   { left: 12, top: 30, size: 4, blur: 2, opacity: 0.3, duration: 16, delay: 0 },
   { left: 24, top: 65, size: 2, blur: 0, opacity: 0.55, duration: 11, delay: 2 },
@@ -21,7 +21,6 @@ const DUST = [
   { left: 6, top: 55, size: 2, blur: 0, opacity: 0.5, duration: 10, delay: 5 },
 ]
 
-/** Custom eye sigil — the Oracle's mark */
 const EyeSigil = () => (
   <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
     <ellipse cx="32" cy="32" rx="26" ry="14" stroke="#c8a24a" strokeWidth="1.5" />
@@ -36,7 +35,7 @@ const EyeSigil = () => (
 const OracleCta = () => {
   return (
     <div className="relative overflow-hidden border-y border-cosmos-borderSoft bg-[#0a0908]">
-      {/* Single key light: warm gold from above, deep falloff */}
+      {/* Single key light */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
@@ -48,7 +47,7 @@ const OracleCta = () => {
         }}
       />
 
-      {/* Organic drifting dust */}
+      {/* Organic dust */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
         {DUST.map((d, i) => (
           <span
@@ -68,39 +67,48 @@ const OracleCta = () => {
         ))}
       </div>
 
-      <div className="content-container relative z-10 py-24 text-center">
+      <div className="content-container relative z-10 py-24 small:py-32">
+        {/* Monumental tracked moment — used ONCE */}
         <Reveal>
-          <div className="mx-auto mb-8 flex justify-center">
-            <EyeSigil />
-          </div>
-        </Reveal>
-        <Reveal delay={0.1}>
-          <p className="text-[11px] uppercase tracking-[0.35em] text-cosmos-gold mb-4">
-            Not sure where to begin?
+          <p
+            aria-hidden="true"
+            className="text-center font-display text-[8vw] small:text-6xl font-light text-cosmos-gold/90 tracking-[0.35em] mb-16 select-none"
+          >
+            ASKANDRECEIVE
           </p>
         </Reveal>
-        <Reveal delay={0.2}>
-          <h2 className="font-display text-4xl small:text-5xl font-light text-cosmos-text mb-6 tracking-tight">
-            Ask the <span className="italic text-cosmos-goldBright">Oracle</span>
-          </h2>
-        </Reveal>
-        <Reveal delay={0.3}>
-          <p className="max-w-xl mx-auto text-cosmos-muted mb-10 leading-relaxed">
-            Describe what you need in plain words — or take the guided quiz.
-            The Oracle reads from our canon of metaphysical knowledge and
-            points you to the pieces that align.
-          </p>
-        </Reveal>
-        <Reveal delay={0.4}>
-          <div className="flex flex-col small:flex-row items-center justify-center gap-4">
-            <LocalizedClientLink href="/oracle" className="btn-gold">
-              Consult the Oracle
-            </LocalizedClientLink>
-            <LocalizedClientLink href="/guides" className="btn-ghost">
-              Explore guides
-            </LocalizedClientLink>
-          </div>
-        </Reveal>
+
+        <div className="text-center">
+          <Reveal>
+            <div className="mx-auto mb-8 flex justify-center">
+              <EyeSigil />
+            </div>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <h2 className="font-display text-4xl small:text-5xl font-light text-cosmos-text mb-6 tracking-tight">
+              The <span className="italic text-cosmos-goldBright">Oracle</span> knows
+              <br />
+              what you won&apos;t admit you need.
+            </h2>
+          </Reveal>
+          <Reveal delay={0.2}>
+            <p className="max-w-xl mx-auto text-cosmos-muted mb-10 leading-relaxed">
+              Describe what&apos;s actually going on — or take the quiz.
+              No fluff. No generic &quot;good vibes.&quot; The Oracle reads the canon
+              and points at the stone.
+            </p>
+          </Reveal>
+          <Reveal delay={0.3}>
+            <div className="flex flex-col small:flex-row items-center justify-center gap-4">
+              <LocalizedClientLink href="/oracle" className="btn-gold">
+                Consult the Oracle
+              </LocalizedClientLink>
+              <LocalizedClientLink href="/guides" className="btn-ghost">
+                Read the canon
+              </LocalizedClientLink>
+            </div>
+          </Reveal>
+        </div>
       </div>
 
       <style>{`
