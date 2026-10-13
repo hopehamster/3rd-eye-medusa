@@ -30,14 +30,14 @@ export class CJClient {
     options: CJModuleOptions,
     logger?: { info: (m: string) => void; warn: (m: string) => void }
   ) {
-    if (!options.apiKey || !options.email) {
+    if (!options.apiKey) {
       throw new MedusaError(
         MedusaError.Types.INVALID_DATA,
-        "CJ fulfillment: CJ_API_KEY and CJ_EMAIL must be configured."
+        "CJ fulfillment: CJ_API_KEY must be configured."
       )
     }
     this.apiKey = options.apiKey
-    this.email = options.email
+    this.email = options.email ?? ""
     this.baseUrl = options.baseUrl || DEFAULT_BASE_URL
     this.logger = logger
   }
@@ -69,11 +69,17 @@ export class CJClient {
     if (this.token && Date.now() < this.tokenExpiresAt - 5 * 60 * 1000) {
       return this.token
     }
+    // NOTE (verified 2026-10-13 against the live API): getAccessToken takes
+    // only `apiKey`. Two quirks: (1) never send a field named `email` — the
+    // endpoint's validator rejects the request with "email must be not
+    // empty" whenever that field is present, even with a value; (2) the body
+    // must contain a second field alongside apiKey or the same broken
+    // validation path triggers. The extra field is ignored by CJ.
     const body = (await (
       await fetch(`${this.baseUrl}/authentication/getAccessToken`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: this.email, apiKey: this.apiKey }),
+        body: JSON.stringify({ apiKey: this.apiKey, client: "3rd-eye-supply" }),
       })
     ).json()) as TokenResponse
     if (body.code !== 200 || !body.data?.accessToken) {
