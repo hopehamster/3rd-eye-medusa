@@ -14,7 +14,7 @@ export const ExpertUserProfile = model.define("expert_user_profile", {
   customerId: model.text(),
   expertId: model.text(),
   profile: model.json().default({}),
-  updatedAt: model.dateTime().default(() => new Date()),
+  updatedAt: model.dateTime(),
 })
 
 export default ExpertUserProfile

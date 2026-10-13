@@ -26,14 +26,19 @@ interface Classified {
   mode: "guidance" | "knowledge"
 }
 
+export interface HistoryTurn {
+  role: string
+  content: string
+}
+
 const classifyStep = createStep(
   "classify",
   async (
-    { question }: { question: string },
+    { question, history }: { question: string; history?: HistoryTurn[] },
     { container }
   ): Promise<StepResponse<Classified>> => {
     const oracle = container.resolve(ORACLE_MODULE) as OracleModuleService
-    const { intents, mode } = await classifyQuestion(question)
+    const { intents, mode } = await classifyQuestion(question, history)
     return new StepResponse({
       intents: await oracle.sanitizeIntents(intents),
       mode,
@@ -46,18 +51,20 @@ interface ProductHit extends OracleProduct {
   handle: string
 }
 
-const retrieveProductsStep = createStep(
-  "retrieve-products",
-  async (
-    {
-      intents,
-      mode,
-      question,
-    }: Classified & { question: string },
-    { container }
-  ): Promise<StepResponse<{ products: ProductHit[] }>> => {
+/**
+ * Shared product retrieval (tag match + stock gate + semantic fallback).
+ * Used by the workflow and the streaming route.
+ */
+export async function retrieveProducts(
+  container: {
+    resolve: (key: string) => any
+  },
+  intents: string[],
+  mode: "guidance" | "knowledge",
+  question: string
+): Promise<ProductHit[]> {
     if (mode === "knowledge" || intents.length === 0) {
-      return new StepResponse({ products: [] })
+      return []
     }
 
     const query = container.resolve(ContainerRegistrationKeys.QUERY)
@@ -179,7 +186,40 @@ const retrieveProductsStep = createStep(
       }
     }
 
-    return new StepResponse({ products: hits })
+    return hits
+}
+
+const retrieveProductsStep = createStep(
+  "retrieve-products",
+  async (
+    {
+      intents,
+      mode,
+      question,
+    }: Classified & { question: string },
+    { container }
+  ): Promise<StepResponse<{ products: ProductHit[] }>> => {
+    const products = await retrieveProducts(container, intents, mode, question)
+    return new StepResponse({ products })
+  }
+)
+
+const historyStep = createStep(
+  "history",
+  async (
+    { sessionId, expertId }: { sessionId?: string; expertId?: string },
+    { container }
+  ): Promise<StepResponse<{ history: HistoryTurn[] }>> => {
+    if (!sessionId || !expertId) {
+      return new StepResponse({ history: [] })
+    }
+    try {
+      const oracle = container.resolve(ORACLE_MODULE) as OracleModuleService
+      const history = await oracle.listRecentMessages(sessionId, expertId, 10)
+      return new StepResponse({ history })
+    } catch {
+      return new StepResponse({ history: [] })
+    }
   }
 )
 
@@ -200,10 +240,12 @@ const composeStep = createStep(
       products,
       expertId,
       customerId,
+      history,
     }: {
       question: string
       expertId?: string
       customerId?: string
+      history?: HistoryTurn[]
     } & Classified & {
       products: ProductHit[]
     },
@@ -230,6 +272,7 @@ const composeStep = createStep(
         canonExcerpts: excerpts,
         expertId,
         userProfile,
+        history,
       })
       return new StepResponse({
         answer,
@@ -246,6 +289,7 @@ const composeStep = createStep(
       products,
       expertId,
       userProfile,
+      history,
     })
     return new StepResponse({
       answer,
@@ -253,6 +297,33 @@ const composeStep = createStep(
       canonTitles: canonDocs.map((d) => d.title),
       needsCanon: false,
     })
+  }
+)
+
+/** Persist both turns of this exchange for conversation continuity. */
+const saveMessagesStep = createStep(
+  "save-messages",
+  async (
+    {
+      question,
+      answer,
+      sessionId,
+      expertId,
+    }: {
+      question: string
+      answer: string
+      sessionId?: string
+      expertId?: string
+    },
+    { container }
+  ): Promise<StepResponse<{ saved: boolean }>> => {
+    if (!sessionId || !expertId || !answer) {
+      return new StepResponse({ saved: false })
+    }
+    const oracle = container.resolve(ORACLE_MODULE) as OracleModuleService
+    await oracle.saveMessage(sessionId, expertId, "user", question)
+    await oracle.saveMessage(sessionId, expertId, "expert", answer)
+    return new StepResponse({ saved: true })
   }
 )
 
@@ -345,7 +416,14 @@ const memorizeStep = createStep(
 export const oracleConsultationWorkflow = createWorkflow(
   "oracle-consultation",
   (input: OracleConsultationInput) => {
-    const classified = classifyStep({ question: input.question })
+    const history = historyStep({
+      sessionId: input.sessionId,
+      expertId: input.expertId,
+    })
+    const classified = classifyStep({
+      question: input.question,
+      history: history.history,
+    })
     const retrieved = retrieveProductsStep({
       intents: classified.intents,
       mode: classified.mode,
@@ -355,6 +433,7 @@ export const oracleConsultationWorkflow = createWorkflow(
       question: input.question,
       expertId: input.expertId,
       customerId: input.customerId,
+      history: history.history,
       intents: classified.intents,
       mode: classified.mode,
       products: retrieved.products,
@@ -367,6 +446,12 @@ export const oracleConsultationWorkflow = createWorkflow(
       mode: classified.mode,
       picks: composed.picks,
       needsCanon: composed.needsCanon,
+    })
+    const saved = saveMessagesStep({
+      question: input.question,
+      answer: composed.answer,
+      sessionId: input.sessionId,
+      expertId: input.expertId,
     })
 
     // Background: update user memory (fire-and-forget, never blocks response)

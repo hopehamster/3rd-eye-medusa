@@ -1,10 +1,12 @@
 import { MedusaService } from "@medusajs/framework/utils"
 import OracleLog from "./models/oracle-log"
+import OracleMessage from "./models/oracle-message"
 import ExpertUserProfile from "./models/expert-user-profile"
 import { ORACLE_INTENT_IDS, getIntent, intentTag } from "./taxonomy"
 
 class OracleModuleService extends MedusaService({
   OracleLog,
+  OracleMessage,
   ExpertUserProfile,
 }) {
   /**
@@ -32,6 +34,43 @@ class OracleModuleService extends MedusaService({
   }
 
   /**
+   * Recent conversation turns for a session + expert, oldest first.
+   * Bounded — the expert reads these before answering.
+   */
+  async listRecentMessages(
+    sessionId: string,
+    expertId: string,
+    limit = 10
+  ): Promise<{ role: string; content: string }[]> {
+    const messages = await this.listOracleMessages(
+      { sessionId, expertId },
+      { take: limit, order: { created_at: "DESC" } }
+    )
+    return (messages ?? [])
+      .reverse()
+      .map((m) => ({ role: m.role, content: m.content }))
+  }
+
+  /** Persist one conversation turn. Best-effort — never throws. */
+  async saveMessage(
+    sessionId: string,
+    expertId: string,
+    role: "user" | "expert",
+    content: string
+  ): Promise<void> {
+    try {
+      await this.createOracleMessages({
+        sessionId,
+        expertId,
+        role,
+        content: content.slice(0, 8000),
+      })
+    } catch {
+      // History is a nice-to-have — never break the consultation
+    }
+  }
+
+  /**
    * Get a customer's memory profile for an expert. Returns empty object
    * if they've never talked to this expert before.
    */
@@ -40,8 +79,8 @@ class OracleModuleService extends MedusaService({
     expertId: string
   ): Promise<Record<string, unknown>> {
     const profiles = await this.listExpertUserProfiles({
-      customer_id: customerId,
-      expert_id: expertId,
+      customerId,
+      expertId,
     })
     const profile = profiles?.[0]
     return (profile?.profile as Record<string, unknown>) ?? {}
@@ -57,8 +96,8 @@ class OracleModuleService extends MedusaService({
     updates: Record<string, unknown>
   ): Promise<void> {
     const existing = await this.listExpertUserProfiles({
-      customer_id: customerId,
-      expert_id: expertId,
+      customerId,
+      expertId,
     })
     const current = (existing?.[0]?.profile as Record<string, unknown>) ?? {}
     const merged = { ...current, ...updates, updated_at: new Date().toISOString() }
@@ -70,8 +109,8 @@ class OracleModuleService extends MedusaService({
       })
     } else {
       await this.createExpertUserProfiles({
-        customer_id: customerId,
-        expert_id: expertId,
+        customerId,
+        expertId,
         profile: merged,
       })
     }

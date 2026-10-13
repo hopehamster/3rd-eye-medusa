@@ -4,7 +4,14 @@
  * Token is cached in memory until expiry (with a 5-minute safety margin).
  */
 import { MedusaError } from "@medusajs/framework/utils"
-import type { CJModuleOptions, CJOrderPayload, CJOrderResult } from "./types"
+import type {
+  CJModuleOptions,
+  CJOrderPayload,
+  CJOrderResult,
+  CJProductSummary,
+  CJProductDetail,
+  CJInventoryEntry,
+} from "./types"
 
 const DEFAULT_BASE_URL = "https://developers.cjdropshipping.com/api2.0/v1"
 

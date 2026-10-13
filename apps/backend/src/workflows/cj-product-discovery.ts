@@ -130,7 +130,7 @@ const filter = createStep(
       container.resolve<IProductModuleService>(Modules.PRODUCT)
 
     // Products already imported (by CJ product id in variant metadata)
-    const [, existingVariants] =
+    const [existingVariants] =
       await productModule.listAndCountProductVariants(
         {},
         { select: ["id", "metadata"] }
@@ -226,12 +226,6 @@ const importDrafts = createStep(
             variants: [
               {
                 title: "Default",
-                prices: [
-                  {
-                    amount: Math.round(Number(c.sellPrice ?? 0) * 250),
-                    currency_code: "usd",
-                  },
-                ],
                 options: { Style: "Default" },
                 metadata: { cj_pid: c.id, source: "cj-discovery" },
               },
@@ -244,6 +238,42 @@ const importDrafts = createStep(
             },
           },
         ])
+
+        // Prices live in the pricing module (Medusa v2): each variant gets
+        // an auto-created price set — add our retail price to it.
+        try {
+          const pricing = container.resolve(Modules.PRICING) as {
+            addPrices: (data: {
+              priceSetId: string
+              prices: { amount: number; currency_code: string }[]
+            }) => Promise<unknown>
+          }
+          const [variant] = await productModule.listProductVariants(
+            { product_id: product.id },
+            { relations: ["price_set"] }
+          )
+          const priceSetId = (variant as { price_set?: { id?: string } })
+            ?.price_set?.id
+          if (priceSetId) {
+            await pricing.addPrices({
+              priceSetId,
+              prices: [
+                {
+                  amount: Math.round(Number(c.sellPrice ?? 0) * 250),
+                  currency_code: "usd",
+                },
+              ],
+            })
+          } else {
+            logger.warn(
+              `CJ discovery: no price set found for variant of ${c.id} — price not set`
+            )
+          }
+        } catch (priceErr) {
+          logger.warn(
+            `CJ discovery: price creation failed for ${c.id}: ${(priceErr as Error).message}`
+          )
+        }
 
         // AI content draft — applied to the draft product, still needs
         // human review before publishing (the review gate).

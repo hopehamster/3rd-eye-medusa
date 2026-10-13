@@ -1,6 +1,9 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import { oracleConsultationWorkflow } from "../../../../workflows/oracle-consultation"
+import { EXPERT_PERSONAS } from "../../../../modules/oracle/experts"
+
+const VALID_EXPERTS = new Set(Object.keys(EXPERT_PERSONAS))
 
 const ORACLE_RESTING =
   "The Oracle is resting at the moment — please try again soon."
@@ -43,7 +46,10 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       input: {
         question: question.trim(),
         sessionId: typeof sessionId === "string" ? sessionId : undefined,
-        expertId: typeof expertId === "string" ? expertId : undefined,
+        expertId:
+          typeof expertId === "string" && VALID_EXPERTS.has(expertId)
+            ? expertId
+            : undefined,
         customerId: typeof customerId === "string" ? customerId : undefined,
       },
     })
