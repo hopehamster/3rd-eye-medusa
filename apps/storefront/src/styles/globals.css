@@ -1,0 +1,184 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/* 3rd Eye Supply — dark cosmic base */
+@layer base {
+  html {
+    background-color: #0b0b10;
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: #0b0b10;
+    color: #edeae2;
+    font-family: var(--font-sans), Inter, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: #c9a227;
+    color: #0b0b10;
+  }
+
+  /* Restrained dark scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0b0b10;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #26262f;
+    border-radius: 8px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #34343f;
+  }
+}
+
+@layer utilities {
+  /* Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  input:focus ~ label,
+  input:not(:placeholder-shown) ~ label {
+    @apply -translate-y-2 text-xsmall-regular;
+  }
+
+  input:focus ~ label {
+    @apply left-0;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus {
+    border: 1px solid #26262f;
+    -webkit-text-fill-color: #edeae2;
+    -webkit-box-shadow: 0 0 0px 1000px #12121a inset;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
+  input[type="search"]::-webkit-search-decoration,
+  input[type="search"]::-webkit-search-cancel-button,
+  input[type="search"]::-webkit-search-results-button,
+  input[type="search"]::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+  }
+
+  /* Brand: display serif for headings */
+  .font-display {
+    font-family: var(--font-display), Fraunces, Georgia, serif;
+  }
+
+  /* Subtle cosmic gradient wash for hero surfaces (pure CSS, restrained) */
+  .cosmos-wash {
+    background:
+      radial-gradient(ellipse 60% 50% at 20% 10%, rgba(139, 123, 199, 0.12), transparent),
+      radial-gradient(ellipse 50% 40% at 85% 85%, rgba(201, 162, 39, 0.08), transparent),
+      radial-gradient(ellipse 40% 35% at 70% 20%, rgba(94, 156, 143, 0.07), transparent),
+      #0b0b10;
+  }
+
+  /* Fine gold hairline used as a quiet divider accent */
+  .gold-hairline {
+    background: linear-gradient(90deg, transparent, #c9a22755, transparent);
+    height: 1px;
+  }
+}
+
+@layer components {
+  .content-container {
+    @apply max-w-[1440px] w-full mx-auto px-6;
+  }
+
+  .contrast-btn {
+    @apply px-4 py-2 border border-black rounded-full hover:bg-black hover:text-white transition-colors duration-200 ease-in;
+  }
+
+  /* Brand primary button: warm gold on near-black */
+  .btn-gold {
+    @apply inline-flex items-center justify-center px-8 py-3.5 rounded-full
+      bg-cosmos-gold text-cosmos-bg text-sm font-medium tracking-wide
+      transition-all duration-300 ease-out
+      hover:bg-cosmos-goldBright hover:shadow-[0_0_32px_rgba(201,162,39,0.25)];
+  }
+
+  /* Brand ghost button: hairline border, quiet */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center px-8 py-3.5 rounded-full
+      border border-cosmos-border text-cosmos-text text-sm font-medium tracking-wide
+      transition-all duration-300 ease-out
+      hover:border-cosmos-gold/60 hover:text-cosmos-goldBright;
+  }
+
+  .text-xsmall-regular {
+    @apply text-[10px] leading-4 font-normal;
+  }
+
+  .text-small-regular {
+    @apply text-xs leading-5 font-normal;
+  }
+
+  .text-small-semi {
+    @apply text-xs leading-5 font-semibold;
+  }
+
+  .text-base-regular {
+    @apply text-sm leading-6 font-normal;
+  }
+
+  .text-base-semi {
+    @apply text-sm leading-6 font-semibold;
+  }
+
+  .text-large-regular {
+    @apply text-base leading-6 font-normal;
+  }
+
+  .text-large-semi {
+    @apply text-base leading-6 font-semibold;
+  }
+
+  .text-xl-regular {
+    @apply text-2xl leading-[36px] font-normal;
+  }
+
+  .text-xl-semi {
+    @apply text-2xl leading-[36px] font-semibold;
+  }
+
+  .text-2xl-regular {
+    @apply text-[30px] leading-[48px] font-normal;
+  }
+
+  .text-2xl-semi {
+    @apply text-[30px] leading-[48px] font-semibold;
+  }
+
+  .text-3xl-regular {
+    @apply text-[32px] leading-[44px] font-normal;
+  }
+
+  .text-3xl-semi {
+    @apply text-[32px] leading-[44px] font-semibold;
+  }
+}
