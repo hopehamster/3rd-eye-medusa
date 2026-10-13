@@ -10,42 +10,42 @@ const INTENTIONS = [
   {
     intent: "protection",
     label: "Protection",
-    description: "Shield your space and energy",
+    description: "For when the world feels sharp",
     image: "https://images.unsplash.com/photo-1566907722747-d16ed41b52bc?auto=format&fit=crop&w=600&q=80",
     crystal: "Black Tourmaline",
   },
   {
     intent: "abundance-prosperity",
     label: "Abundance",
-    description: "Open the flow of prosperity",
+    description: "Money likes attention. Give it some.",
     image: "https://images.unsplash.com/photo-1615114814213-a245ffc79e9a?auto=format&fit=crop&w=600&q=80",
     crystal: "Citrine",
   },
   {
     intent: "calm-soothing",
     label: "Calm",
-    description: "Quiet the mind, soften the day",
+    description: "Your nervous system will thank you",
     image: "https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?auto=format&fit=crop&w=600&q=80",
     crystal: "Amethyst",
   },
   {
     intent: "love-self",
     label: "Love",
-    description: "For yourself or another",
+    description: "Start with the person in the mirror",
     image: "https://images.unsplash.com/photo-1587652990090-67c742c382ce?auto=format&fit=crop&w=600&q=80",
     crystal: "Rose Quartz",
   },
   {
     intent: "clarity-focus",
     label: "Clarity",
-    description: "See your path clearly",
+    description: "Cut through your own noise",
     image: "https://images.unsplash.com/photo-1617038220319-276d3cfab638?auto=format&fit=crop&w=600&q=80",
     crystal: "Clear Quartz",
   },
   {
     intent: "sleep-dreams",
     label: "Sleep",
-    description: "Restful nights, vivid dreams",
+    description: "Your brain needs the dark too",
     image: "https://images.unsplash.com/photo-1602523961358-f9f03dd557db?auto=format&fit=crop&w=600&q=80",
     crystal: "Selenite",
   },
@@ -54,15 +54,15 @@ const INTENTIONS = [
 const IntentionGrid = () => {
   return (
     <div className="content-container py-20">
-      <Reveal className="text-center mb-12">
+      <Reveal className="mb-12">
         <p className="text-[11px] uppercase tracking-[0.35em] text-cosmos-gold mb-4">
-          Shop by intention
+          Chapter I — The Stones
         </p>
         <h2 className="font-display text-4xl small:text-5xl font-light text-cosmos-text tracking-tight">
-          What are you <span className="italic text-cosmos-goldBright">calling in?</span>
+          What are you trying to <span className="italic text-cosmos-goldBright">fix?</span>
         </h2>
-        <p className="mt-4 text-cosmos-muted max-w-lg mx-auto">
-          Every stone carries a frequency. Choose the energy you need, and let the right crystal find you.
+        <p className="mt-4 text-cosmos-muted max-w-lg">
+          Pick the problem. We&apos;ll point at the stone.
         </p>
       </Reveal>
       <div className="grid grid-cols-2 small:grid-cols-3 gap-5">
