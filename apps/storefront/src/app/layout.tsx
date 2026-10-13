@@ -1,6 +1,7 @@
 import { getBaseURL } from "@lib/util/env"
 import { Metadata } from "next"
 import { Fraunces, Inter } from "next/font/google"
+import FilmGrain from "@modules/common/components/film-grain"
 import "styles/globals.css"
 
 const fraunces = Fraunces({
@@ -34,6 +35,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
       className={`dark ${fraunces.variable} ${inter.variable}`}
     >
       <body className="bg-cosmos-bg text-cosmos-text antialiased">
+        <FilmGrain />
         <main className="relative">{props.children}</main>
       </body>
     </html>
