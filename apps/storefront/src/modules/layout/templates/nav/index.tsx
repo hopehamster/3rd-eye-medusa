@@ -34,35 +34,28 @@ export default async function Nav() {
                 href="/store"
                 data-testid="nav-shop-link"
               >
-                Shop
-              </LocalizedClientLink>
-              <LocalizedClientLink
-                className="hover:text-cosmos-text transition-colors text-[13px] tracking-wide"
-                href="/store"
-                data-testid="nav-collections-link"
-              >
-                Collections
+                <span className="text-cosmos-faint mr-1">I.</span> Stones
               </LocalizedClientLink>
               <LocalizedClientLink
                 className="hover:text-cosmos-text transition-colors text-[13px] tracking-wide text-cosmos-gold"
                 href="/oracle"
                 data-testid="nav-oracle-link"
               >
-                Oracle
+                <span className="text-cosmos-faint mr-1">II.</span> Oracle
               </LocalizedClientLink>
               <LocalizedClientLink
                 className="hover:text-cosmos-text transition-colors text-[13px] tracking-wide"
                 href="/guides"
                 data-testid="nav-guides-link"
               >
-                Guides
+                <span className="text-cosmos-faint mr-1">III.</span> Canon
               </LocalizedClientLink>
               <LocalizedClientLink
                 className="hover:text-cosmos-text transition-colors text-[13px] tracking-wide"
                 href="/ritual-builder"
                 data-testid="nav-ritual-link"
               >
-                Ritual Builder
+                <span className="text-cosmos-faint mr-1">IV.</span> Rituals
               </LocalizedClientLink>
             </div>
           </div>
