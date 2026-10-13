@@ -30,7 +30,7 @@
     "@medusajs/draft-order": "2.21.2",
     "@medusajs/framework": "2.21.2",
     "@medusajs/medusa": "2.21.2",
-    "@medusajs/medusa/payment-stripe": "2.21.2",
+    "@medusajs/payment-stripe": "2.21.2",
     "@medusajs/ui": "4.2.6",
     "@tanstack/react-query": "5.64.2",
     "react-i18next": "13.5.0",

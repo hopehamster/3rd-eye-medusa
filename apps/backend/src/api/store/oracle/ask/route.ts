@@ -12,18 +12,20 @@ const ORACLE_MISHEARD =
 
 /**
  * POST /store/oracle/ask
- * Body: { question: string, sessionId?: string, expertId?: string, customerId?: string }
- * Note: customerId should come from auth middleware in production. For now
- * it's accepted as an optional parameter for signed-in users.
+ * Body: { question: string, sessionId?: string, expertId?: string }
+ * Customer identity comes from the auth session (see middlewares.ts) —
+ * never trust a client-supplied customer id.
  */
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const body = (req.body ?? {}) as {
     question?: unknown
     sessionId?: unknown
     expertId?: unknown
-    customerId?: unknown
   }
-  const { question, sessionId, expertId, customerId } = body
+  const { question, sessionId, expertId } = body
+  // Signed-in customer id from the auth middleware; undefined for guests.
+  const customerId = (req as { auth_context?: { actor_id?: string } })
+    .auth_context?.actor_id
 
   if (
     typeof question !== "string" ||
@@ -50,7 +52,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
           typeof expertId === "string" && VALID_EXPERTS.has(expertId)
             ? expertId
             : undefined,
-        customerId: typeof customerId === "string" ? customerId : undefined,
+        customerId,
       },
     })
     res.json(result)

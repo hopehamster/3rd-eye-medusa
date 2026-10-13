@@ -28,24 +28,24 @@ type StreamEvent =
 /**
  * POST /store/oracle/ask/stream
  * Server-sent events: token (answer chunks) -> picks/products -> done.
- * Body: { question, sessionId?, expertId?, customerId? }
+ * Body: { question, sessionId?, expertId? }
+ * Customer identity comes from the auth session — never the request body.
  */
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const body = (req.body ?? {}) as {
     question?: unknown
     sessionId?: unknown
     expertId?: unknown
-    customerId?: unknown
   }
-  const { question, sessionId, expertId, customerId } = body
+  const { question, sessionId, expertId } = body
+  const cleanCustomer = (req as { auth_context?: { actor_id?: string } })
+    .auth_context?.actor_id
 
   const cleanExpert =
     typeof expertId === "string" && VALID_EXPERTS.has(expertId)
       ? expertId
       : "general"
   const cleanSession = typeof sessionId === "string" ? sessionId : undefined
-  const cleanCustomer =
-    typeof customerId === "string" ? customerId : undefined
 
   if (
     typeof question !== "string" ||
