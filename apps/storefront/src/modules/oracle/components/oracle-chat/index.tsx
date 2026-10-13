@@ -51,7 +51,7 @@ function renderMarkdown(text: string) {
       <p key={i} className="mb-3 last:mb-0 leading-relaxed">
         {parts.map((part, j) =>
           part.startsWith("**") && part.endsWith("**") ? (
-            <strong key={j} className="text-amber-200 font-semibold">
+            <strong key={j} className="text-cosmos-gold font-semibold">
               {part.slice(2, -2)}
             </strong>
           ) : (
@@ -94,7 +94,7 @@ function ProductCard({
   }
 
   return (
-    <div className="mt-3 rounded-xl border border-purple-400/20 bg-purple-950/40 p-3 flex gap-3">
+    <div className="mt-3 rounded-xl border border-cosmos-violet/20 bg-purple-950/40 p-3 flex gap-3">
       {product?.thumbnail && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -109,17 +109,17 @@ function ProductCard({
             {product?.title ?? "A piece from the collection"}
           </p>
           {product?.price && (
-            <p className="text-sm text-amber-200 shrink-0">{product.price}</p>
+            <p className="text-sm text-cosmos-gold shrink-0">{product.price}</p>
           )}
         </div>
-        <p className="text-xs text-purple-300/80 mt-1 leading-relaxed">
+        <p className="text-xs text-cosmos-violet/80 mt-1 leading-relaxed">
           {pick.why_it_fits}
         </p>
         {product?.variantId && (
           <button
             onClick={handleAdd}
             disabled={adding || added}
-            className="mt-2 text-xs px-3 py-1.5 rounded-full border border-amber-200/30 text-amber-200 hover:bg-amber-200/10 transition disabled:opacity-50"
+            className="mt-2 text-xs px-3 py-1.5 rounded-full border border-cosmos-gold/30 text-cosmos-gold hover:bg-cosmos-gold/10 transition disabled:opacity-50"
           >
             {added ? "Added to your bag" : adding ? "Adding…" : "Add to bag"}
           </button>
@@ -132,25 +132,33 @@ function ProductCard({
 const EXPERTS = [
   {
     id: "crystal",
-    label: "Sage · Crystal Guide",
+    label: "Sage",
+    role: "Crystal Guide",
+    description: "Find the right stones for your needs",
     greeting:
       "Hey, I'm Sage. I help people find the right stones — whether you know exactly what you need or you're just starting to get curious. What's on your mind?",
   },
   {
     id: "tarot",
-    label: "Luna · Tarot Reader",
+    label: "Luna",
+    role: "Tarot Reader",
+    description: "Card pulls for clarity and insight",
     greeting:
       "Hey, I'm Luna. I read tarot — not to tell you the future, but to help you see your present more clearly. What's weighing on you? Or want me to pull some cards and see what comes up?",
   },
   {
     id: "numerology",
-    label: "Theo · Numerologist",
+    label: "Theo",
+    role: "Numerologist",
+    description: "Life path numbers and personal cycles",
     greeting:
       "Hey, I'm Theo. I work with numbers — life path, personal cycles, timing. Everything has a rhythm, and once you see yours, decisions get easier. What's your birth date? Or just tell me what's on your mind.",
   },
   {
     id: "general",
-    label: "Oracle · General Guide",
+    label: "Oracle",
+    role: "General Guide",
+    description: "Open guidance on anything",
     greeting:
       "Welcome, seeker. What brings you to the Oracle today? Speak plainly — a feeling, a question, a need — and I will guide you.",
   },
@@ -412,7 +420,7 @@ export default function OracleChat({
   return (
     <div className="max-w-2xl mx-auto">
       <div className="flex items-center justify-between mb-3">
-        <div className="flex gap-2 flex-wrap">
+        <div className="grid grid-cols-2 small:grid-cols-4 gap-2">
           {EXPERTS.map((expert) => (
             <button
               key={expert.id}
@@ -420,28 +428,38 @@ export default function OracleChat({
                 setExpertId(expert.id)
                 setMessages([{ role: "oracle", text: expert.greeting }])
               }}
-              className={`text-xs px-3 py-1.5 rounded-full border transition ${
+              className={`text-left px-3 py-2.5 rounded-lg border transition ${
                 expertId === expert.id
-                  ? "border-amber-200/50 bg-amber-200/10 text-amber-200"
-                  : "border-purple-400/20 text-purple-300/60 hover:border-purple-400/40"
+                  ? "border-cosmos-gold/60 bg-cosmos-gold/10"
+                  : "border-cosmos-borderSoft hover:border-cosmos-violet/40 bg-cosmos-surface"
               }`}
             >
-              {expert.label}
+              <div className={`text-sm font-medium ${expertId === expert.id ? "text-cosmos-gold" : "text-cosmos-text"}`}>
+                {expert.label}
+              </div>
+              <div className="text-[11px] text-cosmos-muted mt-0.5">
+                {expert.role}
+              </div>
+              <div className="text-[11px] text-cosmos-faint mt-1 leading-tight hidden small:block">
+                {expert.description}
+              </div>
             </button>
           ))}
         </div>
-        <label className="inline-flex items-center gap-2 text-xs text-purple-300/80 cursor-pointer">
+        <label className="inline-flex items-center gap-2 text-xs text-cosmos-violet/80 cursor-pointer">
           <input
             type="checkbox"
             checked={knowledgeOnly}
             onChange={(e) => setKnowledgeOnly(e.target.checked)}
-            className="accent-purple-400"
+            className="accent-cosmos-violet"
           />
-          Knowledge only
+          <span title="Get guidance without product recommendations">
+            Guidance only (no product picks)
+          </span>
         </label>
       </div>
 
-      <div className="rounded-2xl border border-purple-400/20 bg-[#150b26]/80 p-4 min-h-[50vh] flex flex-col">
+      <div className="rounded-2xl border border-cosmos-violet/20 bg-[#150b26]/80 p-4 min-h-[50vh] flex flex-col">
         <div className="flex-1 space-y-4 overflow-y-auto">
           {messages.map((msg, i) => (
             <div
@@ -454,7 +472,7 @@ export default function OracleChat({
                 className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm ${
                   msg.role === "user"
                     ? "bg-purple-600/40 text-purple-50"
-                    : "bg-purple-950/60 text-purple-100/90 border border-purple-400/10"
+                    : "bg-purple-950/60 text-purple-100/90 border border-cosmos-violet/10"
                 }`}
               >
                 {msg.role === "oracle" ? (
@@ -465,9 +483,9 @@ export default function OracleChat({
                         role="status"
                         aria-label="Oracle is thinking"
                       >
-                        <span className="w-2 h-2 rounded-full bg-purple-300/70 animate-bounce [animation-delay:-0.3s]" />
-                        <span className="w-2 h-2 rounded-full bg-purple-300/70 animate-bounce [animation-delay:-0.15s]" />
-                        <span className="w-2 h-2 rounded-full bg-purple-300/70 animate-bounce" />
+                        <span className="w-2 h-2 rounded-full bg-cosmos-violet/70 animate-bounce [animation-delay:-0.3s]" />
+                        <span className="w-2 h-2 rounded-full bg-cosmos-violet/70 animate-bounce [animation-delay:-0.15s]" />
+                        <span className="w-2 h-2 rounded-full bg-cosmos-violet/70 animate-bounce" />
                       </span>
                     ) : (
                       renderMarkdown(msg.text)
@@ -480,7 +498,7 @@ export default function OracleChat({
                       />
                     ))}
                     {msg.logId && msg.feedback === undefined && (
-                      <div className="flex gap-2 mt-3 text-xs text-purple-300/60">
+                      <div className="flex gap-2 mt-3 text-xs text-cosmos-violet/60">
                         <span>Was this helpful?</span>
                         <button
                           onClick={() => sendFeedback(i, true)}
@@ -499,7 +517,7 @@ export default function OracleChat({
                       </div>
                     )}
                     {msg.feedback !== undefined && (
-                      <p className="mt-3 text-xs text-purple-300/50">
+                      <p className="mt-3 text-xs text-cosmos-violet/50">
                         Thanks for the feedback.
                       </p>
                     )}
@@ -513,13 +531,13 @@ export default function OracleChat({
           {loading && messages[messages.length - 1]?.role !== "oracle" && (
             <div className="flex justify-start">
               <div
-                className="rounded-2xl px-4 py-3 bg-purple-950/60 border border-purple-400/10 flex items-center gap-1.5"
+                className="rounded-2xl px-4 py-3 bg-purple-950/60 border border-cosmos-violet/10 flex items-center gap-1.5"
                 role="status"
                 aria-label="Oracle is thinking"
               >
-                <span className="w-2 h-2 rounded-full bg-purple-300/70 animate-bounce [animation-delay:-0.3s]" />
-                <span className="w-2 h-2 rounded-full bg-purple-300/70 animate-bounce [animation-delay:-0.15s]" />
-                <span className="w-2 h-2 rounded-full bg-purple-300/70 animate-bounce" />
+                <span className="w-2 h-2 rounded-full bg-cosmos-violet/70 animate-bounce [animation-delay:-0.3s]" />
+                <span className="w-2 h-2 rounded-full bg-cosmos-violet/70 animate-bounce [animation-delay:-0.15s]" />
+                <span className="w-2 h-2 rounded-full bg-cosmos-violet/70 animate-bounce" />
               </div>
             </div>
           )}
@@ -533,7 +551,7 @@ export default function OracleChat({
                 key={opener}
                 onClick={() => ask(opener)}
                 disabled={loading}
-                className="text-xs px-3 py-1.5 rounded-full border border-purple-400/30 text-purple-200 hover:bg-purple-400/10 transition disabled:opacity-50"
+                className="text-xs px-3 py-1.5 rounded-full border border-cosmos-violet/30 text-purple-200 hover:bg-purple-400/10 transition disabled:opacity-50"
               >
                 {opener}
               </button>
@@ -555,7 +573,7 @@ export default function OracleChat({
             maxLength={500}
             aria-label="Ask the Oracle a question"
             autoComplete="off"
-            className="flex-1 rounded-full bg-purple-950/60 border border-purple-400/20 px-4 py-2.5 text-sm text-purple-50 placeholder:text-purple-400/50 focus:outline-none focus:border-purple-300/50"
+            className="flex-1 rounded-full bg-purple-950/60 border border-cosmos-violet/20 px-4 py-2.5 text-sm text-purple-50 placeholder:text-purple-400/50 focus:outline-none focus:border-purple-300/50"
           />
           <button
             type="submit"

@@ -17,17 +17,17 @@ export default async function TransferPage({
       <div className="flex flex-col gap-y-6">
         {success && (
           <>
-            <Heading level="h1" className="text-xl text-zinc-900">
+            <Heading level="h1" className="text-xl text-cosmos-text">
               Order transfer declined!
             </Heading>
-            <Text className="text-zinc-600">
+            <Text className="text-cosmos-muted">
               Transfer of order {id} has been successfully declined.
             </Text>
           </>
         )}
         {!success && (
           <>
-            <Text className="text-zinc-600">
+            <Text className="text-cosmos-muted">
               There was an error declining the transfer. Please try again.
             </Text>
             {error && (

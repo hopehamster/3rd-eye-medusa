@@ -26,7 +26,7 @@ export default function TransferRequestForm() {
     <div className="flex flex-col gap-y-4 w-full">
       <div className="grid sm:grid-cols-2 items-center gap-x-8 gap-y-4 w-full">
         <div className="flex flex-col gap-y-1">
-          <Heading level="h3" className="!text-sm font-semibold text-neutral-950">
+          <Heading level="h3" className="!text-sm font-semibold text-cosmos-text">
             Order transfers
           </Heading>
           <p className="text-small-regular text-neutral-500">
@@ -60,7 +60,7 @@ export default function TransferRequestForm() {
           <div className="flex gap-x-2 items-center">
             <CheckCircleMiniSolid className="w-4 h-4 text-emerald-500" />
             <div className="flex flex-col gap-y-1">
-              <Text className="text-medim-pl text-neutral-950">
+              <Text className="text-medim-pl text-cosmos-text">
                 Transfer for order {state.order?.id} requested
               </Text>
               <Text className="text-base-regular text-neutral-600">

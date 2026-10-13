@@ -31,7 +31,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
     <html
       lang="en"
       data-mode="dark"
-      className={`${fraunces.variable} ${inter.variable}`}
+      className={`dark ${fraunces.variable} ${inter.variable}`}
     >
       <body className="bg-cosmos-bg text-cosmos-text antialiased">
         <main className="relative">{props.children}</main>

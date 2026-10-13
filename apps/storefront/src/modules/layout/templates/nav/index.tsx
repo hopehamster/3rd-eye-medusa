@@ -6,6 +6,7 @@ import { listRegions } from "@lib/data/regions"
 import { StoreRegion } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import CartButton from "@modules/layout/components/cart-button"
+import Search from "@modules/layout/components/search"
 import SideMenu from "@modules/layout/components/side-menu"
 
 export default async function Nav() {
@@ -99,6 +100,7 @@ export default async function Nav() {
             >
               <CartButton />
             </Suspense>
+            <Search />
           </div>
         </nav>
       </header>
