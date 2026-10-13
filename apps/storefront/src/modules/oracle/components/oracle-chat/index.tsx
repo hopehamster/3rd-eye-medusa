@@ -129,6 +129,37 @@ function ProductCard({
   )
 }
 
+const EXPERTS = [
+  {
+    id: "crystal",
+    label: "Sage · Crystal Guide",
+    greeting:
+      "Hey, I'm Sage. I help people find the right stones — whether you know exactly what you need or you're just starting to get curious. What's on your mind?",
+  },
+  {
+    id: "tarot",
+    label: "Luna · Tarot Reader",
+    greeting:
+      "Hey, I'm Luna. I read tarot — not to tell you the future, but to help you see your present more clearly. What's weighing on you? Or want me to pull some cards and see what comes up?",
+  },
+  {
+    id: "numerology",
+    label: "Theo · Numerologist",
+    greeting:
+      "Hey, I'm Theo. I work with numbers — life path, personal cycles, timing. Everything has a rhythm, and once you see yours, decisions get easier. What's your birth date? Or just tell me what's on your mind.",
+  },
+  {
+    id: "general",
+    label: "Oracle · General Guide",
+    greeting:
+      "Welcome, seeker. What brings you to the Oracle today? Speak plainly — a feeling, a question, a need — and I will guide you.",
+  },
+]
+
+function greetingFor(id: string): string {
+  return EXPERTS.find((e) => e.id === id)?.greeting ?? EXPERTS[0].greeting
+}
+
 export default function OracleChat({
   countryCode,
   initialQuestion,
@@ -138,10 +169,7 @@ export default function OracleChat({
 }) {
   const [expertId, setExpertId] = useState<string>("crystal")
   const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "oracle",
-      text: "Hey, I'm Sage. I help people find the right stones — whether you know exactly what you need or you're just starting to get curious. What's on your mind?",
-    },
+    { role: "oracle", text: greetingFor("crystal") },
   ])
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
@@ -234,43 +262,23 @@ export default function OracleChat({
   return (
     <div className="max-w-2xl mx-auto">
       <div className="flex items-center justify-between mb-3">
-        <div className="flex gap-2">
-          <button
-            onClick={() => {
-              setExpertId("crystal")
-              setMessages([
-                {
-                  role: "oracle",
-                  text: "Hey, I'm Sage. I help people find the right stones — whether you know exactly what you need or you're just starting to get curious. What's on your mind?",
-                },
-              ])
-            }}
-            className={`text-xs px-3 py-1.5 rounded-full border transition ${
-              expertId === "crystal"
-                ? "border-amber-200/50 bg-amber-200/10 text-amber-200"
-                : "border-purple-400/20 text-purple-300/60 hover:border-purple-400/40"
-            }`}
-          >
-            💎 Sage · Crystal Guide
-          </button>
-          <button
-            onClick={() => {
-              setExpertId("general")
-              setMessages([
-                {
-                  role: "oracle",
-                  text: "Welcome, seeker. What brings you to the Oracle today? Speak plainly — a feeling, a question, a need — and I will guide you.",
-                },
-              ])
-            }}
-            className={`text-xs px-3 py-1.5 rounded-full border transition ${
-              expertId === "general"
-                ? "border-purple-300/50 bg-purple-400/10 text-purple-200"
-                : "border-purple-400/20 text-purple-300/60 hover:border-purple-400/40"
-            }`}
-          >
-            🔮 Oracle · General Guide
-          </button>
+        <div className="flex gap-2 flex-wrap">
+          {EXPERTS.map((expert) => (
+            <button
+              key={expert.id}
+              onClick={() => {
+                setExpertId(expert.id)
+                setMessages([{ role: "oracle", text: expert.greeting }])
+              }}
+              className={`text-xs px-3 py-1.5 rounded-full border transition ${
+                expertId === expert.id
+                  ? "border-amber-200/50 bg-amber-200/10 text-amber-200"
+                  : "border-purple-400/20 text-purple-300/60 hover:border-purple-400/40"
+              }`}
+            >
+              {expert.label}
+            </button>
+          ))}
         </div>
         <label className="inline-flex items-center gap-2 text-xs text-purple-300/80 cursor-pointer">
           <input
