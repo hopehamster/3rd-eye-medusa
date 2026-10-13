@@ -4,13 +4,14 @@ import { motion } from "framer-motion"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 /**
- * 3rd Eye Supply hero — directed light edition.
+ * 3rd Eye Supply hero — rule-break edition.
  *
- * One key light (warm gold, upper third). Violet reduced to a whisper.
- * Organic dust distribution. Framer-motion entrances. No style jsx.
+ * 1. Fused words: "ofintention" — deliberate typographic deconstruction.
+ * 2. Copy with teeth: punches instead of describes.
+ * 3. Contradictory pair: ANCIENT / MODERN as tension.
+ * 4. One key light, organic dust — the signature moment.
  */
 
-// Organic particle field: varied size, blur, opacity, drift — no lattice
 const PARTICLES = [
   { left: 8, top: 72, size: 3, blur: 0, opacity: 0.7, duration: 11, delay: 0 },
   { left: 14, top: 28, size: 2, blur: 1, opacity: 0.4, duration: 14, delay: 2 },
@@ -37,7 +38,7 @@ const ease = [0.22, 1, 0.36, 1] as const
 const Hero = () => {
   return (
     <div className="relative w-full overflow-hidden border-b border-cosmos-borderSoft bg-[#08070c]">
-      {/* Single key light: warm gold, upper third. Violet is a whisper. */}
+      {/* Single key light */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
@@ -49,7 +50,7 @@ const Hero = () => {
         }}
       />
 
-      {/* Organic gold dust */}
+      {/* Organic gold dust — the signature moment */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
         {PARTICLES.map((p, i) => (
           <span
@@ -78,67 +79,57 @@ const Hero = () => {
         }}
       />
 
-      <div className="content-container relative z-10 flex min-h-[82vh] flex-col items-center justify-center py-32 text-center">
+      <div className="content-container relative z-10 flex min-h-[88vh] flex-col items-start justify-center py-32">
+        {/* Contradictory pair as eyebrow */}
         <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 1, ease, delay: 0.1 }}
-          className="mb-8 text-[11px] font-medium uppercase tracking-[0.45em] text-cosmos-gold"
+          className="mb-10 text-[11px] font-medium uppercase tracking-[0.4em] text-cosmos-gold"
         >
-          Las Vegas · Est. MMXXVI
+          Ancient stones <span className="text-cosmos-faint mx-3">/</span> Modern rituals
         </motion.p>
 
+        {/* Fused-words headline */}
         <motion.h1
           initial={{ opacity: 0, y: 32 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, ease, delay: 0.25 }}
-          className="font-display max-w-5xl text-6xl font-light leading-[1.02] tracking-tight text-cosmos-text small:text-8xl"
+          className="font-display max-w-6xl text-[13vw] small:text-[7.5rem] font-light leading-[0.95] tracking-tight text-cosmos-text"
         >
-          Objects of{" "}
-          <span className="italic text-cosmos-goldBright">intention</span>
+          Objects
+          <br />
+          of<span className="text-cosmos-goldBright">intention</span>
         </motion.h1>
 
-        <motion.p
+        {/* Copy with teeth */}
+        <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.1, ease, delay: 0.45 }}
-          className="mt-8 max-w-xl text-lg leading-relaxed text-cosmos-muted"
+          className="mt-10 max-w-xl"
         >
-          Hand-selected crystals, wood rings, and orgone art — chosen for
-          craft, beauty, and the rituals they inspire.
-        </motion.p>
+          <p className="text-lg leading-relaxed text-cosmos-text font-medium">
+            Not decoration. Instruments.
+          </p>
+          <p className="mt-3 text-base leading-relaxed text-cosmos-muted">
+            Real stones, chosen by hand in Las Vegas. No two alike. No exceptions.
+          </p>
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease, delay: 0.6 }}
-          className="mt-12 flex flex-col items-center gap-4 small:flex-row"
+          className="mt-12 flex flex-col items-start gap-4 small:flex-row small:items-center"
         >
           <LocalizedClientLink href="/store" className="btn-gold">
-            Shop the collection
+            Enter the collection
           </LocalizedClientLink>
-          <LocalizedClientLink href="/store" className="btn-ghost">
-            Bestsellers
+          <LocalizedClientLink href="/oracle" className="btn-ghost">
+            Ask the Oracle
           </LocalizedClientLink>
         </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.4, ease, delay: 0.85 }}
-          className="gold-hairline mt-20 w-48"
-          aria-hidden="true"
-        />
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.4, ease, delay: 1 }}
-          className="mt-8 max-w-md text-xs leading-relaxed tracking-wide text-cosmos-faint"
-        >
-          Every piece is photographed by hand and shipped from our Las Vegas
-          studio. No two stones are alike.
-        </motion.p>
       </div>
 
       <style>{`
