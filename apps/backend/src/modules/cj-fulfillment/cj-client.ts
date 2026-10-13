@@ -116,4 +116,49 @@ export class CJClient {
       `/logistics/trackInfo?trackNumber=${encodeURIComponent(trackNumber)}`
     )
   }
+
+  /** Search the CJ catalog (listV2). Used by the product discovery job. */
+  async searchProducts(params: {
+    keyWord: string
+    page?: number
+    size?: number
+    countryCode?: string
+    startSellPrice?: string
+    endSellPrice?: string
+    orderBy?: number
+    sort?: "asc" | "desc"
+  }): Promise<CJProductSummary[]> {
+    await this.getToken()
+    const q = new URLSearchParams({
+      keyWord: params.keyWord,
+      page: String(params.page ?? 1),
+      size: String(params.size ?? 20),
+      countryCode: params.countryCode ?? "US",
+      orderBy: String(params.orderBy ?? 1),
+      sort: params.sort ?? "desc",
+    })
+    if (params.startSellPrice) q.set("startSellPrice", params.startSellPrice)
+    if (params.endSellPrice) q.set("endSellPrice", params.endSellPrice)
+    const data = await this.request<{ list?: CJProductSummary[] }>(
+      `/product/listV2?${q.toString()}`
+    )
+    return data.list ?? []
+  }
+
+  /** Full product detail incl. variants. */
+  async getProduct(pid: string): Promise<CJProductDetail> {
+    await this.getToken()
+    return this.request<CJProductDetail>(
+      `/product/query?pid=${encodeURIComponent(pid)}`
+    )
+  }
+
+  /** Inventory per warehouse for a product. */
+  async getInventory(pid: string): Promise<CJInventoryEntry[]> {
+    await this.getToken()
+    const data = await this.request<{ list?: CJInventoryEntry[] }>(
+      `/product/stock/getInventoryByPid?pid=${encodeURIComponent(pid)}`
+    )
+    return data.list ?? []
+  }
 }

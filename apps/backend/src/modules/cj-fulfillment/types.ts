@@ -32,3 +32,36 @@ export interface CJOrderResult {
   orderId: string
   orderNumber?: string
 }
+
+export interface CJProductSummary {
+  id: string
+  nameEn?: string
+  sku?: string
+  bigImage?: string
+  sellPrice?: string
+  listedNum?: number
+  warehouseInventoryNum?: number
+}
+
+export interface CJVariant {
+  vid?: string
+  variantSku?: string
+  variantNameEn?: string
+  variantSellPrice?: string
+  variantKey?: string
+}
+
+export interface CJProductDetail {
+  id: string
+  nameEn?: string
+  description?: string
+  bigImage?: string
+  images?: string[]
+  variants?: CJVariant[]
+}
+
+export interface CJInventoryEntry {
+  countryCode?: string
+  totalInventoryNum?: number
+  cjInventoryNum?: number
+}
