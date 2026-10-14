@@ -1,4 +1,5 @@
 const checkEnvVariables = require("./check-env-variables")
+const { withSentryConfig } = require("@sentry/nextjs/config")
 
 checkEnvVariables()
 
@@ -52,4 +53,16 @@ const nextConfig = {
   },
 }
 
-module.exports = nextConfig
+// Sentry: error monitoring only (basic scope). Source-map upload is skipped
+// unless SENTRY_AUTH_TOKEN + org/project are configured; runtime error
+// capture works from the DSN env vars alone.
+module.exports = withSentryConfig(nextConfig, {
+  org: process.env.SENTRY_ORG || "702-ai-services",
+  project: process.env.SENTRY_PROJECT || "3rd-eye-supply",
+  silent: true,
+  widenClientFileUpload: true,
+  tunnelRoute: "/monitoring",
+  sourcemaps: {
+    disable: !process.env.SENTRY_AUTH_TOKEN,
+  },
+})
