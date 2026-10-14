@@ -213,3 +213,4 @@ export const fallbackCollections: HttpTypes.StoreCollection[] = [
 ]
 
 export const fallbackCategories: HttpTypes.StoreProductCategory[] = []
+
