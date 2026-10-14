@@ -4,6 +4,7 @@ import ImageGallery from "@modules/products/components/image-gallery"
 import ProductActions from "@modules/products/components/product-actions"
 import ProductOnboardingCta from "@modules/products/components/product-onboarding-cta"
 import ProductTabs from "@modules/products/components/product-tabs"
+import ProductViewTracker from "@modules/products/components/product-view-tracker"
 import RelatedProducts from "@modules/products/components/related-products"
 import ProductInfo from "@modules/products/templates/product-info"
 import SkeletonRelatedProducts from "@modules/skeletons/templates/skeleton-related-products"
@@ -31,6 +32,11 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
 
   return (
     <>
+      <ProductViewTracker
+        productId={product.id}
+        title={product.title}
+        handle={product.handle ?? undefined}
+      />
       <div
         className="content-container  flex flex-col small:flex-row small:items-start py-6 relative"
         data-testid="product-container"

@@ -1,6 +1,7 @@
 "use client"
 
 import { addToCart } from "@lib/data/cart"
+import { trackAddToCart } from "@lib/analytics"
 import { useIntersection } from "@lib/hooks/use-in-view"
 import { HttpTypes } from "@medusajs/types"
 import { Button } from "@modules/common/components/ui"
@@ -130,6 +131,13 @@ export default function ProductActions({
       variantId: selectedVariant.id,
       quantity: 1,
       countryCode,
+    })
+
+    trackAddToCart({
+      productId: product.id,
+      variantId: selectedVariant.id,
+      title: product.title,
+      quantity: 1,
     })
 
     setIsAdding(false)
