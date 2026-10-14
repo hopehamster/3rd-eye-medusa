@@ -142,18 +142,14 @@ export class CJClient {
     sort?: "asc" | "desc"
   }): Promise<CJProductSummary[]> {
     await this.getToken()
+    // Use /product/list with productNameEn (listV2 with keyWord returns empty)
     const q = new URLSearchParams({
-      keyWord: params.keyWord,
-      page: String(params.page ?? 1),
-      size: String(params.size ?? 20),
-      countryCode: params.countryCode ?? "US",
-      orderBy: String(params.orderBy ?? 1),
-      sort: params.sort ?? "desc",
+      productNameEn: params.keyWord,
+      pageNum: String(params.page ?? 1),
+      pageSize: String(params.size ?? 20),
     })
-    if (params.startSellPrice) q.set("startSellPrice", params.startSellPrice)
-    if (params.endSellPrice) q.set("endSellPrice", params.endSellPrice)
     const data = await this.request<{ list?: CJProductSummary[] }>(
-      `/product/listV2?${q.toString()}`
+      `/product/list?${q.toString()}`
     )
     return data.list ?? []
   }
