@@ -96,25 +96,74 @@ const demoProduct = (
 
 export const fallbackProducts: HttpTypes.StoreProduct[] = [
   demoProduct(
-    "prod_offline_amethyst",
-    "Amethyst Cathedral Cluster",
-    "amethyst-cathedral-cluster",
-    "Demo listing. A deep-violet amethyst cathedral cluster for the altar, the desk, or the nightstand. Real inventory appears here once the store backend is connected.",
-    4800
+    "prod_offline_wood_ring",
+    "Handcrafted Wood Ring",
+    "wood-ring",
+    "Turned from solid hardwood and finished by hand, each ring carries the grain of the tree it came from — no two are exactly alike. A quiet, weighty object for daily wear: an anchor for intention, set in wood rather than stone.",
+    2200
   ),
   demoProduct(
-    "prod_offline_koa_ring",
-    "Koa Wood Ring — Hand Turned",
-    "koa-wood-ring-hand-turned",
-    "Demo listing. A hand-turned Hawaiian koa wood band, finished with natural oils. Real inventory appears here once the store backend is connected.",
-    6500
+    "prod_offline_orgone_angel",
+    "Orgone Angel",
+    "orgone-angel",
+    "A hand-cast angel figure built up in layers of resin, metal shavings, and set stone. Made as a small altar or desk companion — something to hold during a moment of stillness, or to keep where you want the room to feel more considered.",
+    3500
   ),
   demoProduct(
-    "prod_offline_orgone",
-    "Orgonite Pyramid — Black Tourmaline",
-    "orgonite-pyramid-black-tourmaline",
-    "Demo listing. Hand-cast orgonite pyramid with black tourmaline, copper, and gold leaf. Real inventory appears here once the store backend is connected.",
-    3900
+    "prod_offline_crystal_tree_green_aventurine",
+    "Crystal Tree — Green Aventurine",
+    "crystal-tree-green-aventurine",
+    "A miniature tree with a wire trunk and branches tipped in green aventurine chips, mounted on a polished stone base. Made for desks, altars, and shelves — a composed piece of the mineral world.",
+    3000
+  ),
+  demoProduct(
+    "prod_offline_crystal_stud_earrings",
+    "Crystal Stud Earrings",
+    "crystal-stud-earrings",
+    "Polished stone cabochons set as simple studs — understated enough for every day, with the particular character of real mineral: veining, depth, small variations no two stones share.",
+    2000
+  ),
+  demoProduct(
+    "prod_offline_3rd_eye_leggings",
+    "3rd Eye Leggings",
+    "3rd-eye-leggings",
+    "High-waisted leggings in original 3rd Eye prints, including Lightning and Dragon. Built for movement — training, practice, long days on your feet.",
+    2500
+  ),
+  demoProduct(
+    "prod_offline_crystal_ring",
+    "Crystal Ring",
+    "crystal-ring",
+    "A single polished stone bezel-set on a simple band — the stone is the whole statement. Each ring is one of a small case lot.",
+    2800
+  ),
+  demoProduct(
+    "prod_offline_orgone_pyramid",
+    "Orgone Pyramid",
+    "orgone-pyramid",
+    "A hand-cast pyramid of layered resin, metal, and stone — the classic orgone form, made as a desk or altar object. Heavy in the hand, quiet in the room.",
+    38500
+  ),
+  demoProduct(
+    "prod_offline_orgone_buddha",
+    "Orgone Buddha",
+    "orgone-buddha",
+    "A seated Buddha cast in layered orgone — resin, metal shavings, and inlaid stone. A substantial piece, made as the centerpiece of a meditation corner or shelf.",
+    30000
+  ),
+  demoProduct(
+    "prod_offline_orgone_starfish",
+    "Orgone Starfish",
+    "orgone-starfish",
+    "An orgone starfish — resin, metal, and stone cast into an unexpected form. A little playful, a little strange; a conversation piece for the shelf.",
+    17500
+  ),
+  demoProduct(
+    "prod_offline_stone_protection_pouch",
+    "Stone Protection Pouch",
+    "stone-protection-pouch",
+    "A small drawstring pouch, sized for stones, rings, or whatever you carry through the day. Simple, durable, made to be used.",
+    2000
   ),
 ]
 
@@ -123,21 +172,42 @@ export const fallbackCollections: HttpTypes.StoreCollection[] = [
     id: "coll_offline_crystals",
     title: "Crystals",
     handle: "crystals",
-    products: [fallbackProducts[0]],
+    products: [
+      fallbackProducts[2],
+      fallbackProducts[3],
+      fallbackProducts[5],
+      fallbackProducts[9],
+    ],
     metadata: { offline_demo: true },
   } as unknown as HttpTypes.StoreCollection,
   {
     id: "coll_offline_jewelry",
     title: "Jewelry",
     handle: "jewelry",
-    products: [fallbackProducts[1]],
+    products: [
+      fallbackProducts[0],
+      fallbackProducts[3],
+      fallbackProducts[5],
+    ],
     metadata: { offline_demo: true },
   } as unknown as HttpTypes.StoreCollection,
   {
     id: "coll_offline_orgone",
     title: "Orgone Art",
     handle: "orgone-art",
-    products: [fallbackProducts[2]],
+    products: [
+      fallbackProducts[1],
+      fallbackProducts[6],
+      fallbackProducts[7],
+      fallbackProducts[8],
+    ],
+    metadata: { offline_demo: true },
+  } as unknown as HttpTypes.StoreCollection,
+  {
+    id: "coll_offline_apparel",
+    title: "Apparel",
+    handle: "apparel",
+    products: [fallbackProducts[4]],
     metadata: { offline_demo: true },
   } as unknown as HttpTypes.StoreCollection,
 ]
