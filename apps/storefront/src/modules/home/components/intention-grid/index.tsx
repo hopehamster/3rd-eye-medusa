@@ -11,7 +11,7 @@ const INTENTIONS = [
     intent: "protection",
     label: "Protection",
     description: "For when the world feels sharp",
-    image: "https://images.unsplash.com/photo-1566907722747-d16ed41b52bc?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80",
     crystal: "Black Tourmaline",
   },
   {

@@ -37,7 +37,7 @@ export default async function Nav() {
                 <span className="text-cosmos-faint mr-1">I.</span> Stones
               </LocalizedClientLink>
               <LocalizedClientLink
-                className="hover:text-cosmos-text transition-colors text-[13px] tracking-wide text-cosmos-gold"
+                className="hover:text-cosmos-text transition-colors text-[13px] tracking-wide"
                 href="/oracle"
                 data-testid="nav-oracle-link"
               >

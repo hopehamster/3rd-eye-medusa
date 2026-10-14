@@ -99,7 +99,7 @@ const Hero = () => {
         >
           Objects
           <br />
-          of<span className="text-cosmos-goldBright">intention</span>
+          of <span className="text-cosmos-goldBright">intention</span>
         </motion.h1>
 
         {/* Copy with teeth */}

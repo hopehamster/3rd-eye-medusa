@@ -35,7 +35,7 @@ const Interweave = () => {
           <p className="font-display max-w-5xl text-3xl small:text-5xl font-light leading-[1.35] text-cosmos-text">
             Each stone is
             <InlineImage
-              src="https://images.unsplash.com/photo-1566907722747-d16ed41b52bc?auto=format&fit=crop&w=200&q=70"
+              src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=200&q=70"
               alt="Amethyst cluster"
             />
             chosen by hand,

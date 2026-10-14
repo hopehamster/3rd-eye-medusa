@@ -8,8 +8,6 @@ import { join } from "path"
 
 const CANON_DIR = join(
   process.cwd(),
-  "..",
-  "backend",
   "canon"
 )
 
