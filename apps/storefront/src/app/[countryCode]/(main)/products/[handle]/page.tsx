@@ -119,14 +119,8 @@ export default async function ProductPage(props: Props) {
       countryCode: params.countryCode,
       queryParams: { handle: params.handle },
     }).then(({ response }) => response.products[0])
-  } catch (e) {
-    return (
-      <div style={{ padding: "2rem", fontFamily: "monospace" }}>
-        <h1>DEBUG: listProducts failed</h1>
-        <pre>{e instanceof Error ? e.message : String(e)}</pre>
-        <pre>{e instanceof Error ? e.stack : ""}</pre>
-      </div>
-    )
+  } catch {
+    notFound()
   }
 
   if (!pricedProduct) {
@@ -135,22 +129,12 @@ export default async function ProductPage(props: Props) {
 
   const images = getImagesForVariant(pricedProduct, selectedVariantId)
 
-  try {
-    return (
-      <ProductTemplate
-        product={pricedProduct}
-        region={region}
-        countryCode={params.countryCode}
-        images={images ?? []}
-      />
-    )
-  } catch (e) {
-    return (
-      <div style={{ padding: "2rem", fontFamily: "monospace" }}>
-        <h1>DEBUG: ProductTemplate render failed</h1>
-        <pre>{e instanceof Error ? e.message : String(e)}</pre>
-        <pre>{e instanceof Error ? e.stack : ""}</pre>
-      </div>
-    )
-  }
+  return (
+    <ProductTemplate
+      product={pricedProduct}
+      region={region}
+      countryCode={params.countryCode}
+      images={images ?? []}
+    />
+  )
 }
