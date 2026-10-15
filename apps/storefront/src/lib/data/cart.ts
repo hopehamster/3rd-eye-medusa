@@ -30,26 +30,36 @@ export async function retrieveCart(cartId?: string, fields?: string) {
     return null
   }
 
-  const headers = {
-    ...(await getAuthHeaders()),
+  const backendUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+  const publishableKey = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
+
+  if (!backendUrl || !publishableKey) {
+    return null
   }
 
-  const next = {
-    ...(await getCacheOptions("carts")),
-  }
+  try {
+    // Direct fetch instead of SDK (SDK has issues in server components)
+    const res = await fetch(
+      `${backendUrl}/store/carts/${id}?fields=${encodeURIComponent(fields)}`,
+      {
+        method: "GET",
+        headers: {
+          "x-publishable-api-key": publishableKey,
+          "Content-Type": "application/json",
+        },
+        cache: "no-store",
+      }
+    )
 
-  return await sdk.client
-    .fetch<HttpTypes.StoreCartResponse>(`/store/carts/${id}`, {
-      method: "GET",
-      query: {
-        fields,
-      },
-      headers,
-      next,
-      cache: "force-cache",
-    })
-    .then(({ cart }: { cart: HttpTypes.StoreCart }) => cart)
-    .catch(() => null)
+    if (!res.ok) {
+      return null
+    }
+
+    const { cart } = await res.json()
+    return cart as HttpTypes.StoreCart
+  } catch {
+    return null
+  }
 }
 
 export async function getOrSetCart(countryCode: string) {
