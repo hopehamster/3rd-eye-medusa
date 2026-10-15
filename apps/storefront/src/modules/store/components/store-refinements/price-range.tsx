@@ -7,15 +7,17 @@ import { useRange } from "react-instantsearch"
 import { indexedCurrency, priceAttribute } from "@lib/search-client"
 
 function formatAmount(amount: number, currency: string) {
+    // Index price fields are in minor units (cents); display in major units.
+    const majorAmount = amount / 100
     try {
       return new Intl.NumberFormat(undefined, {
         style: "currency",
         currency: currency.toUpperCase(),
         maximumFractionDigits: 0,
-      }).format(amount)
+      }).format(majorAmount)
     } catch {
       // An unrecognised currency code shouldn't take the sidebar down.
-      return `${Math.round(amount)} ${currency.toUpperCase()}`
+      return `${Math.round(majorAmount)} ${currency.toUpperCase()}`
     }
 }
 
