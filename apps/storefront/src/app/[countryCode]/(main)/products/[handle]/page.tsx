@@ -10,7 +10,24 @@ type Props = {
   searchParams: Promise<{ v_id?: string }>
 }
 
-export const dynamic = "force-dynamic"
+export async function generateStaticParams() {
+  // Pre-render product pages at build time when backend is reachable.
+  // Uses the same listProducts as the store page.
+  try {
+    const { response } = await listProducts({
+      countryCode: "us",
+      queryParams: { limit: 100 },
+    })
+    return response.products
+      .filter((p) => p.handle)
+      .map((p) => ({
+        countryCode: "us",
+        handle: p.handle,
+      }))
+  } catch {
+    return []
+  }
+}
 
 function getImagesForVariant(
   product: HttpTypes.StoreProduct,
@@ -65,10 +82,16 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
 export default async function ProductPage(props: Props) {
   const params = await props.params
-  const region = await getRegion(params.countryCode)
   const searchParams = await props.searchParams
 
   const selectedVariantId = searchParams.v_id
+
+  let region
+  try {
+    region = await getRegion(params.countryCode)
+  } catch {
+    region = null
+  }
 
   if (!region) {
     notFound()
