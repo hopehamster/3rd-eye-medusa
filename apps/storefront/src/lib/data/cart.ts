@@ -201,20 +201,35 @@ export async function deleteLineItem(lineId: string) {
     throw new Error("Missing cart ID when deleting line item")
   }
 
-  const headers = {
-    ...(await getAuthHeaders()),
+  const backendUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+  const publishableKey = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
+
+  if (!backendUrl || !publishableKey) {
+    throw new Error("Missing backend configuration")
   }
 
-  await sdk.store.cart
-    .deleteLineItem(cartId, lineId, {}, headers)
-    .then(async () => {
-      const cartCacheTag = await getCacheTag("carts")
-      revalidateTag(cartCacheTag)
+  // Direct fetch instead of SDK (SDK has issues with cookies in server actions)
+  const res = await fetch(
+    `${backendUrl}/store/carts/${cartId}/line-items/${lineId}`,
+    {
+      method: "DELETE",
+      headers: {
+        "x-publishable-api-key": publishableKey,
+        "Content-Type": "application/json",
+      },
+    }
+  )
 
-      const fulfillmentCacheTag = await getCacheTag("fulfillment")
-      revalidateTag(fulfillmentCacheTag)
-    })
-    .catch(medusaError)
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}))
+    throw new Error(`Failed to delete line item: ${res.status} ${JSON.stringify(errorData)}`)
+  }
+
+  const cartCacheTag = await getCacheTag("carts")
+  revalidateTag(cartCacheTag)
+
+  const fulfillmentCacheTag = await getCacheTag("fulfillment")
+  revalidateTag(fulfillmentCacheTag)
 }
 
 export async function setShippingMethod({
