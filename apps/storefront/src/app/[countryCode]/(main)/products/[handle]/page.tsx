@@ -70,31 +70,35 @@ function getImagesForVariant(
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
-  const params = await props.params
-  const { handle } = params
-  const region = await getRegion(params.countryCode)
+  try {
+    const params = await props.params
+    const { handle } = params
+    const region = await getRegion(params.countryCode)
 
-  if (!region) {
-    notFound()
-  }
+    if (!region) {
+      return { title: "Product | 3rd Eye Supply" }
+    }
 
-  const product = await listProducts({
-    countryCode: params.countryCode,
-    queryParams: { handle },
-  }).then(({ response }) => response.products[0])
+    const product = await listProducts({
+      countryCode: params.countryCode,
+      queryParams: { handle },
+    }).then(({ response }) => response.products[0])
 
-  if (!product) {
-    notFound()
-  }
+    if (!product) {
+      return { title: "Product not found | 3rd Eye Supply" }
+    }
 
-  return {
-    title: `${product.title} | 3rd Eye Supply`,
-    description: `${product.title}`,
-    openGraph: {
+    return {
       title: `${product.title} | 3rd Eye Supply`,
       description: `${product.title}`,
-      images: product.thumbnail ? [product.thumbnail] : [],
-    },
+      openGraph: {
+        title: `${product.title} | 3rd Eye Supply`,
+        description: `${product.title}`,
+        images: product.thumbnail ? [product.thumbnail] : [],
+      },
+    }
+  } catch {
+    return { title: "Product | 3rd Eye Supply" }
   }
 }
 
@@ -109,10 +113,21 @@ export default async function ProductPage(props: Props) {
     notFound()
   }
 
-  const pricedProduct = await listProducts({
-    countryCode: params.countryCode,
-    queryParams: { handle: params.handle },
-  }).then(({ response }) => response.products[0])
+  let pricedProduct
+  try {
+    pricedProduct = await listProducts({
+      countryCode: params.countryCode,
+      queryParams: { handle: params.handle },
+    }).then(({ response }) => response.products[0])
+  } catch (e) {
+    return (
+      <div style={{ padding: "2rem", fontFamily: "monospace" }}>
+        <h1>DEBUG: listProducts failed</h1>
+        <pre>{e instanceof Error ? e.message : String(e)}</pre>
+        <pre>{e instanceof Error ? e.stack : ""}</pre>
+      </div>
+    )
+  }
 
   if (!pricedProduct) {
     notFound()
@@ -120,12 +135,22 @@ export default async function ProductPage(props: Props) {
 
   const images = getImagesForVariant(pricedProduct, selectedVariantId)
 
-  return (
-    <ProductTemplate
-      product={pricedProduct}
-      region={region}
-      countryCode={params.countryCode}
-      images={images ?? []}
-    />
-  )
+  try {
+    return (
+      <ProductTemplate
+        product={pricedProduct}
+        region={region}
+        countryCode={params.countryCode}
+        images={images ?? []}
+      />
+    )
+  } catch (e) {
+    return (
+      <div style={{ padding: "2rem", fontFamily: "monospace" }}>
+        <h1>DEBUG: ProductTemplate render failed</h1>
+        <pre>{e instanceof Error ? e.message : String(e)}</pre>
+        <pre>{e instanceof Error ? e.stack : ""}</pre>
+      </div>
+    )
+  }
 }
