@@ -14,6 +14,11 @@ const S3_PATHNAME = process.env.MEDUSA_CLOUD_S3_PATHNAME
  */
 const nextConfig = {
   reactStrictMode: true,
+  // Include the canon markdown guides in the server bundle so the
+  // /guides/[slug] pages can read them at runtime on Vercel.
+  outputFileTracingIncludes: {
+    "/[countryCode]/(main)/guides/[slug]": ["./canon/**/*"],
+  },
   logging: {
     fetches: {
       fullUrl: true,

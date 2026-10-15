@@ -108,9 +108,15 @@ export function renderMarkdown(md: string): string {
 }
 
 export async function getCanonGuides(): Promise<CanonGuide[]> {
-  const files = (await readdir(CANON_DIR)).filter((f) =>
-    f.endsWith(".md")
-  )
+  let files: string[]
+  try {
+    files = (await readdir(CANON_DIR)).filter((f) =>
+      f.endsWith(".md")
+    )
+  } catch {
+    // Canon directory not available (e.g., not in server bundle) — return empty.
+    return []
+  }
   const guides: CanonGuide[] = []
   for (const file of files) {
     const raw = await readFile(join(CANON_DIR, file), "utf-8")
