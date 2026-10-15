@@ -93,36 +93,39 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   try {
     const oracle = req.scope.resolve(ORACLE_MODULE) as OracleModuleService
 
-    // History first — classification and composition both use it
-    const history =
+    // Kick off independent I/O immediately. History and the user profile do
+    // not depend on classification, so they run concurrently with the
+    // classifier LLM call instead of blocking before it.
+    const historyPromise =
       cleanSession && cleanExpert !== "general"
-        ? await oracle
+        ? oracle
             .listRecentMessages(cleanSession, cleanExpert, 10)
-            .catch(() => [])
-        : []
+            .catch((): { role: string; content: string }[] => [])
+        : Promise.resolve([] as { role: string; content: string }[])
+    const profilePromise =
+      cleanCustomer && cleanExpert !== "general"
+        ? oracle
+            .getUserProfile(cleanCustomer, cleanExpert)
+            .catch((): Record<string, unknown> => ({}))
+        : Promise.resolve({} as Record<string, unknown>)
 
-    const { intents, mode } = await classifyQuestion(question.trim(), history)
+    // History first — classification uses it for follow-up context
+    const history = await historyPromise
+    const [{ intents, mode }, userProfile] = await Promise.all([
+      classifyQuestion(question.trim(), history),
+      profilePromise,
+    ])
     const cleanIntents = await oracle.sanitizeIntents(intents)
 
-    const products = await retrieveProducts(
-      req.scope,
-      cleanIntents,
-      mode,
-      question.trim()
-    )
+    // Products and canon retrieval are independent of each other — run
+    // them concurrently so the slower one doesn't block the faster.
+    const [products, canonDocs] = await Promise.all([
+      retrieveProducts(req.scope, cleanIntents, mode, question.trim()),
+      retrieveCanon(cleanIntents),
+    ])
     send({ type: "products", products })
 
-    const canonDocs = await retrieveCanon(cleanIntents)
     const excerpts = canonDocs.map((d) => `### ${d.title}\n${d.excerpt}`)
-
-    let userProfile: Record<string, unknown> = {}
-    if (cleanCustomer && cleanExpert !== "general") {
-      try {
-        userProfile = await oracle.getUserProfile(cleanCustomer, cleanExpert)
-      } catch {
-        // best-effort
-      }
-    }
 
     const composeParams = {
       question: question.trim(),

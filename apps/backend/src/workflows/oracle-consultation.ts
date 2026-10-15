@@ -252,18 +252,18 @@ const composeStep = createStep(
     { container }
   ): Promise<StepResponse<Composed>> => {
     const oracle = container.resolve(ORACLE_MODULE) as OracleModuleService
-    const canonDocs = await retrieveCanon(intents)
+    // Canon retrieval and user-memory lookup are independent — run them
+    // concurrently instead of sequentially.
+    const canonPromise = retrieveCanon(intents)
+    const profilePromise: Promise<Record<string, unknown>> =
+      customerId && expertId
+        ? oracle.getUserProfile(customerId, expertId).catch(() => ({}))
+        : Promise.resolve({})
+    const [canonDocs, userProfile] = await Promise.all([
+      canonPromise,
+      profilePromise,
+    ])
     const excerpts = canonDocs.map((d) => `### ${d.title}\n${d.excerpt}`)
-
-    // Load user memory if they're signed in
-    let userProfile: Record<string, unknown> = {}
-    if (customerId && expertId) {
-      try {
-        userProfile = await oracle.getUserProfile(customerId, expertId)
-      } catch {
-        // Memory is best-effort — never block the consultation
-      }
-    }
 
     if (mode === "knowledge") {
       const answer = await composeKnowledge({
