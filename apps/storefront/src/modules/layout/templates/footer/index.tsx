@@ -22,8 +22,8 @@ export default async function Footer() {
               3RD EYE <span className="text-cosmos-gold">SUPPLY</span>
             </LocalizedClientLink>
             <Text className="mt-4 text-sm leading-relaxed text-cosmos-muted">
-              A Las Vegas spiritual goods house. Crystals, wood rings, and
-              orgone art — chosen for intention, craft, and beauty.
+              Curated crystals, ritual objects, and spiritual goods — chosen
+              for intention and beauty, shipped directly to you.
             </Text>
           </div>
           <div className="text-small-regular gap-10 md:gap-x-16 grid grid-cols-2 sm:grid-cols-3">

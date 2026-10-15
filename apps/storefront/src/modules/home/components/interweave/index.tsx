@@ -38,12 +38,12 @@ const Interweave = () => {
               src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=200&q=70"
               alt="Amethyst cluster"
             />
-            chosen by hand,
+            chosen for the collection,
             <InlineImage
               src="https://images.unsplash.com/photo-1615114814213-a245ffc79e9a?auto=format&fit=crop&w=200&q=70"
               alt="Citrine crystal"
             />
-            photographed in our studio,
+            sourced from trusted suppliers,
             <InlineImage
               src="https://images.unsplash.com/photo-1567113463300-102a7eb3cb26?auto=format&fit=crop&w=200&q=70"
               alt="Clear quartz"

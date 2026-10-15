@@ -113,7 +113,7 @@ const Hero = () => {
             Not decoration. Instruments.
           </p>
           <p className="mt-3 text-base leading-relaxed text-cosmos-muted">
-            Real stones, chosen by hand in Las Vegas. No two alike. No exceptions.
+            Real stones, curated for intention. Shipped directly to you. No two alike.
           </p>
         </motion.div>
 

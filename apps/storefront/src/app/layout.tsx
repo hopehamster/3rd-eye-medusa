@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     template: "%s | 3rd Eye Supply",
   },
   description:
-    "3rd Eye Supply is a Las Vegas spiritual goods house: hand-selected crystals, wood rings, orgone art, and ritual objects chosen for intention, craft, and beauty.",
+    "3rd Eye Supply is a curated source for crystals, ritual objects, and spiritual goods — chosen for intention and beauty, shipped directly to you.",
 }
 
 export default function RootLayout(props: { children: React.ReactNode }) {

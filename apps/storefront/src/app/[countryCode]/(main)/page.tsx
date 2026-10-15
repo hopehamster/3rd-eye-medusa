@@ -11,7 +11,7 @@ import { getRegion } from "@lib/data/regions"
 export const metadata: Metadata = {
   title: "3rd Eye Supply — Crystals, Ritual Objects & Spiritual Goods",
   description:
-    "Hand-selected crystals, wood rings, and orgone art from Las Vegas. Chosen for intention, craft, and beauty.",
+    "Curated crystals, ritual objects, and spiritual goods. Chosen for intention and beauty, shipped directly to you.",
 }
 
 export default async function Home(props: {
