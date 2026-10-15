@@ -5,7 +5,25 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 
 export async function generateStaticParams() {
   const guides = await getCanonGuides()
-  return guides.map((g) => ({ slug: g.slug }))
+  // Guides are region-independent content, but the route has a [countryCode]
+  // segment, so every entry must include it or Next.js prerenders nothing.
+  // Prefer the backend region list; fall back to "us" for offline builds.
+  let countryCodes = ["us"]
+  try {
+    const { listRegions } = await import("@lib/data/regions")
+    const regions = await listRegions()
+    const codes = regions
+      ?.flatMap((r) => r.countries?.map((c) => c.iso_2) ?? [])
+      .filter(Boolean) as string[]
+    if (codes?.length) {
+      countryCodes = [...new Set(codes)]
+    }
+  } catch {
+    // Offline build without backend access — keep the "us" fallback.
+  }
+  return countryCodes.flatMap((countryCode) =>
+    guides.map((g) => ({ countryCode, slug: g.slug }))
+  )
 }
 
 export async function generateMetadata({
