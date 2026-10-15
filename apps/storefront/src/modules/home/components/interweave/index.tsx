@@ -45,11 +45,11 @@ const Interweave = () => {
             />
             photographed in our studio,
             <InlineImage
-              src="https://images.unsplash.com/photo-1587652990090-67c742c382ce?auto=format&fit=crop&w=200&q=70"
+              src="https://images.unsplash.com/photo-1567113463300-102a7eb3cb26?auto=format&fit=crop&w=200&q=70"
               alt="Clear quartz"
             />
-            and shipped from Las Vegas.
-            <span className="text-cosmos-goldBright"> No warehouses. No dropshippers. No mystery.</span>
+            and shipped straight to your door.
+            <span className="text-cosmos-goldBright"> Curated with intention. No mystery.</span>
           </p>
         </Reveal>
         <Reveal delay={0.3}>

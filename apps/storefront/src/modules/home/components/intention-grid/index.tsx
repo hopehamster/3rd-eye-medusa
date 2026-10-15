@@ -32,7 +32,7 @@ const INTENTIONS = [
     intent: "love-self",
     label: "Love",
     description: "Start with the person in the mirror",
-    image: "https://images.unsplash.com/photo-1587652990090-67c742c382ce?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1567113463300-102a7eb3cb26?auto=format&fit=crop&w=600&q=80",
     crystal: "Rose Quartz",
   },
   {
