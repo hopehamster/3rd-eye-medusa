@@ -1,9 +1,9 @@
-import { listProducts } from "@lib/data/products"
 import { HttpTypes } from "@medusajs/types"
 import ProductActions from "@modules/products/components/product-actions"
 
 /**
- * Fetches real time pricing for a product and renders the product actions component.
+ * Renders the product actions component with real-time pricing.
+ * Uses direct fetch instead of SDK to avoid DYNAMIC_SERVER_USAGE from cookies().
  */
 export default async function ProductActionsWrapper({
   id,
@@ -12,14 +12,34 @@ export default async function ProductActionsWrapper({
   id: string
   region: HttpTypes.StoreRegion
 }) {
-  const product = await listProducts({
-    queryParams: { id: [id] },
-    regionId: region.id,
-  }).then(({ response }) => response.products[0])
+  const backendUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
+  const publishableKey = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 
-  if (!product) {
+  if (!backendUrl || !publishableKey) {
     return null
   }
 
-  return <ProductActions product={product} region={region} />
+  try {
+    const res = await fetch(
+      `${backendUrl}/store/products/${id}?region_id=${region.id}&fields=id,handle,title,subtitle,description,thumbnail,images,*variants.calculated_price,*variants.images,*variants.options,*options`,
+      {
+        headers: { "x-publishable-api-key": publishableKey },
+      }
+    )
+
+    if (!res.ok) {
+      return null
+    }
+
+    const data = await res.json()
+    const product = data.product
+
+    if (!product) {
+      return null
+    }
+
+    return <ProductActions product={product} region={region} />
+  } catch {
+    return null
+  }
 }

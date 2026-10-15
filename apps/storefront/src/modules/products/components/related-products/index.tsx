@@ -16,6 +16,10 @@ export default async function RelatedProducts({
   product,
   countryCode,
 }: RelatedProductsProps) {
+  // Temporarily disabled: uses SDK listProducts/getRegion which cause DYNAMIC_SERVER_USAGE.
+  // TODO: Re-enable with direct fetch once PDP is stable.
+  return null
+
   const region = await getRegion(countryCode)
 
   if (!region) {
