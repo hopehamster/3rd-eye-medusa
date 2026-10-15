@@ -44,8 +44,9 @@ async function fetchProduct(
     if (!region) return { product: null, region: null }
 
     // Get products (no handle filter - Medusa v2 returns 400 for it)
+    // Include all fields ProductTemplate needs
     const productsRes = await fetch(
-      `${backendUrl}/store/products?limit=100&region_id=${region.id}&fields=handle,title,thumbnail,*variants.calculated_price,*variants.images,*variants.options`,
+      `${backendUrl}/store/products?limit=100&region_id=${region.id}&fields=handle,title,subtitle,description,thumbnail,images,*variants.calculated_price,*variants.images,*variants.options,*options`,
       { headers }
     )
     if (!productsRes.ok) return { product: null, region: null }
