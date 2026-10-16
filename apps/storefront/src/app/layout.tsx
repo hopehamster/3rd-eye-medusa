@@ -21,11 +21,24 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseURL()),
   title: {
-    default: "3rd Eye Supply — Crystals, Ritual Objects & Spiritual Goods",
+    default: "Crystals, Ritual Objects & Spiritual Goods",
     template: "%s | 3rd Eye Supply",
   },
   description:
-    "3rd Eye Supply is a curated source for crystals, ritual objects, and spiritual goods — chosen for intention and beauty, shipped directly to you.",
+    "Curated crystals, ritual objects, and spiritual goods. Chosen for intention and beauty, shipped directly to you.",
+  openGraph: {
+    title: "3rd Eye Supply — Crystals, Ritual Objects & Spiritual Goods",
+    description:
+      "Curated crystals, ritual objects, and spiritual goods. Chosen for intention and beauty, shipped directly to you.",
+    siteName: "3rd Eye Supply",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "3rd Eye Supply — Crystals, Ritual Objects & Spiritual Goods",
+    description:
+      "Curated crystals, ritual objects, and spiritual goods. Chosen for intention and beauty, shipped directly to you.",
+  },
 }
 
 export default function RootLayout(props: { children: React.ReactNode }) {

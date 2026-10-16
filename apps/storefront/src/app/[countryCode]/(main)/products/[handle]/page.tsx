@@ -9,13 +9,36 @@ type Props = {
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params
-  const title = params.handle
-    .split("-")
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ")
+  const { product } = await fetchProduct(params.handle, params.countryCode)
+  
+  if (!product) {
+    return {
+      title: "Product Not Found",
+    }
+  }
+  
+  const description = product.description 
+    ? product.description.substring(0, 155).trim() + (product.description.length > 155 ? "..." : "")
+    : `${product.title} - Available at 3rd Eye Supply`
+  
   return {
-    title: `${title} | 3rd Eye Supply`,
-    description: `${title} - 3rd Eye Supply`,
+    title: product.title,
+    description,
+    openGraph: {
+      title: product.title,
+      description,
+      images: product.thumbnail ? [{ url: product.thumbnail }] : [],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: product.title,
+      description,
+      images: product.thumbnail ? [product.thumbnail] : [],
+    },
+    alternates: {
+      canonical: `/us/products/${params.handle}`,
+    },
   }
 }
 
