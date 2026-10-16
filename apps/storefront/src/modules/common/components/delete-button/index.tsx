@@ -4,11 +4,13 @@ import { useState } from "react"
 
 const DeleteButton = ({
   id,
+  cartId,
   children,
   className,
   "data-testid": dataTestId,
 }: {
   id: string
+  cartId?: string
   children?: React.ReactNode
   className?: string
   "data-testid"?: string
@@ -22,14 +24,8 @@ const DeleteButton = ({
       const backendUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
       const publishableKey = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
       
-      // Get cart ID from cookie
-      const cartId = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('_medusa_cart_id='))
-        ?.split('=')[1]
-      
       if (!cartId) {
-        throw new Error("No cart found")
+        throw new Error("No cart ID provided")
       }
       
       const res = await fetch(
