@@ -46,7 +46,6 @@ const DeleteButton = ({
       // Refresh the page to show updated cart
       window.location.reload()
     } catch (err) {
-      console.error("Delete failed:", err)
       setIsDeleting(false)
     }
   }
