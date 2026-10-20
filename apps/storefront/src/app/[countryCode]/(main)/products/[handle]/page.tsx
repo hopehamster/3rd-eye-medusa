@@ -17,22 +17,28 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     }
   }
   
-  const description = product.description 
+  const description = product.description
     ? product.description.substring(0, 155).trim() + (product.description.length > 155 ? "..." : "")
     : `${product.title} - Available at 3rd Eye Supply`
-  
+
+  // Page title carries the intention subtitle when Voice has set one (#24/#26):
+  // "Rose Quartz Bracelet — For self-love" pattern.
+  const pageTitle = product.subtitle
+    ? `${product.title} — ${product.subtitle}`
+    : product.title
+
   return {
-    title: product.title,
+    title: pageTitle,
     description,
     openGraph: {
-      title: product.title,
+      title: pageTitle,
       description,
       images: product.thumbnail ? [{ url: product.thumbnail }] : [],
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      title: product.title,
+      title: pageTitle,
       description,
       images: product.thumbnail ? [product.thumbnail] : [],
     },
@@ -67,9 +73,10 @@ async function fetchProduct(
     if (!region) return { product: null, region: null }
 
     // Get products (no handle filter - Medusa v2 returns 400 for it)
-    // Include all fields ProductTemplate needs
+    // Include all fields ProductTemplate needs, plus the specimen-label
+    // fields (metadata, specs, collection) used by the PDP redesign (#24)
     const productsRes = await fetch(
-      `${backendUrl}/store/products?limit=100&region_id=${region.id}&fields=id,handle,title,subtitle,description,thumbnail,images,*variants.calculated_price,*variants.images,*variants.options,*options`,
+      `${backendUrl}/store/products?limit=100&region_id=${region.id}&fields=id,handle,title,subtitle,description,thumbnail,images,metadata,material,origin_country,weight,length,width,height,*collection,*variants.calculated_price,*variants.images,*variants.options,*options`,
       { headers }
     )
     if (!productsRes.ok) return { product: null, region: null }
