@@ -1,19 +1,33 @@
 import { Metadata } from "next"
 
-import FeaturedProducts from "@modules/home/components/featured-products"
+import BestSellers from "@modules/home/components/best-sellers"
 import Hero from "@modules/home/components/hero"
-import IntentionGrid from "@modules/home/components/intention-grid"
-import Interweave from "@modules/home/components/interweave"
-import OracleCta from "@modules/home/components/oracle-cta"
-import { listCollections } from "@lib/data/collections"
+import HostVoice from "@modules/home/components/host-voice"
+import IntentionShelves from "@modules/home/components/intention-shelves"
+import OracleFrontDoor from "@modules/home/components/oracle-front-door"
+import QuizGreeter from "@modules/home/components/quiz-greeter"
+import ReviewWall from "@modules/home/components/review-wall"
+import TrustFaq from "@modules/home/components/trust-faq"
 import { getRegion } from "@lib/data/regions"
 
 export const metadata: Metadata = {
-  title: "3rd Eye Supply — Crystals, Ritual Objects & Spiritual Goods",
+  title: "3rd Eye Supply — Real Crystals, Ritual Goods & the Oracle",
   description:
-    "Curated crystals, ritual objects, and spiritual goods. Chosen for intention and beauty, shipped directly to you.",
+    "Natural crystals and ritual goods, chosen by hand and organized by what you're dealing with. Ask the Oracle where to begin. Shipped directly to you.",
 }
 
+/**
+ * Homepage — Bright Apothecary rebuild (issue #21).
+ *
+ * Section order follows the niche winners' pattern (Energy Muse /
+ * Conscious Items): daylight hero, quiz greeter, intention shelves,
+ * best sellers, trust furniture (FAQ + review wall), Oracle front
+ * door, host voice.
+ *
+ * Retired from the homepage (components still in the repo): the dark
+ * hero, IntentionGrid, Interweave, FeaturedProducts (collection rails),
+ * OracleCta.
+ */
 export default async function Home(props: {
   params: Promise<{ countryCode: string }>
 }) {
@@ -23,25 +37,20 @@ export default async function Home(props: {
 
   const region = await getRegion(countryCode)
 
-  const { collections } = await listCollections({
-    fields: "id, handle, title",
-  })
-
-  if (!collections || !region) {
+  if (!region) {
     return null
   }
 
   return (
     <>
       <Hero />
-      <IntentionGrid />
-      <Interweave />
-      <div className="py-12">
-        <ul className="flex flex-col gap-x-6">
-          <FeaturedProducts collections={collections} region={region} />
-        </ul>
-      </div>
-      <OracleCta />
+      <QuizGreeter />
+      <IntentionShelves />
+      <BestSellers region={region} />
+      <TrustFaq />
+      <ReviewWall />
+      <OracleFrontDoor />
+      <HostVoice />
     </>
   )
 }
