@@ -35,6 +35,24 @@ module.exports = {
           violet: "#8B7BC7",
           teal: "#5E9C8F",
         },
+        // 3rd Eye Supply — bright apothecary palette (issue #20)
+        // Warm paper surfaces, ink text, stone-tone hairlines, and one
+        // disciplined accent: deep botanical green. Cosmos tokens above stay
+        // in place during the migration; this group is additive.
+        paper: {
+          bg: "#FAF6EF", // warm cream — default page surface
+          surface: "#F4EEE1", // deeper cream — panels, shelves
+          raised: "#FFFDF7", // warm near-white — specimen cards
+          border: "#D9CFBB", // muted stone hairline
+          borderSoft: "#E5DDCC", // softer hairline
+          text: "#23201B", // ink
+          muted: "#6E675A", // warm stone gray — secondary text
+          faint: "#A39A86", // labels, captions
+          stone: "#B4A888", // mid stone tone — fills, markers
+          accent: "#2E5339", // deep botanical green — the one accent
+          accentBright: "#3C6E4B", // accent hover state
+          accentSoft: "#E4E9DC", // accent tint — chips, badges
+        },
         grey: {
           0: "#FFFFFF",
           5: "#F9FAFB",
@@ -53,6 +71,7 @@ module.exports = {
         none: "0px",
         soft: "2px",
         base: "4px",
+        specimen: "3px", // apothecary specimen-card radius (issue #20)
         rounded: "8px",
         large: "16px",
         circle: "9999px",
@@ -84,6 +103,17 @@ module.exports = {
           "sans-serif",
         ],
         display: ["Fraunces", "Georgia", "serif"],
+        // Bright apothecary body voice (issue #20): plain humanist sans.
+        // Use as `font-humanist`. Loading Source Sans 3 in layout.tsx is a
+        // follow-up; the stack degrades to system humanist faces until then.
+        humanist: [
+          "Source Sans 3",
+          "Source Sans Pro",
+          "Segoe UI",
+          "Frutiger",
+          "system-ui",
+          "sans-serif",
+        ],
       },
       keyframes: {
         ring: {

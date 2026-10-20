@@ -103,6 +103,32 @@
     background: linear-gradient(90deg, transparent, #c9a22755, transparent);
     height: 1px;
   }
+
+  /* Bright apothecary (issue #20): static per-surface paper grain.
+     Pure CSS, no JS, no WebGL. Distinct from the sitewide animated
+     FilmGrain component: this one is for light paper surfaces, using a
+     multiply blend so the noise reads as paper fiber. Apply to any
+     container: <div class="bg-paper-bg paper-grain">. */
+  .paper-grain {
+    position: relative;
+    isolation: isolate;
+  }
+  .paper-grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Quiet 1px stone divider for paper surfaces */
+  .paper-hairline {
+    background: #d9cfbb;
+    height: 1px;
+  }
 }
 
 @layer components {
@@ -128,6 +154,51 @@
       border border-cosmos-border text-cosmos-text text-sm font-medium tracking-wide
       transition-all duration-300 ease-out
       hover:border-cosmos-gold/60 hover:text-cosmos-goldBright;
+  }
+
+  /* ---- Bright apothecary primitives (issue #20) ----
+     Specimen-card system: warm paper card, 1px stone hairline, small
+     radius, no blurred shadow. Pair with .paper-grain on the section. */
+
+  /* The card itself: raised paper, hairline border, specimen radius */
+  .specimen-card {
+    @apply bg-paper-raised border border-paper-border rounded-specimen;
+  }
+
+  /* Label block inside a specimen card: name set in the display serif,
+     ruled top and bottom by hairlines, like a botanical plate label.
+     This is card furniture (origin, name, properties), not a heading
+     eyebrow — keep heading patterns eyebrow-free per the redesign spec. */
+  .specimen-label {
+    @apply border-y border-paper-borderSoft py-3 font-display
+      text-paper-text text-lg leading-snug;
+  }
+
+  /* Small property line under a specimen label: humanist sans, muted ink */
+  .specimen-meta {
+    @apply font-humanist text-paper-muted text-sm leading-6;
+  }
+
+  /* Property chip: hairline outline, optional accent tint via bg-paper-accentSoft */
+  .specimen-chip {
+    @apply inline-flex items-center px-2.5 py-1 rounded-soft
+      border border-paper-border font-humanist text-xs text-paper-text;
+  }
+
+  /* Paper primary button: botanical green on cream, squared corners */
+  .btn-paper {
+    @apply inline-flex items-center justify-center px-7 py-3 rounded-soft
+      bg-paper-accent text-paper-bg font-humanist text-sm font-semibold tracking-wide
+      transition-colors duration-200 ease-out
+      hover:bg-paper-accentBright;
+  }
+
+  /* Paper ghost button: hairline border, ink text, accent on hover */
+  .btn-paper-ghost {
+    @apply inline-flex items-center justify-center px-7 py-3 rounded-soft
+      border border-paper-border text-paper-text font-humanist text-sm font-semibold tracking-wide
+      transition-colors duration-200 ease-out
+      hover:border-paper-accent hover:text-paper-accent;
   }
 
   .text-xsmall-regular {
