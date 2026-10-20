@@ -219,19 +219,21 @@ export default function OracleQuiz({ onComplete }: OracleQuizProps) {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <div className="flex items-center gap-2 mb-6">
+      <div className="mb-8 flex gap-2" aria-hidden="true">
         {QUESTIONS.map((_, i) => (
           <div
             key={i}
-            className={`h-1 flex-1 rounded-full ${
-              i <= step ? "bg-violet-500" : "bg-white/10"
+            className={`h-[3px] flex-1 rounded-none ${
+              i <= step ? "bg-paper-accent" : "bg-paper-borderSoft"
             }`}
           />
         ))}
       </div>
 
-      <h2 className="text-2xl font-semibold mb-2">{question.question}</h2>
-      <p className="text-sm text-gray-400 mb-6">
+      <h2 className="mb-2 font-display text-3xl font-light text-paper-text">
+        {question.question}
+      </h2>
+      <p className="mb-6 font-humanist text-sm text-paper-faint">
         Question {step + 1} of {QUESTIONS.length}
       </p>
 
@@ -240,13 +242,13 @@ export default function OracleQuiz({ onComplete }: OracleQuizProps) {
           <button
             key={option.label}
             onClick={() => choose(option)}
-            className="text-left rounded-lg border border-white/10 bg-white/[0.02] p-4 hover:border-violet-600/60 hover:bg-violet-950/30 transition"
+            className="specimen-card w-full p-4 text-left transition-colors hover:border-paper-accent"
           >
-            <span className="font-medium">{option.label}</span>
+            <span className="block font-humanist font-medium text-paper-text">
+              {option.label}
+            </span>
             {option.hint && (
-              <span className="block text-sm text-gray-400 mt-1">
-                {option.hint}
-              </span>
+              <span className="specimen-meta mt-1 block">{option.hint}</span>
             )}
           </button>
         ))}
@@ -254,28 +256,32 @@ export default function OracleQuiz({ onComplete }: OracleQuizProps) {
 
       {isLast && (
         <div className="mt-6">
-          <label className="block text-sm text-gray-400 mb-2">
+          <label
+            htmlFor="oracle-quiz-custom"
+            className="mb-2 block font-humanist text-sm text-paper-muted"
+          >
             Anything else on your mind? (optional)
           </label>
           <textarea
+            id="oracle-quiz-custom"
             value={customText}
             onChange={(e) => setCustomText(e.target.value)}
-            className="w-full rounded-lg border border-white/10 bg-white/[0.02] p-3 text-sm"
+            className="w-full rounded-soft border border-paper-border bg-paper-raised p-3 font-humanist text-sm text-paper-text placeholder:text-paper-faint focus:border-paper-accent focus:outline-none"
             rows={2}
             placeholder="Tell the Oracle anything else..."
           />
         </div>
       )}
 
-      <div className="mt-6 flex justify-between">
+      <div className="mt-6 flex items-baseline justify-between">
         <button
           onClick={back}
           disabled={step === 0}
-          className="text-sm text-gray-400 hover:text-white disabled:opacity-30"
+          className="font-humanist text-sm text-paper-muted underline-offset-4 transition-colors hover:text-paper-accent hover:underline disabled:opacity-40"
         >
           Back
         </button>
-        <span className="text-xs text-gray-500">
+        <span className="font-humanist text-xs text-paper-faint">
           Your answers shape the Oracle&apos;s guidance
         </span>
       </div>

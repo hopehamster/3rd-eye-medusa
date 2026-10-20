@@ -24,42 +24,50 @@ export default function OracleExperience({
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-10">
-      <div className="text-center mb-8">
-        <p className="text-xs uppercase tracking-widest text-violet-400 mb-2">
-          3rd Eye Supply
-        </p>
-        <h1 className="text-3xl font-semibold mb-3">The Oracle</h1>
-        <p className="text-gray-400 max-w-xl mx-auto text-sm">
-          Describe what you need in your own words — or take the guided quiz
-          and let the Oracle read between the lines.
-        </p>
-        <div className="inline-flex rounded-full border border-white/10 bg-white/[0.02] p-1 mt-6">
-          {(["chat", "quiz"] as const).map((m) => (
-            <button
-              key={m}
-              onClick={() => setMode(m)}
-              className={`rounded-full px-5 py-1.5 text-sm transition ${
-                mode === m
-                  ? "bg-violet-600 text-white"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              {m === "chat" ? "Ask freely" : "Guided quiz"}
-            </button>
-          ))}
+    <div className="bg-paper-bg paper-grain text-paper-text">
+      <div className="relative z-[2] mx-auto max-w-4xl px-6 py-12">
+        <div className="mb-10 max-w-2xl">
+          <h1 className="font-display text-4xl small:text-5xl font-light tracking-tight text-paper-text mb-4">
+            Ask the Oracle
+          </h1>
+          <p className="font-humanist text-paper-muted leading-7">
+            Describe what you need in your own words — or take the guided quiz
+            and let the Oracle read between the lines. Four guides keep the
+            counter here, each with a different way of seeing.
+          </p>
+          <div
+            className="mt-8 flex gap-8 border-b border-paper-border"
+            role="tablist"
+            aria-label="Oracle consultation style"
+          >
+            {(["chat", "quiz"] as const).map((m) => (
+              <button
+                key={m}
+                role="tab"
+                aria-selected={mode === m}
+                onClick={() => setMode(m)}
+                className={`-mb-px border-b-2 pb-3 font-humanist text-sm transition-colors ${
+                  mode === m
+                    ? "border-paper-accent font-semibold text-paper-accent"
+                    : "border-transparent text-paper-muted hover:text-paper-text"
+                }`}
+              >
+                {m === "chat" ? "Ask freely" : "Guided quiz"}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
 
-      {mode === "quiz" ? (
-        <OracleQuiz onComplete={handleQuizComplete} />
-      ) : (
-        <OracleChat
-          key={chatKey}
-          countryCode={countryCode}
-          initialQuestion={quizQuestion}
-        />
-      )}
+        {mode === "quiz" ? (
+          <OracleQuiz onComplete={handleQuizComplete} />
+        ) : (
+          <OracleChat
+            key={chatKey}
+            countryCode={countryCode}
+            initialQuestion={quizQuestion}
+          />
+        )}
+      </div>
     </div>
   )
 }

@@ -48,10 +48,10 @@ function renderMarkdown(text: string) {
   return text.split(/\n\n+/).map((para, i) => {
     const parts = para.split(/(\*\*[^*]+\*\*)/g)
     return (
-      <p key={i} className="mb-3 last:mb-0 leading-relaxed">
+      <p key={i} className="mb-3 last:mb-0 leading-7">
         {parts.map((part, j) =>
           part.startsWith("**") && part.endsWith("**") ? (
-            <strong key={j} className="text-cosmos-gold font-semibold">
+            <strong key={j} className="text-paper-accent font-semibold">
               {part.slice(2, -2)}
             </strong>
           ) : (
@@ -94,32 +94,32 @@ function ProductCard({
   }
 
   return (
-    <div className="mt-3 rounded-xl border border-cosmos-violet/20 bg-purple-950/40 p-3 flex gap-3">
+    <div className="specimen-card mt-4 flex gap-4 p-3">
       {product?.thumbnail && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={product.thumbnail}
           alt={product.title}
-          className="w-16 h-16 rounded-lg object-cover shrink-0"
+          className="h-16 w-16 shrink-0 rounded-specimen border border-paper-borderSoft object-cover"
         />
       )}
       <div className="min-w-0 flex-1">
         <div className="flex items-baseline justify-between gap-2">
-          <p className="text-sm font-medium text-purple-100 truncate">
+          <p className="truncate font-display text-base text-paper-text">
             {product?.title ?? "A piece from the collection"}
           </p>
           {product?.price && (
-            <p className="text-sm text-cosmos-gold shrink-0">{product.price}</p>
+            <p className="shrink-0 font-humanist text-sm font-semibold text-paper-text">
+              {product.price}
+            </p>
           )}
         </div>
-        <p className="text-xs text-cosmos-violet/80 mt-1 leading-relaxed">
-          {pick.why_it_fits}
-        </p>
+        <p className="specimen-meta mt-1">{pick.why_it_fits}</p>
         {product?.variantId && (
           <button
             onClick={handleAdd}
             disabled={adding || added}
-            className="mt-2 text-xs px-3 py-1.5 rounded-full border border-cosmos-gold/30 text-cosmos-gold hover:bg-cosmos-gold/10 transition disabled:opacity-50"
+            className="mt-3 inline-flex items-center rounded-soft bg-paper-accent px-4 py-2 font-humanist text-xs font-semibold text-paper-bg transition-colors hover:bg-paper-accentBright disabled:opacity-50"
           >
             {added ? "Added to your bag" : adding ? "Adding…" : "Add to bag"}
           </button>
@@ -168,6 +168,20 @@ function greetingFor(id: string): string {
   return EXPERTS.find((e) => e.id === id)?.greeting ?? EXPERTS[0].greeting
 }
 
+function ThinkingDots() {
+  return (
+    <span
+      className="flex items-center gap-1.5 py-2"
+      role="status"
+      aria-label="Oracle is thinking"
+    >
+      <span className="h-1.5 w-1.5 rounded-full bg-paper-stone animate-bounce [animation-delay:-0.3s]" />
+      <span className="h-1.5 w-1.5 rounded-full bg-paper-stone animate-bounce [animation-delay:-0.15s]" />
+      <span className="h-1.5 w-1.5 rounded-full bg-paper-stone animate-bounce" />
+    </span>
+  )
+}
+
 export default function OracleChat({
   countryCode,
   initialQuestion,
@@ -187,6 +201,8 @@ export default function OracleChat({
     `oracle-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
   )
   const bottomRef = useRef<HTMLDivElement>(null)
+
+  const activeExpert = EXPERTS.find((e) => e.id === expertId) ?? EXPERTS[0]
 
   const scrollDown = () => {
     requestAnimationFrame(() =>
@@ -418,40 +434,68 @@ export default function OracleChat({
   }, [initialQuestion])
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="flex items-center justify-between mb-3">
-        <div className="grid grid-cols-2 small:grid-cols-4 gap-2">
-          {EXPERTS.map((expert) => (
+    <div className="mx-auto max-w-2xl">
+      <p className="specimen-meta mb-3">
+        Choose who you would like to consult. Each guide keeps their own
+        counsel — pick the one whose way of seeing fits your question.
+      </p>
+      <div className="grid grid-cols-1 gap-3 small:grid-cols-2">
+        {EXPERTS.map((expert) => {
+          const active = expertId === expert.id
+          return (
             <button
               key={expert.id}
               onClick={() => {
                 setExpertId(expert.id)
                 setMessages([{ role: "oracle", text: expert.greeting }])
               }}
-              className={`text-left px-3 py-2.5 rounded-lg border transition ${
-                expertId === expert.id
-                  ? "border-cosmos-gold/60 bg-cosmos-gold/10"
-                  : "border-cosmos-borderSoft hover:border-cosmos-violet/40 bg-cosmos-surface"
+              aria-pressed={active}
+              className={`specimen-card p-4 text-left transition-colors ${
+                active
+                  ? "border-paper-accent bg-paper-accentSoft/50"
+                  : "hover:border-paper-stone"
               }`}
             >
-              <div className={`text-sm font-medium ${expertId === expert.id ? "text-cosmos-gold" : "text-cosmos-text"}`}>
-                {expert.label}
-              </div>
-              <div className="text-[11px] text-cosmos-muted mt-0.5">
-                {expert.role}
-              </div>
-              <div className="text-[11px] text-cosmos-faint mt-1 leading-tight hidden small:block">
-                {expert.description}
-              </div>
+              <span className="flex items-start gap-3">
+                <span
+                  aria-hidden="true"
+                  className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border font-display text-xl ${
+                    active
+                      ? "border-paper-accent text-paper-accent"
+                      : "border-paper-border text-paper-muted"
+                  }`}
+                >
+                  {expert.label.charAt(0)}
+                </span>
+                <span className="min-w-0">
+                  <span className="block font-display text-lg leading-snug text-paper-text">
+                    {expert.label}
+                  </span>
+                  <span className="mt-0.5 block font-humanist text-sm text-paper-faint">
+                    {expert.role}
+                  </span>
+                  <span className="mt-1.5 block font-humanist text-sm leading-6 text-paper-muted">
+                    {expert.description}
+                  </span>
+                  {active && (
+                    <span className="mt-2 block font-humanist text-xs font-semibold text-paper-accent">
+                      Now consulting
+                    </span>
+                  )}
+                </span>
+              </span>
             </button>
-          ))}
-        </div>
-        <label className="inline-flex items-center gap-2 text-xs text-cosmos-violet/80 cursor-pointer">
+          )
+        })}
+      </div>
+
+      <div className="mt-4 flex justify-end">
+        <label className="inline-flex cursor-pointer items-center gap-2 font-humanist text-xs text-paper-muted">
           <input
             type="checkbox"
             checked={knowledgeOnly}
             onChange={(e) => setKnowledgeOnly(e.target.checked)}
-            className="accent-cosmos-violet"
+            className="accent-paper-accent"
           />
           <span title="Get guidance without product recommendations">
             Guidance only (no product picks)
@@ -459,99 +503,89 @@ export default function OracleChat({
         </label>
       </div>
 
-      <div className="rounded-2xl border border-cosmos-violet/20 bg-[#150b26]/80 p-4 min-h-[50vh] flex flex-col">
-        <div className="flex-1 space-y-4 overflow-y-auto">
-          {messages.map((msg, i) => (
-            <div
-              key={i}
-              className={`flex ${
-                msg.role === "user" ? "justify-end" : "justify-start"
-              }`}
-            >
-              <div
-                className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm ${
-                  msg.role === "user"
-                    ? "bg-purple-600/40 text-purple-50"
-                    : "bg-purple-950/60 text-purple-100/90 border border-cosmos-violet/10"
-                }`}
-              >
-                {msg.role === "oracle" ? (
-                  <>
-                    {msg.text === "" ? (
-                      <span
-                        className="flex items-center gap-1.5 py-1"
-                        role="status"
-                        aria-label="Oracle is thinking"
+      <div className="specimen-card mt-3 flex min-h-[50vh] flex-col p-5 small:p-7">
+        <div className="flex-1 space-y-8 overflow-y-auto">
+          {messages.map((msg, i) =>
+            msg.role === "oracle" ? (
+              <article key={i} className="max-w-[92%]">
+                <div className="mb-2 flex items-baseline gap-3">
+                  <span className="font-display text-base text-paper-text">
+                    {activeExpert.label}
+                  </span>
+                  <span className="paper-hairline flex-1" aria-hidden="true" />
+                </div>
+                <div className="font-humanist text-[15px] text-paper-text">
+                  {msg.text === "" ? (
+                    <ThinkingDots />
+                  ) : (
+                    renderMarkdown(msg.text)
+                  )}
+                  {msg.picks?.map((pick) => (
+                    <ProductCard
+                      key={pick.product_id}
+                      pick={pick}
+                      countryCode={countryCode}
+                    />
+                  ))}
+                  {msg.logId && msg.feedback === undefined && (
+                    <div className="mt-4 flex gap-3 font-humanist text-xs text-paper-faint">
+                      <span>Was this helpful?</span>
+                      <button
+                        onClick={() => sendFeedback(i, true)}
+                        className="underline underline-offset-4 transition-colors hover:text-paper-accent"
+                        aria-label="Helpful"
                       >
-                        <span className="w-2 h-2 rounded-full bg-cosmos-violet/70 animate-bounce [animation-delay:-0.3s]" />
-                        <span className="w-2 h-2 rounded-full bg-cosmos-violet/70 animate-bounce [animation-delay:-0.15s]" />
-                        <span className="w-2 h-2 rounded-full bg-cosmos-violet/70 animate-bounce" />
-                      </span>
-                    ) : (
-                      renderMarkdown(msg.text)
-                    )}
-                    {msg.picks?.map((pick) => (
-                      <ProductCard
-                        key={pick.product_id}
-                        pick={pick}
-                        countryCode={countryCode}
-                      />
-                    ))}
-                    {msg.logId && msg.feedback === undefined && (
-                      <div className="flex gap-2 mt-3 text-xs text-cosmos-violet/60">
-                        <span>Was this helpful?</span>
-                        <button
-                          onClick={() => sendFeedback(i, true)}
-                          className="hover:text-green-300 transition"
-                          aria-label="Helpful"
-                        >
-                          Helpful
-                        </button>
-                        <button
-                          onClick={() => sendFeedback(i, false)}
-                          className="hover:text-red-300 transition"
-                          aria-label="Not helpful"
-                        >
-                          Not helpful
-                        </button>
-                      </div>
-                    )}
-                    {msg.feedback !== undefined && (
-                      <p className="mt-3 text-xs text-cosmos-violet/50">
-                        Thanks for the feedback.
-                      </p>
-                    )}
-                  </>
-                ) : (
-                  msg.text
-                )}
+                        Helpful
+                      </button>
+                      <button
+                        onClick={() => sendFeedback(i, false)}
+                        className="underline underline-offset-4 transition-colors hover:text-paper-accent"
+                        aria-label="Not helpful"
+                      >
+                        Not helpful
+                      </button>
+                    </div>
+                  )}
+                  {msg.feedback !== undefined && (
+                    <p className="mt-4 font-humanist text-xs text-paper-faint">
+                      Thanks for the feedback.
+                    </p>
+                  )}
+                </div>
+              </article>
+            ) : (
+              <div key={i} className="flex flex-col items-end">
+                <span className="mb-1.5 font-humanist text-xs text-paper-faint">
+                  You wrote
+                </span>
+                <p className="max-w-[85%] border-r-2 border-paper-accent pr-4 text-right font-humanist text-[15px] leading-7 text-paper-text">
+                  {msg.text}
+                </p>
               </div>
-            </div>
-          ))}
+            )
+          )}
           {loading && messages[messages.length - 1]?.role !== "oracle" && (
-            <div className="flex justify-start">
-              <div
-                className="rounded-2xl px-4 py-3 bg-purple-950/60 border border-cosmos-violet/10 flex items-center gap-1.5"
-                role="status"
-                aria-label="Oracle is thinking"
-              >
-                <span className="w-2 h-2 rounded-full bg-cosmos-violet/70 animate-bounce [animation-delay:-0.3s]" />
-                <span className="w-2 h-2 rounded-full bg-cosmos-violet/70 animate-bounce [animation-delay:-0.15s]" />
-                <span className="w-2 h-2 rounded-full bg-cosmos-violet/70 animate-bounce" />
+            <div className="max-w-[92%]">
+              <div className="mb-2 flex items-baseline gap-3">
+                <span className="font-display text-base text-paper-text">
+                  {activeExpert.label}
+                </span>
+                <span className="paper-hairline flex-1" aria-hidden="true" />
               </div>
+              <ThinkingDots />
             </div>
           )}
           <div ref={bottomRef} />
         </div>
 
         {messages.length <= 1 && (
-          <div className="flex flex-wrap gap-2 mt-4">
+          <div className="mt-6 flex flex-wrap gap-2">
             {OPENERS.map((opener) => (
               <button
                 key={opener}
                 onClick={() => ask(opener)}
                 disabled={loading}
-                className="text-xs px-3 py-1.5 rounded-full border border-cosmos-violet/30 text-purple-200 hover:bg-purple-400/10 transition disabled:opacity-50"
+                className="specimen-chip transition-colors hover:border-paper-accent hover:text-paper-accent disabled:opacity-50"
               >
                 {opener}
               </button>
@@ -560,7 +594,7 @@ export default function OracleChat({
         )}
 
         <form
-          className="flex gap-2 mt-4"
+          className="mt-6 flex gap-2 border-t border-paper-borderSoft pt-5"
           onSubmit={(e) => {
             e.preventDefault()
             ask(input)
@@ -573,13 +607,13 @@ export default function OracleChat({
             maxLength={500}
             aria-label="Ask the Oracle a question"
             autoComplete="off"
-            className="flex-1 rounded-full bg-purple-950/60 border border-cosmos-violet/20 px-4 py-2.5 text-sm text-purple-50 placeholder:text-purple-400/50 focus:outline-none focus:border-purple-300/50"
+            className="flex-1 rounded-soft border border-paper-border bg-paper-raised px-4 py-3 font-humanist text-sm text-paper-text placeholder:text-paper-faint focus:border-paper-accent focus:outline-none"
           />
           <button
             type="submit"
             disabled={loading || !input.trim()}
             aria-label="Send question"
-            className="px-5 py-2.5 rounded-full bg-purple-500/80 hover:bg-purple-500 text-white text-sm transition disabled:opacity-50"
+            className="btn-paper px-6 py-3 disabled:opacity-50"
           >
             Ask
           </button>
