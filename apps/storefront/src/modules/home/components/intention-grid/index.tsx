@@ -68,7 +68,7 @@ const IntentionGrid = () => {
       <div className="grid grid-cols-2 small:grid-cols-3 gap-5">
         {INTENTIONS.map((item, i) => (
           <Reveal key={item.intent} delay={(i % 3) * 0.1}>
-            <LocalizedClientLink href={`/store?intent=${item.intent}`}>
+            <LocalizedClientLink href={`/store/shelf/${item.intent}`}>
               <SpotlightCard className="rounded-xl border border-cosmos-borderSoft bg-cosmos-surface transition-all duration-500 hover:border-cosmos-gold/60 hover:-translate-y-1">
                 <div className="relative overflow-hidden">
                   <Image

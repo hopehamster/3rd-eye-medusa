@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 
 import { isOfflineMode } from "@lib/data/offline"
 import { getRegion } from "@lib/data/regions"
+import ShelfIndex from "@modules/store/components/shelf-index"
 import StoreTemplate from "@modules/store/templates"
 import PaginatedProducts from "@modules/store/templates/paginated-products"
 
@@ -25,18 +26,26 @@ export default async function StorePage(props: {
   // Use the server-side product listing with fallback data instead.
   if (isOfflineMode()) {
     return (
-      <div className="py-6 content-container" data-testid="category-container">
-        <div className="mb-8 text-2xl-semi">
-          <h1 data-testid="store-page-title">All products</h1>
+      <>
+        <ShelfIndex />
+        <div className="py-6 content-container" data-testid="category-container">
+          <div className="mb-8 text-2xl-semi">
+            <h1 data-testid="store-page-title">All products</h1>
+          </div>
+          <PaginatedProducts
+            sortBy="created_at"
+            page={1}
+            countryCode={countryCode}
+          />
         </div>
-        <PaginatedProducts
-          sortBy="created_at"
-          page={1}
-          countryCode={countryCode}
-        />
-      </div>
+      </>
     )
   }
 
-  return <StoreTemplate currencyCode={region.currency_code} />
+  return (
+    <>
+      <ShelfIndex />
+      <StoreTemplate currencyCode={region.currency_code} />
+    </>
+  )
 }
