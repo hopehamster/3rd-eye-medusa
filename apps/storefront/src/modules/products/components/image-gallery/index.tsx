@@ -1,21 +1,30 @@
 import { HttpTypes } from "@medusajs/types"
 import { Container } from "@modules/common/components/ui"
 import Image from "next/image"
+import CrystalViewer from "@modules/products/components/crystal-viewer"
 
 type ImageGalleryProps = {
   images: HttpTypes.StoreProductImage[]
+  title: string
+  handle: string
 }
 
 /**
  * PDP imagery (bright apothecary redesign, issue #24).
  * Framed like specimen plates: paper surface, hairline border, small radius.
+ * The 3D stone study leads as the first plate; supplier photos follow.
  * Works with current supplier images; Agent Daylight (#22) photos drop in
  * without layout changes.
  */
-const ImageGallery = ({ images }: ImageGalleryProps) => {
+const ImageGallery = ({ images, title, handle }: ImageGalleryProps) => {
   return (
     <div className="flex items-start relative">
       <div className="flex flex-col flex-1 gap-y-4">
+        <CrystalViewer
+          title={title}
+          handle={handle}
+          fallbackImage={images[0]}
+        />
         {images.map((image, index) => {
           return (
             <Container

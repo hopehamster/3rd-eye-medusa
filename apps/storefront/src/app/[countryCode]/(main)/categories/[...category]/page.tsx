@@ -20,7 +20,15 @@ type Props = {
 }
 
 export async function generateStaticParams() {
-  const product_categories = await listCategories()
+  // A throw here fails the entire production build, so treat any API
+  // failure the same as an empty catalog: no static paths. (The catalog
+  // currently has zero categories; the route stays dynamic at runtime.)
+  let product_categories: HttpTypes.StoreProductCategory[] | null = null
+  try {
+    product_categories = await listCategories()
+  } catch {
+    product_categories = null
+  }
 
   if (!product_categories) {
     return []

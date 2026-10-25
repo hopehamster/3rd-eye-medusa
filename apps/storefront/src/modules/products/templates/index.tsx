@@ -49,7 +49,11 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
       <div className="content-container py-6 small:py-10" data-testid="product-container">
         <div className="flex flex-col small:flex-row items-start gap-10 small:gap-14">
           <div className="w-full min-w-0 small:flex-1">
-            <ImageGallery images={images} />
+            <ImageGallery
+              images={images}
+              title={product.title}
+              handle={product.handle ?? ""}
+            />
           </div>
           <div className="w-full small:w-[380px] medium:w-[420px] shrink-0 small:sticky small:top-28 flex flex-col gap-y-8">
             <ProductInfo product={product} />
