@@ -1,0 +1,71 @@
+{
+  "_comment": "n8n queue/retry NODE SKETCH only \u2014 a fragment, NOT a full workflow. Node names are illustrative; the implementing builder wires real nodes, credentials via env/vault references (never literal values), and final retry/delay numbers. Fake placeholders only. FIXED PER REVIEW (awaiting re-review, not live/proven): explicit ToS/robots ban = HARD STOP with no override (pattern doc 1.1); CAPTCHA auto-solve banned outright; section 3 measures pre-block only, forbidden after a block.",
+  "flow_order": [
+    "Schedule-or-Webhook-Trigger",
+    "Enqueue-Items",
+    "Dequeue-One",
+    "Wait-Random-Delay",
+    "Fetch-via-Antidetect-Browser-or-HTTP",
+    "Classify-Outcome",
+    "Extract-Delta -> Write-Delta-Only (success branch)",
+    "Requeue-With-Backoff (retryable branch, capped)",
+    "Dead-Letter -> Alert-Human-On-DeadLetter-Or-Block (fatal / exhausted branch)"
+  ],
+  "nodes": [
+    {
+      "name": "Schedule-or-Webhook-Trigger",
+      "notes": "Starts a sync run. One run per supplier per schedule; never all suppliers in one blast.",
+      "type": "n8n-nodes-base.ScheduleTrigger-or-Webhook"
+    },
+    {
+      "name": "Enqueue-Items",
+      "notes": "One queue item per supplier SKU/page: {supplier, skuOrPageId, listingUrl, profileRef, attempt: 0}. Queue-based logic manages retries/failures better than running everything in one go [topic-122967, Jue reply].",
+      "type": "n8n-nodes-base.Code-or-Queue-Enqueue"
+    },
+    {
+      "name": "Dequeue-One",
+      "notes": "Process items one (or few) at a time. A single item failure never blocks the queue.",
+      "type": "n8n-nodes-base.Queue-Dequeue"
+    },
+    {
+      "name": "Wait-Random-Delay",
+      "notes": "Random jittered delay before each fetch [topic-176926 reply: random delays]. Builder sets the range; never a fixed interval.",
+      "type": "n8n-nodes-base.Wait"
+    },
+    {
+      "name": "Fetch-via-Antidetect-Browser-or-HTTP",
+      "notes": "Browser path only when JS rendering is genuinely needed [topic-122967]; otherwise HTTP Request node with real browser headers [topic-176926 reply]. Proxy: rotating residential, referenced by env var name only, e.g. $env.SUPPLIER_PROXY_HOST_EXAMPLE. Antidetect API key: vault/env reference only, e.g. $env.ANTIDETECT_API_KEY_EXAMPLE \u2014 never a literal. SECTION 3 MEASURES (proxies, antidetect fingerprints, browser headers) are permitted ONLY before any block event for this supplier and FORBIDDEN after one for resuming a paused scrape; their use requires a per-supplier approved-risk record (approver + date + reasoning + scope) \u2014 pattern doc section 3. Never an authenticated session cookie in a profile (section 2/F6).",
+      "type": "n8n-nodes-base.HttpRequest-or-Antidetect-API"
+    },
+    {
+      "name": "Classify-Outcome",
+      "notes": "Route by outcome: success -> Extract-Delta; retryable (network error, 5xx, timeout, attempt < 3) -> Requeue-With-Backoff; fatal (403/block page, CAPTCHA, login wall, bot-control response) -> Dead-Letter directly, NO retry, supplier queue PAUSED, human escalation. Classification fires on block/CAPTCHA \u2014 never auto-retry into a control, never auto-solve a CAPTCHA (pattern doc section 6: NO automated solving against explicit bot controls, period; human manual solving only, per challenge, logged). After a block event, section 3 measures are FORBIDDEN for resuming the paused scrape.",
+      "type": "n8n-nodes-base.If-or-Switch"
+    },
+    {
+      "name": "Requeue-With-Backoff",
+      "notes": "attempt = attempt + 1, with backoff + jitter. At attempt cap, route to Dead-Letter instead.",
+      "type": "n8n-nodes-base.Queue-Enqueue"
+    },
+    {
+      "name": "Extract-Delta",
+      "notes": "Per-batch work in a sub-workflow returning only a short result [topic-308744]. Output per item: supplier ID, listing URL, and CHANGED fields only \u2014 never full product blobs, never downloaded images (URLs only) [topic-308744]. Compare against last stored snapshot; no change -> no write.",
+      "type": "n8n-nodes-base.Code-or-Execute-SubWorkflow"
+    },
+    {
+      "name": "Write-Delta-Only",
+      "notes": "Write only the delta to the delta table / storefront update path. One supplier, one product class, one delta table to start [topic-308744].",
+      "type": "n8n-nodes-base.Code-or-Store-Update"
+    },
+    {
+      "name": "Dead-Letter",
+      "notes": "Fatal + exhausted items with full attempt log (supplier, SKU/page, profile, outcome, timestamp). Never silently dropped; reviewed by a human on a schedule. A block/CAPTCHA dead-letter also pauses that supplier's queue until a fresh gate pass + new approver record (pattern doc sections 3 and 6).",
+      "type": "n8n-nodes-base.Queue-or-Store"
+    },
+    {
+      "name": "Alert-Human-On-DeadLetter-Or-Block",
+      "notes": "Alert on dead-letter and especially on any block/CAPTCHA. CAPTCHA: NO automated solving against explicit bot controls, period \u2014 escalate instead (pattern doc section 6). Human manual solving only, per challenge, logged (date/time, supplier, challenge type, solver name, item/SKU, proceed-or-pause decision). A block pauses that supplier's queue until approver approval after cause understood + robots/ToS re-check re-run; section 3 measures forbidden for resuming the paused scrape.",
+      "type": "n8n-nodes-base.Notification"
+    }
+  ]
+}
