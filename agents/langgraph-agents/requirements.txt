@@ -1,0 +1,4 @@
+# B2 leg: skeleton runs on stdlib alone (python3 -m unittest).
+# These are for B1's wiring leg only — NOT installed by this leg.
+langgraph>=0.2
+pytest>=8.0
