@@ -37,6 +37,25 @@ actually read. Stale index = re-index, never guess.
   human reviewer (or the independent review agent path) before merge.
 - Secrets: env vars only, never in code, prompts, or retrieved context.
 
+## Framework — per-agent decision, SPEC ONLY (corrected
+2026-10-27, Michael comment 6460788465)
+
+Dev-trial judging is DROPPED: no trial process is imposed,
+pursued, or left as an open item for this agent. #124 stays
+spec-only. The per-agent framework line stands as spec'd — the
+research agent (#122) stays on its small custom graph, and #123 /
+#125 use `create_agent` + `interrupt_on` — and this spec records
+the dev agent's graph shape (plan → tools → reflect → verdict,
+with a critic loop) without attaching any trial, judging process,
+owner, duration, candidate count, or evidence pack to it. The
+gates in this spec are unchanged: the verdict still goes to a
+human reviewer before merge, the agent still never pushes,
+merges, or deploys, and secrets stay env vars only. The pins are
+unchanged: langgraph stays at 0.2.45 through the #130/#131 merge
+decision (see `core-discipline.md`); any upgrade need goes to the
+separate upgrade-pins branch (full suite re-run), never to a
+silent upgrade.
+
 ## Done when (from #124)
 
 A dev investigation runs as a graph (plan → tools → reflect → verdict)

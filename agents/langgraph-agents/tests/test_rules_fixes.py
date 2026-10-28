@@ -13,19 +13,32 @@ def sig(family: str, direction: str = "agree", strength: float = 0.8) -> Signal:
 
 
 class TestDisagreeNaming(unittest.TestCase):
-    def test_list_verdict_names_disagreeing_supplier_proof(self) -> None:
+    # Pre-veto versions expected LIST over a critical disagree; the
+    # veto fold supersedes them. Soft (non-critical) disagreement is
+    # still named on a LIST; critical disagreement now vetoes to SKIP
+    # and is named on the veto-SKIP.
+    def test_veto_skip_names_disagreeing_supplier_proof(self) -> None:
         signals = [sig("social_velocity"), sig("search_demand"), sig("margin_math"),
                    sig("supplier_proof", direction="disagree")]
         verdict = decide_verdict(signals)
-        self.assertEqual(verdict.decision, "list")
+        self.assertEqual(verdict.decision, "skip")
+        self.assertEqual(verdict.vetoed_by, ["supplier_proof"])
         self.assertIn("supplier_proof", verdict.reasoning)
 
-    def test_list_verdict_names_disagreeing_margin_math(self) -> None:
+    def test_veto_skip_names_disagreeing_margin_math(self) -> None:
         signals = [sig("social_velocity"), sig("search_demand"), sig("supplier_proof"),
                    sig("margin_math", direction="disagree")]
         verdict = decide_verdict(signals)
-        self.assertEqual(verdict.decision, "list")
+        self.assertEqual(verdict.decision, "skip")
+        self.assertEqual(verdict.vetoed_by, ["margin_math"])
         self.assertIn("margin_math", verdict.reasoning)
+
+    def test_list_verdict_names_soft_disagreement(self) -> None:
+        signals = [sig("social_velocity"), sig("search_demand"), sig("supplier_proof"),
+                   sig("ad_longevity", direction="disagree")]
+        verdict = decide_verdict(signals)
+        self.assertEqual(verdict.decision, "list")
+        self.assertIn("ad_longevity", verdict.reasoning)
 
 
 class TestFamilyValidation(unittest.TestCase):

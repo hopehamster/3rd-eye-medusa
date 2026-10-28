@@ -16,6 +16,49 @@ def agreeing_scout(family: str):
     return scout
 
 
+class TestGraphVeto(unittest.TestCase):
+    def test_veto_in_graph_beats_three_agreeing_scouts(self) -> None:
+        def agree(family: str):
+            def scout(product: str) -> list[Signal]:
+                return [Signal(family=family, name="m", direction="agree",
+                               strength=0.9, evidence="mocked", source="mock")]
+            return scout
+        def disagree_supplier(product: str) -> list[Signal]:
+            return [Signal(family="supplier_proof", name="m",
+                           direction="disagree", strength=0.9,
+                           evidence="supplier listing dead", source="mock")]
+        state = run_research("mock product", scouts={
+            "social_velocity": agree("social_velocity"),
+            "search_demand": agree("search_demand"),
+            "ad_longevity": agree("ad_longevity"),
+            "supplier_proof": disagree_supplier,
+        }, outcome_record_id="rec-9")
+        assert state.verdict is not None
+        self.assertEqual(state.verdict.decision, "skip")
+        self.assertEqual(state.verdict.vetoed_by, ["supplier_proof"])
+        self.assertEqual(state.verdict.outcome_record_id, "rec-9")
+
+    def test_failed_verification_leaves_veto_standing(self) -> None:
+        def agree(family: str):
+            def scout(product: str) -> list[Signal]:
+                return [Signal(family=family, name="m", direction="agree",
+                               strength=0.9, evidence="mocked", source="mock")]
+            return scout
+        def disagree_margin(product: str) -> list[Signal]:
+            return [Signal(family="margin_math", name="m",
+                           direction="disagree", strength=0.9,
+                           evidence="margin does not clear costs", source="mock")]
+        state = run_research("mock product", scouts={
+            "social_velocity": agree("social_velocity"),
+            "search_demand": agree("search_demand"),
+            "margin_math": disagree_margin,
+        }, verifier=lambda s: False, max_attempts=2)
+        assert state.verdict is not None
+        self.assertEqual(state.verdict.decision, "skip")
+        self.assertEqual(state.verdict.vetoed_by, ["margin_math"])
+        self.assertIn("best-effort", state.verdict.reasoning)
+
+
 class TestGraph(unittest.TestCase):
     def test_plan_is_written_before_any_scout_call(self) -> None:
         order: list[str] = []

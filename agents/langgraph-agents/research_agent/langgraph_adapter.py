@@ -164,10 +164,18 @@ def build_langgraph_graph(
         from research_agent.rules import decide_verdict
 
         signals = _signals_from_dicts(state.get("signals", []))
-        return {**state,
-                "verdict": decide_verdict(
-                    signals, state["product"],
-                    best_effort=bool(state.get("best_effort", False)))}
+        verdict = decide_verdict(
+            signals, state["product"],
+            best_effort=bool(state.get("best_effort", False)),
+            weak_critical_families=tuple(
+                state.get("weak_critical_families", ())),
+            outcome_record_id=state.get("outcome_record_id"),
+            prior_record_id=state.get("prior_record_id"))
+        errors = list(state.get("errors", []))
+        if verdict.incomplete and verdict.incomplete_reason:
+            errors.append(
+                f"verdict incomplete: {verdict.incomplete_reason}")
+        return {**state, "verdict": verdict, "errors": errors}
 
     graph: object = StateGraph(GraphState)
     graph.add_node("plan", plan_node)  # type: ignore[attr-defined]

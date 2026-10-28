@@ -131,6 +131,69 @@ the checkpointer and retention choice from §5, and the retry bounds plus
 best-effort verdict shape from §6. A review that cites this file's title
 without those four records has not satisfied issue #128.
 
+## 8. Per-agent framework — no blanket harness blessing (adopted
+2026-10-27, #128 comment 6447161191)
+
+Section 2's "avoid prebuilt frameworks by default" still stands.
+What the 2026-10-27 decision adds is a per-agent ruling, not a
+blanket amendment to §2. Each agent's framework must be named in
+its own spec and in its design review; an agent whose spec does not
+name its framework has not satisfied this discipline.
+
+| Agent | Framework | Why this one |
+|---|---|---|
+| Research deep agent (#122) | Small custom graph (LangGraph core + direct LLM calls, as built) | A single list/skip judgement with deterministic gates (veto, 3-signal count) + human approval. The field fit for this shape; the full deepagents harness is not adopted here. |
+| Oracle (#123) | `create_agent` + `interrupt_on` for money actions | Short, focused, read-only answering. `interrupt_on` is a defensive gate: no money tools exist today, and any money tool added later must be interrupt-gated before first use. |
+| Dev (#124) | Spec only — no trial | Dev-trial judging DROPPED (Michael 2026-10-27, comment 6460788465): no trial process is imposed, pursued, or left as an open item. #124 stays spec-only; its graph shape (plan → tools → reflect → verdict, with a critic loop) is recorded in the dev spec without any trial, judging process, owner, duration, or evidence pack. |
+| Fulfilment exception (#125) | `create_agent` + `interrupt_on` for money actions | Short recommendation judgement over ambiguous failure evidence. `interrupt_on` is the enforcement backstop behind recommend-only; it does not authorize execution. |
+
+Free-only, LangChain-wise (standing): only free LangChain offerings
+are in scope — skills repo, LangSmith Developer free tracing,
+LangSmith Studio, Academy, open-source frameworks. Paid offerings
+are out. n8n stays the action layer for every agent above; no
+framework choice moves scheduling, distribution, or action
+execution off n8n.
+
+## 9. Learning — propose-only, behind eval gates (adopted 2026-10-27)
+
+Learned changes (signal reweights, threshold changes, rule
+refinements, prompt/model changes that encode learned behaviour)
+are PROPOSE-ONLY to a human. No silent auto-apply. The only
+auto-apply zone contemplated by field practice is narrow,
+reversible, low-blast parameters behind an eval gate with automatic
+rollback — and that zone is NOT adopted in this phase: until the
+outcome record exists and an eval set is built from it, proposals
+wait, and no auto-apply of reweights is authorized at all.
+
+When a human-approved proposal is promoted, it goes through eval
+gates in order, and a failure at any gate stops promotion:
+
+1. **Evals:** offline golden set + safety set + regression
+   comparison against current production; block on any critical
+   score drop.
+2. **Shadow:** candidate runs silently, output not served.
+3. **Small canary:** a small external slice.
+4. **Staged ramp:** staged increases toward full rollout.
+5. **Instant rollback:** repoint a label/tag, not a redeploy;
+   prompt/model versions logged per request so a rollback target
+   is known before it is needed.
+
+No learning claim may be made before the outcome record
+(`outcome-record-spec.md`) exists for the candidates claimed about,
+with verdict, human decision, and real outcome recorded separately
+and confounders alongside. A before/after story without a
+comparison cohort is not a learning claim.
+
+## 10. Pins — HOLD through the #130/#131 merge decision (adopted
+2026-10-27)
+
+Hold langgraph 0.2.45 through the #130/#131 merge decision. No
+silent drift, no upgrade inside a feature trial or a spec fold.
+After the merge decision, upgrades go on a SEPARATE upgrade-pins
+branch with a full suite re-run, and the recursion-limit / default
+values recorded in design reviews are re-checked against the
+installed package before any number is quoted from them again.
+
 ## Boundary
 
 Boundary: this doc sets the rules a design review must enforce; it does

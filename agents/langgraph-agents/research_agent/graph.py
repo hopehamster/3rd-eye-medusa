@@ -80,6 +80,9 @@ def run_research(
     verifier: Verifier | None = None,
     max_attempts: int = 3,
     parallel: bool = True,
+    outcome_record_id: str | None = None,
+    weak_critical_families: tuple[str, ...] = (),
+    prior_record_id: str | None = None,
 ) -> AgentState:
     """Run one research pass over a candidate product.
 
@@ -165,7 +168,19 @@ def run_research(
             best_effort = True  # budget exhausted: deliver, never hang
 
     # Node: verdict. Always produced, even on the best-effort path.
+    # Veto-first-then-count runs on the FINAL signals: a veto that
+    # verification failed to correct stands here (best-effort SKIP),
+    # and a veto lifts only if the signals were corrected.
     state.verdict = decide_verdict(
-        state.signals, product, best_effort=best_effort
+        state.signals, product, best_effort=best_effort,
+        weak_critical_families=weak_critical_families,
+        outcome_record_id=outcome_record_id,
+        prior_record_id=prior_record_id,
     )
+    # W4: a verdict with no outcome record id is incomplete, and that
+    # incompleteness is surfaced here (errors entry) as well as on
+    # the Verdict itself (verdict.incomplete), never left silent.
+    if state.verdict.incomplete and state.verdict.incomplete_reason:
+        state.errors.append(
+            f"verdict incomplete: {state.verdict.incomplete_reason}")
     return state

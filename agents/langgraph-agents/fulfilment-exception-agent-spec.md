@@ -31,6 +31,41 @@ of this build, and no sentence in this spec authorizes it. Anything the
 agent cannot recommend confidently goes to a human as an alert. No
 exceptions, no "the agent judged it safe" override.
 
+## Framework — per-agent decision (adopted 2026-10-27, #128 comment
+6447161191)
+
+This agent uses `create_agent` (the minimal LangChain agent harness)
+with `interrupt_on` for money actions. This is a per-agent decision,
+not a blanket harness blessing: the research agent (#122) stays on
+its small custom graph, and the dev agent (#124) is spec-only with
+no trial process (Michael 2026-10-27, comment 6460788465). See
+`core-discipline.md` for the per-agent framework table.
+
+How `interrupt_on` composes with the recommend-only rule below,
+stated explicitly so the two are not read as contradicting each
+other: in this phase the agent RECOMMENDS and never executes a
+money action, so `interrupt_on` is the enforcement backstop, not a
+permission. Any money-capable tool wired to this agent MUST be
+listed in `interrupt_on`, so that if execution is ever attempted
+through the agent path it pauses for a human approve/edit/reject
+decision before running. That backstop does NOT authorize execution:
+rule-gated execution remains a later, separately approved scope,
+and until it is approved the human executes every money action
+outside the agent. `interrupt_on` without that approval is a guard
+on a door that stays shut, not an opening of it.
+
+## Loser decisions — not this agent's job (cross-reference)
+
+This agent investigates single failed orders; it does not own
+product lifecycle. It never auto-pauses an ad set and never delists
+a listing. If a pattern of failed orders suggests a product is a
+loser, the agent ALERTS with the evidence and points at the loser
+rules in `research-deep-agent-spec.md` (ad sets: rule-gated
+auto-pause with guards; listings: recommend-only + human gate,
+never auto-delist). The loser decision itself belongs to that
+lifecycle spec and its human gate, not to an order-level
+recommendation.
+
 ## Rules
 
 - One order, one recommendation, one reasoning trail. Batch summaries

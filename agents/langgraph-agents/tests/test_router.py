@@ -7,7 +7,6 @@ must FAIL (no router module) against the old skeleton."""
 import unittest
 
 from research_agent.router import (
-    SPEND_THRESHOLD_USD,
     EscalationInput,
     decide_route,
     route_from_signals,
@@ -60,12 +59,15 @@ class TestRouter(unittest.TestCase):
         self.assertTrue(decision.escalate)
         self.assertIn("novelty", decision.triggers)
 
-    def test_spend_threshold_boundary(self) -> None:
-        self.assertEqual(SPEND_THRESHOLD_USD, 500.0)
-        self.assertTrue(decide_route(base(estimated_spend_usd=500.0)).escalate)
-        self.assertFalse(decide_route(base(estimated_spend_usd=499.99)).escalate)
-        self.assertIn("high_spend",
-                      decide_route(base(estimated_spend_usd=500.0)).triggers)
+    def test_estimated_spend_is_deferred_and_never_triggers(self) -> None:
+        # Michael 2026-10-27, comment 6460788465: estimated spend is
+        # DEFERRED, left undefined. The field is an optional
+        # placeholder only: no spend value escalates, blocks, or
+        # defines a threshold.
+        self.assertFalse(decide_route(base(estimated_spend_usd=500.0)).escalate)
+        self.assertFalse(decide_route(base(estimated_spend_usd=100000.0)).escalate)
+        self.assertNotIn("high_spend",
+                         decide_route(base(estimated_spend_usd=500.0)).triggers)
 
     def test_first_pass_verification_failure_escalates(self) -> None:
         decision = decide_route(base(first_pass_verified=False))

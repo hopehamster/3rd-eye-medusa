@@ -53,8 +53,10 @@ ESCALATION-ONLY: `research_agent/router.py` routes from the default
 composite+judge path on quantified triggers (conflict, novelty, spend
 >= $500, first-pass verification failure). See
 `research-deep-agent-spec.md` for the trigger definitions; the $500
-threshold is a fix-pass quantification, reviewable, not a
-Michael-approved number.
+figure is an owner-set placeholder, tuned by the cost-based method
+in that spec (escalation-cost vs. error-cost, retuned from overrides
+and outcomes once outcome records exist) — not a Michael-approved
+number and not a field-standard number.
 
 ## Boundary — what this leg deliberately does NOT do
 

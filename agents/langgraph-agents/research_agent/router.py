@@ -14,7 +14,12 @@ Michael may retune them, but they may not be left as prose):
   signals in total. One non-critical disagreement alone does not escalate.
 - novelty: has_score_history is False — the category/product has no
   prior composite-score history to judge against.
-- high_spend: estimated_spend_usd >= SPEND_THRESHOLD_USD (commitment).
+- high_spend: DEFERRED (Michael 2026-10-27, comment 6460788465:
+  estimated spend is deferred, playing by ear, left undefined).
+  estimated_spend_usd is kept as an optional placeholder field only:
+  it NEVER triggers escalation, NEVER blocks a route, and has NO
+  threshold defined anywhere in this module. Defining it, gating on
+  it, or inventing a spend figure would contradict the deferral.
 - first_pass_verification_failed: first_pass_verified is False — the
   default path's own first-pass verification (supplier proof / margin
   math re-check) did not pass.
@@ -26,9 +31,6 @@ deep agent itself never decides whether it should have run.
 from dataclasses import dataclass, field
 
 from research_agent.state import Signal
-
-#: Commitment/spend at or above which a candidate escalates (USD).
-SPEND_THRESHOLD_USD: float = 500.0
 
 #: Total disagreeing signals that escalate even with no critical family.
 CONFLICT_MIN_DISAGREEING_TOTAL: int = 2
@@ -67,8 +69,8 @@ def decide_route(inp: EscalationInput) -> RouteDecision:
         triggers.append("conflict")
     if not inp.has_score_history:
         triggers.append("novelty")
-    if inp.estimated_spend_usd >= SPEND_THRESHOLD_USD:
-        triggers.append("high_spend")
+    # No high_spend trigger: estimated spend is DEFERRED (see module
+    # docstring). The field is an optional placeholder only.
     if not inp.first_pass_verified:
         triggers.append("first_pass_verification_failed")
     if triggers:

@@ -1,5 +1,41 @@
 # LangChain offerings map — what the team should actually use (B3, issue #129)
 
+> SETTLEMENT BANNER (2026-10-27, per-agent decisions): items #2, #4,
+> and #15 in §6 below are SETTLED by the 2026-10-27 per-agent
+> decisions and are no longer open. The map's ADOPT / DECISION-NEEDED
+> verdicts on those items are SUPERSEDED — do not act on them. The
+> normative homes are `core-discipline.md` §8 and the decision
+> comments #121 comment 6447160149, #122 comment 6447160680, and
+> #128 comment 6447161191 (repo hopehamster/3rd-eye-medusa):
+> #2 deepagents → #122 is NOT adopted — #122 stays on its small
+> custom graph; #4 is narrower than the map's blanket ADOPT —
+> #124 is spec-only (no trial process, per Michael 2026-10-27,
+> comment 6460788465, DROPPED ruling), and #123 / #125 use
+> `create_agent` + `interrupt_on`; #15 version alignment is settled
+> as hold langgraph 0.2.45 through the #130/#131 merge decision,
+> then a separate upgrade-pins branch with a full suite re-run.
+> The rest of this map is unchanged survey material; where it
+> conflicts with §8 or the decision comments on #2 / #4 / #15,
+> §8 and the comments govern.
+>
+> SUPERSEDED ALSO (2026-10-27, round 2, same #128 comment
+> 6447161191): the FREE-ONLY SCOPE sentence "#128 (deepagents
+> harness vs core-only) is still open — both options are free"
+> is SUPERSEDED — #128 is settled per-agent, not open: #122
+> stays on its small custom graph; #123 / #125 use
+> `create_agent` + `interrupt_on`; #124 is spec-only (no trial
+> process, DROPPED ruling above); langgraph 0.2.45 is held through
+> the #130/#131 merge
+> decision, then a separate upgrade-pins branch. The free-only
+> scope itself (only free offerings) stands; only the "#128
+> still open" claim is superseded. §7 Q1 ("Amend #128 or keep
+> core-only?") and §7 Q3 (version-alignment branch) are likewise
+> SUPERSEDED as open proposals — both are answered by that
+> per-agent decision plus the pin hold, as annotated in place
+> in §7. Do not act on Q1 or Q3 as open questions. Item #8
+> (LangSmith Deployment vs B1 service) is untouched and remains
+> as written.
+
 > CORRECTION (2026-10-27, Michael's pointer): the survey's "no catalog of
 > ready-made skills" claim was WRONG. langchain-ai/langchain-skills
 > (public, MIT, 1,316 stars, updated 2026-10-26) is the official catalog:
@@ -20,7 +56,10 @@
 > offerings are OUT: LangSmith Deployment/Plus, Fleet, Engine, managed
 > paths requiring Plus. This settles survey Decision 2: SKIP Deployment,
 > B1 custom service stays. #128 (deepagents harness vs core-only) is
-> still open — both options are free.
+> still open — both options are free. [SUPERSEDED 2026-10-27 by
+> #128 comment 6447161191 — #128 is settled per-agent (see the
+> settlement banner above); only this "#128 still open" sentence
+> is superseded, the free-only scope itself stands.]
 
 Surveyor note, 2026-10-27. 3rd Eye Supply ONLY. Nothing here is live,
 deployed, or proven live — this is a survey + mapping, not a build.
@@ -383,7 +422,13 @@ only, never in code.
 
 ## 7. Decisions needed from Michael (proposals, NOT silent substitutions)
 
-1. **Amend #128 or keep core-only?** Adopting the deepagents harness
+1. **Amend #128 or keep core-only?** [SUPERSEDED 2026-10-27 by
+   #128 comment 6447161191 — answered per-agent, no longer an open
+   proposal: #122 stays on its small custom graph; #123 / #125 use
+   `create_agent` + `interrupt_on`; #124 is spec-only (no trial
+   process, per Michael 2026-10-27, comment 6460788465, DROPPED
+   ruling); no blanket harness blessing. See the settlement banner
+   above.] Adopting the deepagents harness
    (mapping #2) contradicts core-discipline.md §2 ("avoid by
    default: prebuilt agent frameworks, middleware stacks"). Either
    amend §2 to bless deepagents as the approved harness, or rule
@@ -395,7 +440,12 @@ only, never in code.
    and retires VPS service operation — at the cost of moving the
    agent runtime to LangChain's cloud and re-doing the n8n trigger
    shape against Deployment's API. No move without his go.
-3. **Version-alignment branch?** Mapping #15: approve a branch that
+3. **Version-alignment branch?** [SUPERSEDED 2026-10-27 by
+   #128 comment 6447161191 — answered by the pin hold, no longer
+   an open proposal: hold langgraph 0.2.45 through the #130/#131
+   merge decision, then a separate upgrade-pins branch with a
+   full suite re-run. See the settlement banner above.]
+   Mapping #15: approve a branch that
    upgrades langgraph/deepagents pins and re-runs every suite, or
    hold pins and accept that deepagents features newer than the pins
    are unavailable. Either is defensible; drifting is not.

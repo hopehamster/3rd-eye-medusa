@@ -30,10 +30,15 @@ class TestThreeSignalRule(unittest.TestCase):
         self.assertEqual(decide_verdict(signals).decision, "skip")
 
     def test_disagree_does_not_count_toward_agreement(self) -> None:
+        # Pre-veto version of this test expected LIST; the veto fold
+        # (Michael 2026-10-27) supersedes it: a disagreeing critical
+        # signal vetoes, so the count (3) no longer delivers a LIST.
         signals = [sig("social_velocity"), sig("search_demand"),
                    sig("supplier_proof", direction="disagree"), sig("margin_math")]
         self.assertEqual(count_agreeing_families(signals), 3)
-        self.assertEqual(decide_verdict(signals).decision, "list")
+        verdict = decide_verdict(signals)
+        self.assertEqual(verdict.decision, "skip")
+        self.assertEqual(verdict.vetoed_by, ["supplier_proof"])
 
     def test_verdict_carries_reasoning_confidence_and_approval_gate(self) -> None:
         verdict = decide_verdict([sig("social_velocity"), sig("search_demand"), sig("margin_math")])

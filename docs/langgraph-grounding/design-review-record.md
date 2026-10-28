@@ -87,7 +87,7 @@ been the alternative, the gate is human approval instead.
 
 | Action | Gate (this phase) | How it is enforced / where |
 |---|---|---|
-| LIST verdict → any catalog write | HUMAN APPROVAL. The verdict is a recommendation only; `requires_human_approval: true` on every verdict, and wired downstream code MUST check it before any catalog/order write. | Verdict field (B2) + wiring-leg check (B1) — the check itself is a wiring-leg requirement, recorded on #123/#124 specs (B2-8). Until that check exists in wired code, the gate holds on paper only. |
+| LIST verdict → any catalog write | HUMAN APPROVAL. The verdict is a recommendation only; `requires_human_approval: true` on every verdict, and wired downstream code MUST check it before any catalog/order write. | Verdict field (B2) + wiring-leg check (B1) — the check itself is a CODE REQUIREMENT (B2-8, see below), not a spec sentence. Until that check exists in wired code, the gate holds on paper only. |
 | SKIP verdict → anything | NO ACTION. A SKIP recommends nothing and touches nothing. | By construction (verdict only). |
 | Tool calls to n8n webhooks (scout/verify data gathering) | NO MONEY ACTION in the call itself; calls are authenticated per tool (env Authorization header), URL-validated (https, allowlist, DNS-resolved IP block), and idempotency-flagged per tool. | B1 `tools.py` (fixed). |
 | Fulfilment retry / refund (from #125 recommendations) | RECOMMEND-ONLY. The fulfilment agent recommends retry/refund/alert; a HUMAN executes any money action. Rule-gated execution is a later, separately approved scope, not this build. | #125 spec (fixed B2-6) + human execution. |
@@ -101,6 +101,136 @@ before it, since the node re-runs from its start on resume and a
 pre-gate side effect would execute twice. The effect itself must still
 be idempotent. No interrupt-gated action exists in the current graph;
 this rule binds the wiring leg when one is added.
+
+## B2-8 — approval-gate wiring as a CODE REQUIREMENT (adopted
+2026-10-27 fold)
+
+The gate was paper-only: a field on the verdict plus a spec sentence
+saying downstream code must check it. This record now REQUIRES the
+check in code — describing the gate is no longer sufficient, and no
+issue in this tree may be closed on the spec alone while the check
+is unwired. The wiring leg MUST implement all of the following:
+
+1. **The check:** before any catalog write, order write, or other
+   state-changing action driven by a verdict, wired code checks
+   that a human approved THAT specific verdict (matched by verdict
+   / run id, not by product name or by "a human approved something
+   recently"). If the check finds no such approval, the action is
+   REFUSED, the refusal is logged, and nothing is written.
+2. **The refusal test:** a test proving refusal without approval
+   (verdict with `requires_human_approval: true` and no human
+   approval → action refused, catalog unchanged) and a test proving
+   passage with approval (same verdict + recorded approval → action
+   proceeds). Both tests must pass in the wiring leg's suite; a
+   gate with only the passage test is unproven.
+3. **Veto + override handling in code:** a vetoed candidate's SKIP
+   verdict is the agent output; a human override LIST is a separate
+   recorded human decision (with reason) decided through the amber
+   queue with the full veto card — the same single approval
+   mechanism as every other override, not a path outside the queue
+   — that the check matches against, never a re-interpretation of
+   the agent verdict. Code must not convert a vetoed SKIP into a
+   LIST on its own. Override is Michael ONLY, with a fresh
+   supplier/margin re-check attached (Michael 2026-10-27, comment
+   6460788465); implemented in `research_agent/approval.py` and
+   reached from the B1 leg via `b1-service/app/approval_gate.py`,
+   with refusal and passage tests in both suites. Fixed 2026-10-27
+   against the code/security review blocks: the gate never trusts
+   the verdict's own `requires_human_approval` flag (every LIST
+   write needs a matching approval regardless); a non-veto LIST
+   passes only on kind `approve` with a non-empty approver and
+   reason (a `review` record is refused); Michael-only means a
+   verified approver id set by the wiring leg only from an
+   authenticated session, in the wiring leg's id-to-Michael
+   mapping — a bare name never passes and no override passes
+   without the mapping (fail closed), and no auth system is
+   invented here; the re-check is a structured reference (re-run
+   record id + timestamp + passed) verified by the wiring leg
+   against the real re-run before the Approval is minted, and a
+   bare boolean re-check flag is ignored by the gate. Tier
+   agreement: the vetoed verdict tiers red (`queue_tier`), the
+   separate override-decision item tiers amber
+   (`override_queue_tier`) — different items, both statements hold.
+   A verdict with no outcome record id is marked incomplete on the
+   Verdict itself and refused at the gate. Wiring-leg requirements
+   (not a claim of protection — no production call site exists in
+   team-work): the gate must be called before every
+   catalog/order/money write and fail closed on refusal; green
+   sampled audit requires owner-recorded proven criteria + owner
+   sign-off first, with revert to full review on audit errors.
+4. **Scope:** the same check shape applies to the #123 oracle path
+   (no state-changing action without the human gate) and the #124
+   dev path (no merge/deploy without recorded human review) — the
+   wiring leg implements the check once per action surface, not
+   once per spec sentence.
+
+Items 1–2 now exist in wired team-work code and pass in the
+suites (`research_agent/approval.py` + `tests/test_approval.py`,
+and the B1 adapter `b1-service/app/approval_gate.py` +
+`tests/test_approval_gate.py`), so the "holds on paper only"
+qualifier is lifted for the check itself. That is team-work
+code + offline tests, not live-service proof: no live catalog,
+order, or merge action has been gated by it yet, and that proof
+remains a QA / fact-check leg, not a claim made here.
+
+## Approval-queue tiers (adopted 2026-10-27 — detail in the research
+spec)
+
+Tiers apply to lower-risk steps only; they never auto-approve a
+LIST. Red = hard block (veto, critical-check failure, unresolved
+verification) that never enters the queue as an approvable item in
+the red tier; the only path past a veto is a human override
+decision taken through the amber queue with the full veto card —
+a recorded human decision, never a code conversion of a SKIP into
+a LIST and never an agent verdict. Amber = async human queue
+(every LIST verdict, every override, every delist recommendation,
+every money recommendation) with the full approval card inline.
+Green = auto-approved low-risk steps only (routine SKIPs,
+internal record writes, trace/dataset promotion) with audit at
+100% at first, dropping to a sample only once the audit process
+is proven (Michael 2026-10-27, comment 6460788465), and revert
+to amber on audit errors; a veto-SKIP is NOT a green item — a
+vetoed candidate is Red, and green covers routine SKIPs only
+(no veto, no critical failure, no weak/shaky critical
+disagreement); green never covers a LIST, a catalog write, a
+money action, or a delist. Machine pre-gates run before the
+queue: an item that fails a pre-gate is denied, it does not wait
+in the queue for a human to catch it. Override is Michael-only
+with a fresh re-check attached (see B2-8 item 3 above).
+
+## Tracing scope — free tier (adopted 2026-10-27)
+
+Tracing is sampled and scoped to the runs that matter, not turned
+on for everything, because the free tier is bounded (LangSmith
+Developer free tracing; overage figures in secondary sources
+conflict and must be verified on LangChain's pricing page before
+any cost is modelled or relied on). Scope, as a design requirement
+for the wiring leg:
+
+- **Trace:** the agent's list/skip judgement runs, in a dedicated
+  prod project — not n8n signal-gathering loops, not dev iterations.
+- **Always keep (tail-keep, implemented app-side):** runs that are
+  errors, low-confidence, signal-conflicted, vetoed, human-overridden,
+  or that later become listed products. LangSmith provides a
+  sampling knob, not a documented tail sampler, so keeping every
+  important run is app-side work (always trace those runs via a
+  tracing context), not a LangSmith setting to assume.
+- **Sample the rest:** routine unanimous SKIP / routine approve runs
+  are random-sampled for a baseline. No sample percentage is set
+  here — the field has no consensus figure; the rate is set to fit
+  the free-tier trace budget and tuned from volume, not copied
+  from a guide.
+- **Archive before retention expires:** important traces are
+  promoted to a dataset / exported before the retention window
+  ends, otherwise the verdict-to-outcome link the outcome record
+  depends on is lost. Tag runs (verdict, conflict flag, veto flag,
+  human decision) so the important ones are findable for that
+  promotion.
+
+Tracing and gating status: the tracing scope above is a design
+requirement, not a running setup; the prune job in §5 is likewise
+recorded, not built. Neither may be quoted as operating until the
+wiring leg builds it and QA checks it.
 
 ## §5 — Checkpointer + retention choice (core-discipline.md §5)
 
@@ -155,15 +285,32 @@ this rule binds the wiring leg when one is added.
 - **"Retry until correct" is prohibited:** no design in this record
   retries without a bound.
 - **Best-effort verdict shape (at the bound):** a full `Verdict` is
-  always delivered, never nothing and never a hang:
-  - `product`, `decision` ("list" | "skip" — family-count rule only),
+  always delivered, never nothing and never a hang, matching the
+  research spec verdict schema exactly:
+  - `product`, `decision` ("list" | "skip" — veto-first-then-count:
+    the veto check runs first on the final signals at verdict time,
+    and the 3-signal family count decides LIST-eligibility only
+    among candidates that pass the veto; a vetoed candidate is
+    never an agent LIST),
   - `agreeing_families` (the families that agreed),
-  - `reasoning` (family count vs the 3 required; "best-effort verdict:
-    verification did not pass within the attempt budget" when exhausted;
-    disagreeing families NAMED with signal name + evidence on any LIST;
-    confidence is informational, never a gate),
+  - `disagreeing_families` (all disagreeing families, critical and
+    soft, so no disagreement is hidden from the human approver),
+  - `vetoed_by` (every critical family whose disagreeing signal
+    vetoed a LIST; empty when no veto applies — a verdict with a
+    non-empty `vetoed_by` MUST have `decision: "skip"`),
+  - `reasoning` (veto status first, then family count vs the 3
+    required; "best-effort verdict: verification did not pass
+    within the attempt budget" when exhausted; disagreeing families
+    NAMED with signal name + evidence on any verdict — soft
+    disagreements named on a LIST, vetoing critical families named
+    on the veto-SKIP, since a vetoed candidate can never be an
+    agent LIST under the adopted veto rule; confidence is
+    informational, never a gate),
   - `confidence` (mean agreeing-signal strength, 0.0–1.0, informational),
-  - `requires_human_approval: true` (always, including LIST).
+  - `requires_human_approval: true` (always, including LIST),
+  - `outcome_record_id` (id of the outcome record for this
+    candidate, pre-created by the wiring leg — see the research
+    spec's verdict contract).
   Plus, outside the verdict itself: what failed is recorded in
   `state.errors` (planner/scout/verifier exceptions), and the
   verification state is False (failed) — never silently True.
