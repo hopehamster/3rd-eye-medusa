@@ -1,0 +1,59 @@
+# EXAMPLE ONLY — adapt before use. NOT a deployed control.
+#
+# Reverse-proxy front door for the 3rd Eye Supply agent service
+# (R-B1-4 / F-B1-6: rate limiting + body-size limits are deployment
+# controls, not code in app/). This file ships as an example to adapt:
+# copying it into place does NOT deploy anything, and the shipped
+# docker-compose.yml stays a LOCAL-DEV-ONLY snippet (host port mappings
+# + placeholder credentials) that must not be carried to a real deploy.
+#
+# Adaptation checklist before use:
+# - Listen ONLY on the private n8n<->service network interface (replace
+#   the listen address below); never expose this service publicly.
+# - Point proxy_pass at the real service address (container name or
+#   private IP + port 8000). Postgres gets NO host port mapping in
+#   production and stays on the private network only.
+# - Tune the rate zone + burst and the body limit to the real traffic
+#   shape; the values below are starting points, not measured limits.
+# - Terminate TLS at this proxy if the private network does not already
+#   provide it; tool webhooks themselves must still be https (see
+#   app/tools.py — the service validates tool URLs, not this proxy).
+# - Keep AGENT_SHARED_SECRET + tool auth values in env only, never in
+#   this file.
+
+# Rate-limit zone: 10 requests/second per client IP, 10 MB of state.
+# (Shared with limit_req below; burst absorbs short spikes.)
+limit_req_zone $binary_remote_addr zone=agent_service:10m rate=10r/s;
+
+server {
+    # PRIVATE interface only — replace with the real private address.
+    listen 127.0.0.1:8080;
+    server_name agent-service.private;
+
+    # Body-size limit (F-B1-6): /agent/run bodies are small JSON
+    # (run_id + input). Anything larger is rejected before the app.
+    client_max_body_size 1m;
+
+    # Rate limit (F-B1-6): 10 req/s sustained, burst 20, no delay for
+    # the burst (nodelay keeps legitimate bursts fast; sustained
+    # abuse past the burst gets 503).
+    limit_req zone=agent_service burst=20 nodelay;
+
+    # Do not leak version details to callers.
+    server_tokens off;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        # Never forward or log Authorization-style secrets at this layer;
+        # the app logs only a generic rejection, never a secret value.
+        proxy_read_timeout 60s;
+        proxy_send_timeout 60s;
+    }
+
+    # Liveness probe stays cheap and unauthenticated by design in the
+    # app (/health returns no data); it still passes through the same
+    # rate + body limits above.
+}

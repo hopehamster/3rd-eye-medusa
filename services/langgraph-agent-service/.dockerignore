@@ -1,0 +1,7 @@
+# Keep bytecode and local venvs out of the image (F1: Dockerfile COPYs app/,
+# and test runs create app/__pycache__ in the worktree).
+__pycache__/
+**/__pycache__/
+*.pyc
+**/*.pyc
+.venv/
