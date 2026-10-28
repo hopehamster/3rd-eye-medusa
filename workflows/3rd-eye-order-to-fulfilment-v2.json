@@ -1,0 +1,1780 @@
+{
+  "active": false,
+  "connections": {
+    "Order webhook": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Verify + Normalize",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Verify + Normalize": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Signature valid?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Signature valid?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Has items?",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Bad-signature throttle",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Bad-signature throttle": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Alert: bad signature",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Alert: bad signature": {
+      "main": [
+        []
+      ]
+    },
+    "Has items?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Dedupe check",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Alert: empty order",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Alert: empty order": {
+      "main": [
+        []
+      ]
+    },
+    "Dedupe check": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Duplicate?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Duplicate?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Duplicate alert throttle",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "CJ get access token",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Duplicate alert throttle": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Alert: duplicate delivery",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Alert: duplicate delivery": {
+      "main": [
+        []
+      ]
+    },
+    "CJ get access token": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "CJ token",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "CJ token": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Token ok?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Token ok?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Split order lines",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Alert: CJ token failed",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Alert: CJ token failed": {
+      "main": [
+        []
+      ]
+    },
+    "Split order lines": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Has CJ variant id?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Has CJ variant id?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "CJ stock by vid",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "CJ stock by sku",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "CJ stock by vid": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Merge stock results",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "CJ stock by sku": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Merge stock results",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Merge stock results": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Evaluate stock",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Evaluate stock": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "All in stock?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "All in stock?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Build CJ order body",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Backorder: email customer",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Backorder: email customer": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Alert: backorder",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Alert: backorder": {
+      "main": [
+        []
+      ]
+    },
+    "Build CJ order body": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "CJ create order",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "CJ create order": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Evaluate PO",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Evaluate PO": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "PO ok?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "PO ok?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "CJ pay balance",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "PO duplicate?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "PO duplicate?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Alert: PO duplicate",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Dead-letter PO",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Alert: PO duplicate": {
+      "main": [
+        []
+      ]
+    },
+    "Dead-letter PO": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Alert: PO failed",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Alert: PO failed": {
+      "main": [
+        []
+      ]
+    },
+    "CJ pay balance": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Evaluate payment",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Evaluate payment": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Payment ok?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Payment ok?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "CJ order detail",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Alert: payment failed",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Alert: payment failed": {
+      "main": [
+        []
+      ]
+    },
+    "CJ order detail": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Capture tracking",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Capture tracking": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Tracking present?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Tracking present?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Medusa mark fulfilled",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Mark awaiting tracking",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Mark awaiting tracking": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Alert: awaiting tracking",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Alert: awaiting tracking": {
+      "main": [
+        []
+      ]
+    },
+    "Medusa mark fulfilled": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Mark succeeded",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Mark succeeded": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Email customer (tracking)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Email customer (tracking)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Slack: fulfilled",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Slack: fulfilled": {
+      "main": [
+        []
+      ]
+    },
+    "Inventory sync (6h)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "CJ get access token (sync)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "CJ get access token (sync)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "CJ token (sync)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "CJ token (sync)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Token ok? (sync)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Token ok? (sync)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "CJ inventory pull",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Alert: CJ sync token failed",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Alert: CJ sync token failed": {
+      "main": [
+        []
+      ]
+    },
+    "CJ inventory pull": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Diff + low-stock digest",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Diff + low-stock digest": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Slack: low-stock digest",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Slack: low-stock digest": {
+      "main": [
+        []
+      ]
+    },
+    "Bad-signature digest (15m)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Build window digest",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Build window digest": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Slack: window digest",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Slack: window digest": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "name": "3rd Eye - Order to Fulfilment (Medusa to CJ) v2",
+  "nodes": [
+    {
+      "id": "f01",
+      "name": "Order webhook",
+      "parameters": {
+        "httpMethod": "POST",
+        "options": {},
+        "path": "medusa-order",
+        "responseMode": "onReceived"
+      },
+      "position": [
+        240,
+        360
+      ],
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2
+    },
+    {
+      "id": "f02",
+      "name": "Verify + Normalize",
+      "parameters": {
+        "jsCode": "// Shared-secret check, FIXED-LENGTH loop (F-A1-3): the loop always runs\n// secret.length iterations, padding a short provided value with 0, so the\n// iteration count cannot leak the provided length. No Node crypto is used:\n// crypto would need NODE_FUNCTION_ALLOW_BUILTIN=crypto on the instance,\n// which is not guaranteed. Empty secret fails closed.\n// NOTE (F6, honest flag): this is a shared-secret header agreed with\n// Medusa (x-medusa-secret = WEBHOOK_SECRET), NOT an HMAC/body signature.\n// Medusa does not send an HMAC-signed webhook for this flow, so no HMAC\n// scheme is invented here. See SETUP for the accepted replay risk.\n// R-A1-5: order_id_safe / source_safe are the ONLY alert-safe forms of\n// the attacker-controlled order id and x-forwarded-for values \u2014 Slack\n// texts must interpolate the _safe fields, never the raw fields.\n// Sanitize strips Slack formatting/mention characters (@ # < > ` * ~ &)\n// and control characters, then truncates; legit id chars (-, _) survive.\nconst sanitize = (v, max) => String(v == null ? '' : v)\n  .replace(/[@#<>`*~&\\r\\n\\t\\x00-\\x1F\\x7F]/g, '').slice(0, max);\nconst headers = $input.first().json.headers || {};\nconst body = $input.first().json.body || {};\nconst secret = $env.WEBHOOK_SECRET || '';\nconst provided = headers['x-medusa-secret'] || '';\nconst header_present = provided !== '';\nlet diff = (provided.length === secret.length) ? 0 : 1;\nfor (let i = 0; i < secret.length; i++) {\n  const p = (i < provided.length) ? provided.charCodeAt(i) : 0;\n  diff |= (p ^ secret.charCodeAt(i));\n}\nconst valid = diff === 0 && secret.length > 0;\nconst addr = body.shipping_address || {};\nconst rawItems = body.items || [];\nconst items = rawItems.map((i) => ({\n  item_id: i.id || '',\n  sku: i.variant_sku || (i.variant && i.variant.sku) || i.title || 'unknown',\n  cj_variant_id: (i.metadata && i.metadata.cj_variant_id) || '',\n  qty: (typeof i.quantity === 'number' && i.quantity > 0) ? i.quantity : 1,\n}));\nconst first = addr.first_name || '';\nconst last = addr.last_name || '';\nconst order_id = body.id || body.display_id || '';\nconst source = headers['x-forwarded-for'] || headers['x-real-ip'] || '';\nreturn [{ json: {\n  valid, header_present,\n  order_id, missing_order_id: (order_id === ''),\n  order_id_safe: sanitize(order_id, 80),\n  source_safe: sanitize(source, 64),\n  items_empty: items.length === 0,\n  email: (body.customer && body.customer.email) || body.email || '',\n  customer_name: ((first + ' ' + last).trim()) || '',\n  items,\n  shipping_address: addr,\n  source,\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        480,
+        360
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 3
+    },
+    {
+      "id": "f03",
+      "name": "Signature valid?",
+      "parameters": {
+        "conditions": [
+          {
+            "id": "c1",
+            "leftValue": "={{ $json.valid }}",
+            "operator": {
+              "name": "filter.operator.boolean.true",
+              "operation": "true",
+              "type": "boolean"
+            },
+            "rightValue": true
+          }
+        ],
+        "options": {
+          "caseSensitive": true,
+          "leftValue": "",
+          "typeValidation": "loose",
+          "version": 2
+        }
+      },
+      "position": [
+        720,
+        360
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "f04",
+      "name": "Bad-signature throttle",
+      "parameters": {
+        "jsCode": "// F-A1-1 + R-A1-1/R-A1-2: one bad-signature Slack alert per 15-minute\n// window. Repeats in the same window are suppressed and counted; the\n// count surfaces as suppressed_prev on the next window's first alert\n// AND in the scheduled window-close digest (Build window digest), which\n// consumes the window \u2014 a digested count is never reported twice.\n// Counts are per order id (perKey) plus a DISTINCT missing-id count:\n// missing-id deliveries are never collapsed under one shared key.\n// R-A1-5: the alert carries order_id_safe / source_safe only (same\n// sanitize as Verify: formatting/mention chars stripped, truncated).\nconst sanitize = (v, max) => String(v == null ? '' : v)\n  .replace(/[@#<>`*~&\\r\\n\\t\\x00-\\x1F\\x7F]/g, '').slice(0, max);\nconst staticData = $getWorkflowStaticData('global');\nstaticData.badSig = staticData.badSig || { bucket: -1, count: 0, alerted: false, perKey: {}, missing: 0 };\nconst bucket = Math.floor(Date.now() / 900000);\nconst orderId = $json.order_id || '';\nconst missing = (!orderId || orderId === 'unknown');\nconst safe = { order_id_safe: sanitize(orderId, 80), source_safe: sanitize($json.source || '', 64) };\nif (bucket !== staticData.badSig.bucket) {\n  const suppressed_prev = staticData.badSig.alerted ? (staticData.badSig.count - 1) : 0;\n  staticData.badSig = { bucket, count: 1, alerted: true,\n    perKey: missing ? {} : { [orderId]: 1 }, missing: missing ? 1 : 0 };\n  return [{ json: { ...$json, ...safe, suppressed_prev } }];\n}\nstaticData.badSig.count += 1;\nif (missing) { staticData.badSig.missing += 1; }\nelse { staticData.badSig.perKey[orderId] = (staticData.badSig.perKey[orderId] || 0) + 1; }\nreturn [];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        720,
+        640
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 3
+    },
+    {
+      "id": "f05",
+      "name": "Alert: bad signature",
+      "parameters": {
+        "channel": "#ops",
+        "operation": "post",
+        "resource": "message",
+        "text": "=Bad webhook signature dropped at {{ $now }}. order {{ $json.order_id_safe }}, source {{ $json.source_safe }}, header {{ $json.header_present ? 'wrong' : 'missing' }}, suppressed in prior window: {{ $json.suppressed_prev }}. No order processed. The presented secret is never logged. Interpolated values are sanitized (formatting/mention characters stripped, truncated) by the throttle node."
+      },
+      "position": [
+        960,
+        640
+      ],
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3
+    },
+    {
+      "id": "f06",
+      "name": "Has items?",
+      "parameters": {
+        "conditions": [
+          {
+            "id": "c1",
+            "leftValue": "={{ !$json.items_empty }}",
+            "operator": {
+              "name": "filter.operator.boolean.true",
+              "operation": "true",
+              "type": "boolean"
+            },
+            "rightValue": true
+          }
+        ],
+        "options": {
+          "caseSensitive": true,
+          "leftValue": "",
+          "typeValidation": "loose",
+          "version": 2
+        }
+      },
+      "position": [
+        960,
+        360
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "f07",
+      "name": "Alert: empty order",
+      "parameters": {
+        "channel": "#ops",
+        "operation": "post",
+        "resource": "message",
+        "text": "=Empty order dropped: order {{ $json.order_id_safe }} has no line items. No CJ call made."
+      },
+      "position": [
+        960,
+        120
+      ],
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3
+    },
+    {
+      "id": "f08",
+      "name": "Dedupe check",
+      "parameters": {
+        "jsCode": "// F3 / F-A1-4: OUTCOME-AWARE dedupe. States: in_flight (claimed at\n// start, NOT terminal), succeeded, needs_lookup, payment_failed,\n// awaiting_tracking (block a webhook redelivery), failed, backordered\n// (ALLOW a legitimate retry). A missing order id is NEVER recorded:\n// it returns duplicate=true with reason missing_order_id, which routes\n// to the duplicate alert and stops \u2014 never to a CJ call, never to the\n// shared 'unknown' key. Cap 5000, transient states pruned first, FIFO.\n// Static data survives restarts in n8n's DB but is LOST on workflow\n// re-import/deletion \u2014 see SETUP for the Data Table activation step.\n// Dedupe is NOT replay protection (see SETUP, F-A1-2).\nconst staticData = $getWorkflowStaticData('global');\nstaticData.orders = staticData.orders || {};\nconst orderId = $json.order_id;\nif (!orderId || orderId === 'unknown' || $json.missing_order_id) {\n  return [{ json: { ...$json, duplicate: true, duplicate_reason: 'missing_order_id' } }];\n}\nconst state = staticData.orders[orderId] ? staticData.orders[orderId].state : '';\nconst blocking = ['in_flight', 'succeeded', 'needs_lookup', 'payment_failed', 'awaiting_tracking'];\nif (blocking.includes(state)) {\n  return [{ json: { ...$json, duplicate: true, duplicate_reason: state } }];\n}\n// failed / backordered / absent: allowed to run; claim as in_flight.\nstaticData.orders[orderId] = { state: 'in_flight', at: new Date().toISOString() };\nconst PROTECTED = ['succeeded', 'needs_lookup', 'payment_failed', 'awaiting_tracking'];\nlet keys = Object.keys(staticData.orders);\nwhile (keys.length > 5000) {\n  const victim = keys.find((k) => !PROTECTED.includes(staticData.orders[k].state)) || keys[0];\n  delete staticData.orders[victim];\n  keys = keys.filter((k) => k !== victim);\n}\nreturn [{ json: { ...$json, duplicate: false, duplicate_reason: '' } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1200,
+        360
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 3
+    },
+    {
+      "id": "f09",
+      "name": "Duplicate?",
+      "parameters": {
+        "conditions": [
+          {
+            "id": "c1",
+            "leftValue": "={{ $json.duplicate }}",
+            "operator": {
+              "name": "filter.operator.boolean.true",
+              "operation": "true",
+              "type": "boolean"
+            },
+            "rightValue": true
+          }
+        ],
+        "options": {
+          "caseSensitive": true,
+          "leftValue": "",
+          "typeValidation": "loose",
+          "version": 2
+        }
+      },
+      "position": [
+        1440,
+        360
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "f10",
+      "name": "Duplicate alert throttle",
+      "parameters": {
+        "jsCode": "// F-A1-4 + R-A1-1: the FIRST duplicate for an order_id alerts; repeats\n// increment a counter in static data instead of firing another Slack\n// message. That is aggregation after an alert, not a silent drop \u2014 the\n// first duplicate was alerted, and the counts surface in the scheduled\n// window-close digest (Build window digest). Missing-id deliveries are\n// NEVER keyed under a shared 'missing' order: they increment the\n// distinct duplicateMissing counter, alert on the first missing\n// delivery, and the digest re-arms that alert \u2014 so a missing-id probe\n// flood surfaces every window instead of going invisible after one.\n// R-A1-5: the alert carries order_id_safe only.\nconst sanitize = (v, max) => String(v == null ? '' : v)\n  .replace(/[@#<>`*~&\\r\\n\\t\\x00-\\x1F\\x7F]/g, '').slice(0, max);\nconst staticData = $getWorkflowStaticData('global');\nstaticData.duplicateAlerted = staticData.duplicateAlerted || {};\nstaticData.duplicateMissing = staticData.duplicateMissing || 0;\nstaticData.duplicateMissingAlerted = staticData.duplicateMissingAlerted || false;\nconst orderId = $json.order_id || '';\nconst missing = (!orderId || orderId === 'unknown' || $json.missing_order_id);\nconst safe = { order_id_safe: sanitize(orderId, 80) };\nif (missing) {\n  staticData.duplicateMissing += 1;\n  if (staticData.duplicateMissingAlerted) return [];\n  staticData.duplicateMissingAlerted = true;\n  return [{ json: { ...$json, ...safe, duplicate_reason: 'missing_order_id' } }];\n}\nif (staticData.duplicateAlerted[orderId]) {\n  staticData.duplicateAlerted[orderId] += 1;\n  return [];\n}\nstaticData.duplicateAlerted[orderId] = 1;\nreturn [{ json: { ...$json, ...safe } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1440,
+        640
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 3
+    },
+    {
+      "id": "f11",
+      "name": "Alert: duplicate delivery",
+      "parameters": {
+        "channel": "#ops",
+        "operation": "post",
+        "resource": "message",
+        "text": "=Duplicate delivery dropped: order {{ $json.order_id_safe }} (reason: {{ $json.duplicate_reason }}). Already recorded \u2014 no second CJ order created. Repeats for this order are counted, not re-alerted; per-order and missing-id counts surface in the 15-minute window digest."
+      },
+      "position": [
+        1680,
+        640
+      ],
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3
+    },
+    {
+      "id": "f12",
+      "name": "CJ get access token",
+      "parameters": {
+        "authentication": "none",
+        "method": "POST",
+        "url": "= {{ $env.CJ_API_BASE + '/authentication/getAccessToken' }}",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "jsonBody": "= {{ { apiKey: $env.CJ_API_KEY } }}",
+        "sendBody": true,
+        "specifyBody": "json"
+      },
+      "position": [
+        1680,
+        360
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "f13",
+      "name": "CJ token",
+      "parameters": {
+        "jsCode": "// CJ getAccessToken envelope: {code, result, data: {accessToken}}.\n// An error envelope (token expired / 401-shaped) yields token '' so the\n// Token ok? branch alerts and stops instead of calling CJ with an empty\n// header. A bare accessToken without result+code is NOT accepted.\nconst data = $input.first().json || {};\nconst ok = data.result === true && data.code === 200;\nconst token = ok ? ((data.data && data.data.accessToken) || '') : '';\nreturn [{ json: { token, token_ok: token !== '' } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1920,
+        360
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 3
+    },
+    {
+      "id": "f14",
+      "name": "Token ok?",
+      "parameters": {
+        "conditions": [
+          {
+            "id": "c1",
+            "leftValue": "={{ $json.token_ok }}",
+            "operator": {
+              "name": "filter.operator.boolean.true",
+              "operation": "true",
+              "type": "boolean"
+            },
+            "rightValue": true
+          }
+        ],
+        "options": {
+          "caseSensitive": true,
+          "leftValue": "",
+          "typeValidation": "loose",
+          "version": 2
+        }
+      },
+      "position": [
+        2160,
+        360
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "f15",
+      "name": "Alert: CJ token failed",
+      "parameters": {
+        "channel": "#ops",
+        "operation": "post",
+        "resource": "message",
+        "text": "=CJ token failed for order {{ $('Dedupe check').first().json.order_id }}. No CJ call made; check CJ_API_KEY and retry."
+      },
+      "position": [
+        2160,
+        640
+      ],
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3
+    },
+    {
+      "id": "f16",
+      "name": "Split order lines",
+      "parameters": {
+        "jsCode": "// One item per order line, each carrying its own line_key: the CJ\n// variant id when known, else the SKU. The stock branch routes on that\n// key (queryByVid vs queryBySku); Evaluate stock matches on engine\n// pairing + vid echo, never on result order.\nconst src = $('Dedupe check').first().json;\nreturn (src.items || []).map((item) => ({ json: {\n  order_id: src.order_id, email: src.email,\n  customer_name: src.customer_name,\n  shipping_address: src.shipping_address,\n  items: src.items,\n  item: { ...item, line_key: item.cj_variant_id || item.sku },\n} }));",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        2400,
+        360
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 3
+    },
+    {
+      "id": "f17",
+      "name": "Has CJ variant id?",
+      "parameters": {
+        "conditions": [
+          {
+            "id": "c1",
+            "leftValue": "={{ !!$json.item.cj_variant_id }}",
+            "operator": {
+              "name": "filter.operator.boolean.true",
+              "operation": "true",
+              "type": "boolean"
+            },
+            "rightValue": true
+          }
+        ],
+        "options": {
+          "caseSensitive": true,
+          "leftValue": "",
+          "typeValidation": "loose",
+          "version": 2
+        }
+      },
+      "position": [
+        2640,
+        360
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "f18",
+      "name": "CJ stock by vid",
+      "parameters": {
+        "authentication": "none",
+        "method": "GET",
+        "url": "= {{ $env.CJ_API_BASE + '/product/stock/queryByVid?vid=' + $json.item.cj_variant_id }}",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "CJ-Access-Token",
+              "value": "= {{ $('CJ token').first().json.token }}"
+            }
+          ]
+        },
+        "sendHeaders": true
+      },
+      "position": [
+        2880,
+        200
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "f19",
+      "name": "CJ stock by sku",
+      "parameters": {
+        "authentication": "none",
+        "method": "GET",
+        "url": "= {{ $env.CJ_API_BASE + '/product/stock/queryBySku?sku=' + $json.item.sku }}",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "CJ-Access-Token",
+              "value": "= {{ $('CJ token').first().json.token }}"
+            }
+          ]
+        },
+        "sendHeaders": true
+      },
+      "position": [
+        2880,
+        520
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "f20",
+      "name": "Merge stock results",
+      "parameters": {
+        "mode": "append"
+      },
+      "position": [
+        3120,
+        360
+      ],
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3
+    },
+    {
+      "id": "f21",
+      "name": "Evaluate stock",
+      "parameters": {
+        "jsCode": "// F1 + F5: per-line stock, matched by n8n engine pairing (pairedItem),\n// NOT by result order. Each result must also pass result+code; a vid\n// result whose data.vid disagrees with the paired line is a shortage and\n// sets stock_match_mismatch. A count mismatch shortages EVERY line.\n// Unknown/error stock = shortage, never assumed stock. Bool is not a\n// number here (typeof true is 'boolean', so it shortages correctly).\n// Backorder state is recorded here (decision node) so the 6h digest can\n// re-check it (F8) and a later redelivery may retry.\nconst src = $('Dedupe check').first().json;\nconst lines = $('Split order lines').all().map((i) => i.json.item);\nconst results = $input.all();\nconst shortages = [];\nlet stock_match_mismatch = false;\nlet count_mismatch = false;\nif (results.length !== lines.length) {\n  count_mismatch = true;\n  lines.forEach((item) => shortages.push(item.sku));\n} else {\n  const byPaired = {};\n  results.forEach((r) => {\n    const idx = (r.pairedItem && typeof r.pairedItem.item === 'number') ? r.pairedItem.item : null;\n    if (idx !== null) byPaired[idx] = r.json;\n  });\n  lines.forEach((item, idx) => {\n    const res = byPaired[idx] || null;\n    if (!res || res.result !== true || res.code !== 200) { shortages.push(item.sku); return; }\n    const data = res.data || {};\n    if (item.cj_variant_id && data.vid && String(data.vid) !== String(item.cj_variant_id)) {\n      shortages.push(item.sku); stock_match_mismatch = true; return;\n    }\n    const avail = data.totalInventoryNum;\n    if (typeof avail !== 'number' || avail < item.qty) shortages.push(item.sku);\n  });\n}\nif (shortages.length > 0 && src.order_id && src.order_id !== 'unknown') {\n  const sd = $getWorkflowStaticData('global');\n  sd.orders = sd.orders || {};\n  sd.orders[src.order_id] = { state: 'backordered', at: new Date().toISOString(),\n    shortages: lines.filter((l) => shortages.includes(l.sku)).map((l) => ({ sku: l.sku, qty: l.qty })) };\n}\nreturn [{ json: {\n  order_id: src.order_id, email: src.email,\n  customer_name: src.customer_name,\n  shipping_address: src.shipping_address,\n  items: src.items, all_in_stock: shortages.length === 0, shortages,\n  stock_match_mismatch, count_mismatch,\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        3360,
+        360
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 3
+    },
+    {
+      "id": "f22",
+      "name": "All in stock?",
+      "parameters": {
+        "conditions": [
+          {
+            "id": "c1",
+            "leftValue": "={{ $json.all_in_stock }}",
+            "operator": {
+              "name": "filter.operator.boolean.true",
+              "operation": "true",
+              "type": "boolean"
+            },
+            "rightValue": true
+          }
+        ],
+        "options": {
+          "caseSensitive": true,
+          "leftValue": "",
+          "typeValidation": "loose",
+          "version": 2
+        }
+      },
+      "position": [
+        3600,
+        360
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "f23",
+      "name": "Backorder: email customer",
+      "parameters": {
+        "emailType": "text",
+        "fromEmail": "= {{ $env.SMTP_FROM }}",
+        "message": "Hi, thanks for your 3rd Eye order. One of your items is on backorder with our supplier \u2014 we will ship it as soon as it is back in stock and email your tracking then.",
+        "subject": "Your 3rd Eye order is on backorder",
+        "toEmail": "= {{ $('Evaluate stock').first().json.email }}"
+      },
+      "position": [
+        3600,
+        640
+      ],
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1
+    },
+    {
+      "id": "f24",
+      "name": "Alert: backorder",
+      "parameters": {
+        "channel": "#ops",
+        "operation": "post",
+        "resource": "message",
+        "text": "=Backorder: order {{ $('Evaluate stock').first().json.order_id }}, shortages: {{ $('Evaluate stock').first().json.shortages.join(', ') }}. Customer emailed. The 6h digest re-checks this order when stock returns."
+      },
+      "position": [
+        3840,
+        640
+      ],
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3
+    },
+    {
+      "id": "f25",
+      "name": "Build CJ order body",
+      "parameters": {
+        "jsCode": "// F2 + F7: the createOrderV3 body, built in one place. payType is FIXED\n// at 3 (create-only) \u2014 there is no payType env to flip, silently or\n// otherwise; payment is the separate explicit payBalanceV2 step.\n// shippingCountry prefers a country NAME when Medusa supplies one\n// (shipping_address.country); it falls back to the country CODE, which\n// CJ requires as a separate field \u2014 that fallback is a recorded known\n// limit (SETUP), not a claim that code == name. Products carry vid when\n// a CJ variant id is known, else sku (CJ: vid/sku cannot both be null;\n// sku looks the variant up when vid is missing).\nconst src = $('Evaluate stock').first().json;\nconst addr = src.shipping_address || {};\nconst code = (addr.country_code || '').toUpperCase();\nconst products = (src.items || []).map((i) => {\n  const p = { sku: i.sku,\n    quantity: (typeof i.qty === 'number' && i.qty > 0) ? i.qty : 1,\n    storeLineItemId: i.item_id };\n  if (i.cj_variant_id) p.vid = i.cj_variant_id;\n  return p;\n});\nreturn [{ json: { body: {\n  orderNumber: src.order_id,\n  shippingZip: addr.postal_code || '',\n  shippingCountryCode: code,\n  shippingCountry: addr.country || code,\n  shippingProvince: addr.province || '',\n  shippingCity: addr.city || '',\n  shippingCustomerName: src.customer_name || '',\n  shippingAddress: addr.address_1 || '',\n  shippingAddress2: addr.address_2 || '',\n  shippingPhone: addr.phone || '',\n  email: src.email,\n  logisticName: $env.CJ_LOGISTIC_NAME,\n  fromCountryCode: $env.CJ_FROM_COUNTRY_CODE,\n  payType: 3,\n  products,\n} } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        3840,
+        360
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 3
+    },
+    {
+      "id": "f26",
+      "name": "CJ create order",
+      "parameters": {
+        "authentication": "none",
+        "method": "POST",
+        "url": "= {{ $env.CJ_API_BASE + '/shopping/order/createOrderV3' }}",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "CJ-Access-Token",
+              "value": "= {{ $('CJ token').first().json.token }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "jsonBody": "= {{ $('Build CJ order body').first().json.body }}",
+        "sendBody": true,
+        "specifyBody": "json"
+      },
+      "position": [
+        4080,
+        360
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "f27",
+      "name": "Evaluate PO",
+      "parameters": {
+        "jsCode": "// F3 + F5: PO outcome requires result AND code==200. A message naming\n// ORDER_CODE_EXIST means the CJ order ALREADY EXISTS: set state\n// needs_lookup (blocks a re-PO redelivery) and route to the lookup\n// alert \u2014 never to the generic dead-letter path. A plain failure keeps\n// the dead-letter path, which records state failed (retry allowed).\nconst res = $input.first().json || {};\nconst msg = res.message || '';\nconst duplicate = /ORDER_CODE_EXIST/i.test(msg);\nconst ok = res.result === true && res.code === 200;\nconst data = res.data || {};\nconst prev = $('Evaluate stock').first().json;\nif (duplicate && prev.order_id) {\n  const sd = $getWorkflowStaticData('global');\n  sd.orders = sd.orders || {};\n  sd.orders[prev.order_id] = { state: 'needs_lookup', at: new Date().toISOString() };\n}\nreturn [{ json: { ...prev,\n  po_ok: ok, po_duplicate: duplicate,\n  po_status: ok ? 'ok' : (duplicate ? 'duplicate' : 'failed'),\n  cj_order_id: ok ? (data.orderId || '') : '',\n  shipment_order_id: ok ? (data.shipmentOrderId || '') : '',\n  po_code: res.code, po_message: msg,\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        4320,
+        360
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 3
+    },
+    {
+      "id": "f28",
+      "name": "PO ok?",
+      "parameters": {
+        "conditions": [
+          {
+            "id": "c1",
+            "leftValue": "={{ $json.po_ok }}",
+            "operator": {
+              "name": "filter.operator.boolean.true",
+              "operation": "true",
+              "type": "boolean"
+            },
+            "rightValue": true
+          }
+        ],
+        "options": {
+          "caseSensitive": true,
+          "leftValue": "",
+          "typeValidation": "loose",
+          "version": 2
+        }
+      },
+      "position": [
+        4560,
+        360
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "f29",
+      "name": "PO duplicate?",
+      "parameters": {
+        "conditions": [
+          {
+            "id": "c1",
+            "leftValue": "={{ $json.po_duplicate }}",
+            "operator": {
+              "name": "filter.operator.boolean.true",
+              "operation": "true",
+              "type": "boolean"
+            },
+            "rightValue": true
+          }
+        ],
+        "options": {
+          "caseSensitive": true,
+          "leftValue": "",
+          "typeValidation": "loose",
+          "version": 2
+        }
+      },
+      "position": [
+        4560,
+        640
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "f30",
+      "name": "Alert: PO duplicate",
+      "parameters": {
+        "channel": "#ops",
+        "operation": "post",
+        "resource": "message",
+        "text": "=PO DUPLICATE \u2014 already exists, look it up: order {{ $json.order_id }} already exists in CJ (ORDER_CODE_EXIST). Do NOT re-create it. Look up the CJ order by orderNumber {{ $json.order_id }}, then pay/track it by hand if needed. No dead-letter entry made."
+      },
+      "position": [
+        4800,
+        640
+      ],
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3
+    },
+    {
+      "id": "f31",
+      "name": "Dead-letter PO",
+      "parameters": {
+        "jsCode": "// Exactly one dead-letter entry per order_id; a second failure for the\n// same order re-alerts but does not duplicate the entry. State failed\n// deliberately ALLOWS a manual webhook retry (F-A1-4: the old text told\n// ops to retry manually while dedupe silently dropped that retry).\nconst staticData = $getWorkflowStaticData('global');\nstaticData.failed = staticData.failed || [];\nstaticData.orders = staticData.orders || {};\nconst orderId = $json.order_id;\nif (orderId && $json.po_status === 'failed') {\n  if (!staticData.failed.some((f) => f.order_id === orderId)) {\n    staticData.failed.push({ order_id: orderId, at: new Date().toISOString(),\n      reason: 'CJ create order failed' });\n  }\n  staticData.orders[orderId] = { state: 'failed', at: new Date().toISOString() };\n}\nreturn [{ json: $json }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        4800,
+        880
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 3
+    },
+    {
+      "id": "f32",
+      "name": "Alert: PO failed",
+      "parameters": {
+        "channel": "#ops",
+        "operation": "post",
+        "resource": "message",
+        "text": "=PO FAILED for order {{ $json.order_id }} (code {{ $json.po_code }}). Written to dead-letter list. A manual webhook retry is allowed (failed state permits a retry run) \u2014 do not create the CJ order by hand, or the retry will hit ORDER_CODE_EXIST."
+      },
+      "position": [
+        5040,
+        880
+      ],
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3
+    },
+    {
+      "id": "f33",
+      "name": "CJ pay balance",
+      "parameters": {
+        "authentication": "none",
+        "method": "POST",
+        "url": "= {{ $env.CJ_API_BASE + '/shopping/pay/payBalanceV2' }}",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "CJ-Access-Token",
+              "value": "= {{ $('CJ token').first().json.token }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "jsonBody": "= {{ { shipmentOrderId: $json.shipment_order_id } }}",
+        "sendBody": true,
+        "specifyBody": "json"
+      },
+      "position": [
+        4800,
+        360
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "f34",
+      "name": "Evaluate payment",
+      "parameters": {
+        "jsCode": "// F2: payBalanceV2 outcome requires result AND code==200. On failure\n// the CJ order exists UNPAID: set state payment_failed (blocks a re-PO\n// redelivery \u2014 the order must be paid by hand in CJ, never re-created)\n// and route to the payment-failed alert.\nconst res = $input.first().json || {};\nconst ok = res.result === true && res.code === 200;\nconst prev = $('Evaluate PO').first().json;\nif (!ok && prev.order_id) {\n  const sd = $getWorkflowStaticData('global');\n  sd.orders = sd.orders || {};\n  sd.orders[prev.order_id] = { state: 'payment_failed', at: new Date().toISOString() };\n}\nreturn [{ json: { ...prev, payment_ok: ok, payment_code: res.code } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        5040,
+        360
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 3
+    },
+    {
+      "id": "f35",
+      "name": "Payment ok?",
+      "parameters": {
+        "conditions": [
+          {
+            "id": "c1",
+            "leftValue": "={{ $json.payment_ok }}",
+            "operator": {
+              "name": "filter.operator.boolean.true",
+              "operation": "true",
+              "type": "boolean"
+            },
+            "rightValue": true
+          }
+        ],
+        "options": {
+          "caseSensitive": true,
+          "leftValue": "",
+          "typeValidation": "loose",
+          "version": 2
+        }
+      },
+      "position": [
+        5280,
+        360
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "f36",
+      "name": "Alert: payment failed",
+      "parameters": {
+        "channel": "#ops",
+        "operation": "post",
+        "resource": "message",
+        "text": "=CJ PAYMENT FAILED for order {{ $json.order_id }} (code {{ $json.payment_code }}). The CJ order exists UNPAID \u2014 pay it by hand in CJ, do NOT re-create it. No shipped email sent."
+      },
+      "position": [
+        5280,
+        640
+      ],
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3
+    },
+    {
+      "id": "f37",
+      "name": "CJ order detail",
+      "parameters": {
+        "authentication": "none",
+        "method": "GET",
+        "url": "= {{ $env.CJ_API_BASE + '/shopping/order/getOrderDetail?orderId=' + $json.cj_order_id }}",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "CJ-Access-Token",
+              "value": "= {{ $('CJ token').first().json.token }}"
+            }
+          ]
+        },
+        "sendHeaders": true
+      },
+      "position": [
+        5520,
+        360
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "f38",
+      "name": "Capture tracking",
+      "parameters": {
+        "jsCode": "// getOrderDetail envelope: {code, result, data: {trackNumber,\n// trackingProvider, cjOrderId, ...}}. An error envelope yields no\n// tracking (never a stale number). trackNumber is empty until SHIPPED,\n// so tracking_present gates the shipped email and Medusa fulfillment.\nconst res = $input.first().json || {};\nconst data = (res.result === true && res.code === 200) ? (res.data || {}) : {};\nconst prev = $('Evaluate payment').first().json;\nconst tracking_number = data.trackNumber || '';\nreturn [{ json: { ...prev,\n  tracking_number, tracking_present: tracking_number !== '',\n  carrier: data.trackingProvider || '',\n  cj_order_id: data.cjOrderId || data.orderId || prev.cj_order_id || '',\n} }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        5760,
+        360
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 3
+    },
+    {
+      "id": "f39",
+      "name": "Tracking present?",
+      "parameters": {
+        "conditions": [
+          {
+            "id": "c1",
+            "leftValue": "={{ $json.tracking_present }}",
+            "operator": {
+              "name": "filter.operator.boolean.true",
+              "operation": "true",
+              "type": "boolean"
+            },
+            "rightValue": true
+          }
+        ],
+        "options": {
+          "caseSensitive": true,
+          "leftValue": "",
+          "typeValidation": "loose",
+          "version": 2
+        }
+      },
+      "position": [
+        6000,
+        360
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "f40",
+      "name": "Mark awaiting tracking",
+      "parameters": {
+        "jsCode": "// Paid in CJ, tracking not yet present: block redelivery (the order is\n// already in CJ \u2014 a re-PO would hit ORDER_CODE_EXIST). Retry of a\n// failed Medusa-marking step happens from the n8n execution list, not\n// by webhook resend.\nconst sd = $getWorkflowStaticData('global');\nsd.orders = sd.orders || {};\nif ($json.order_id) sd.orders[$json.order_id] = { state: 'awaiting_tracking', at: new Date().toISOString() };\nreturn [{ json: $json }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        6000,
+        640
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 3
+    },
+    {
+      "id": "f41",
+      "name": "Alert: awaiting tracking",
+      "parameters": {
+        "channel": "#ops",
+        "operation": "post",
+        "resource": "message",
+        "text": "=PO placed and PAID, awaiting tracking: order {{ $json.order_id }}, CJ order {{ $json.cj_order_id }}. No shipped email sent. Re-check tracking via a CJ order-detail lookup; do not re-PO (dedupe blocks redelivery for paid orders \u2014 retry a failed execution from the execution list if Medusa marking failed)."
+      },
+      "position": [
+        6240,
+        640
+      ],
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3
+    },
+    {
+      "id": "f42",
+      "name": "Medusa mark fulfilled",
+      "parameters": {
+        "authentication": "none",
+        "method": "POST",
+        "url": "= {{ $env.MEDUSA_API_BASE + '/admin/orders/' + $json.order_id + '/fulfillments' }}",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-medusa-access-token",
+              "value": "= {{ $env.MEDUSA_ADMIN_TOKEN }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "jsonBody": "= {{ { items: $json.items.map((i) => ({ item_id: i.item_id, quantity: i.qty })), labels: [{ tracking_number: $json.tracking_number }] } }}",
+        "sendBody": true,
+        "specifyBody": "json"
+      },
+      "position": [
+        6240,
+        360
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "f43",
+      "name": "Mark succeeded",
+      "parameters": {
+        "jsCode": "// Terminal success (R-A1-5 correction): this moves the order's dedupe\n// state from the in_flight claim \u2014 which ALREADY blocks redelivery at\n// intake \u2014 to the terminal succeeded block. The terminal state is the\n// durable block, not the first block: a redelivery is blocked from the\n// moment Dedupe check claims the order, and stays blocked once it\n// succeeds. A failed execution before this node leaves the order\n// in awaiting_tracking, retried from the execution list.\nconst sd = $getWorkflowStaticData('global');\nsd.orders = sd.orders || {};\nif ($json.order_id) sd.orders[$json.order_id] = { state: 'succeeded', at: new Date().toISOString() };\nreturn [{ json: $json }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        6480,
+        360
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 3
+    },
+    {
+      "id": "f44",
+      "name": "Email customer (tracking)",
+      "parameters": {
+        "emailType": "text",
+        "fromEmail": "= {{ $env.SMTP_FROM }}",
+        "message": "=Good news \u2014 your 3rd Eye order shipped. Tracking: {{ $json.tracking_number }} ({{ $json.carrier }}).",
+        "subject": "Your 3rd Eye order shipped",
+        "toEmail": "= {{ $json.email }}"
+      },
+      "position": [
+        6720,
+        360
+      ],
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1
+    },
+    {
+      "id": "f45",
+      "name": "Slack: fulfilled",
+      "parameters": {
+        "channel": "#ops",
+        "operation": "post",
+        "resource": "message",
+        "text": "=Order fulfilled: {{ $json.order_id }}, tracking {{ $json.tracking_number }}."
+      },
+      "position": [
+        6960,
+        360
+      ],
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3
+    },
+    {
+      "id": "f46",
+      "name": "Inventory sync (6h)",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "position": [
+        240,
+        1000
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "id": "f47",
+      "name": "CJ get access token (sync)",
+      "parameters": {
+        "authentication": "none",
+        "method": "POST",
+        "url": "= {{ $env.CJ_API_BASE + '/authentication/getAccessToken' }}",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "jsonBody": "= {{ { apiKey: $env.CJ_API_KEY } }}",
+        "sendBody": true,
+        "specifyBody": "json"
+      },
+      "position": [
+        480,
+        1000
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "f48",
+      "name": "CJ token (sync)",
+      "parameters": {
+        "jsCode": "// CJ getAccessToken envelope: {code, result, data: {accessToken}}.\n// An error envelope (token expired / 401-shaped) yields token '' so the\n// Token ok? branch alerts and stops instead of calling CJ with an empty\n// header. A bare accessToken without result+code is NOT accepted.\nconst data = $input.first().json || {};\nconst ok = data.result === true && data.code === 200;\nconst token = ok ? ((data.data && data.data.accessToken) || '') : '';\nreturn [{ json: { token, token_ok: token !== '' } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        720,
+        1000
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 3
+    },
+    {
+      "id": "f49",
+      "name": "Token ok? (sync)",
+      "parameters": {
+        "conditions": [
+          {
+            "id": "c1",
+            "leftValue": "={{ $json.token_ok }}",
+            "operator": {
+              "name": "filter.operator.boolean.true",
+              "operation": "true",
+              "type": "boolean"
+            },
+            "rightValue": true
+          }
+        ],
+        "options": {
+          "caseSensitive": true,
+          "leftValue": "",
+          "typeValidation": "loose",
+          "version": 2
+        }
+      },
+      "position": [
+        960,
+        1000
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "id": "f50",
+      "name": "Alert: CJ sync token failed",
+      "parameters": {
+        "channel": "#ops",
+        "operation": "post",
+        "resource": "message",
+        "text": "=CJ token failed on 6h sync. No inventory pull made; check CJ_API_KEY."
+      },
+      "position": [
+        960,
+        1240
+      ],
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3
+    },
+    {
+      "id": "f51",
+      "name": "CJ inventory pull",
+      "parameters": {
+        "authentication": "none",
+        "method": "GET",
+        "url": "= {{ $env.CJ_API_BASE + '/product/listV2?page=1&size=100' }}",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "CJ-Access-Token",
+              "value": "= {{ $('CJ token (sync)').first().json.token }}"
+            }
+          ]
+        },
+        "sendHeaders": true
+      },
+      "position": [
+        1200,
+        1000
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "f52",
+      "name": "Diff + low-stock digest",
+      "parameters": {
+        "jsCode": "// listV2 envelope: {code, result, data: {content: [{productList:\n// [...]}], totalRecords, pageSize, pageNumber}}. Dropship filter:\n// digest ONLY. CJ fulfills, so this branch never writes Medusa stock\n// levels. F7: truncation is SURFACED (totalRecords beyond page 1 of\n// 100), not silently dropped \u2014 full paging is a follow-up (SETUP).\n// F8: backordered orders are re-checked against the pulled catalogue;\n// backorder_ready lists orders whose shortage SKUs are all back in\n// stock at the needed quantities, and backorders_pending lists every\n// backordered order for a manual re-check of the rest.\nconst data = ($input.first().json.data) || {};\nconst content = data.content || [];\nconst products = [];\ncontent.forEach((c) => (c.productList || []).forEach((p) => products.push(p)));\nconst low = products\n  .filter((p) => (typeof p.warehouseInventoryNum !== 'number' ? 0 : p.warehouseInventoryNum) < 5)\n  .map((p) => ({ sku: p.sku || '', name: p.nameEn || '',\n    inventory: p.warehouseInventoryNum || 0 }));\nconst totalRecords = data.totalRecords || 0;\nconst pageSize = data.pageSize || 100;\nconst pageNumber = data.pageNumber || 1;\nconst truncated = totalRecords > pageSize * pageNumber;\nconst sd = $getWorkflowStaticData('global');\nsd.orders = sd.orders || {};\nconst backorders = Object.entries(sd.orders)\n  .filter(([, v]) => v.state === 'backordered')\n  .map(([order_id, v]) => ({ order_id, shortages: v.shortages || [] }));\nconst backorder_ready = backorders\n  .filter((o) => o.shortages.length > 0 && o.shortages.every((s) => {\n    const p = products.find((pp) => pp.sku === s.sku);\n    return p && typeof p.warehouseInventoryNum === 'number' && p.warehouseInventoryNum >= s.qty;\n  }))\n  .map((o) => o.order_id);\nreturn [{ json: { low_stock: low, count: low.length,\n  at: new Date().toISOString(), totalRecords, truncated,\n  backorders_pending: backorders.map((o) => o.order_id), backorder_ready } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        1440,
+        1000
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 3
+    },
+    {
+      "id": "f53",
+      "name": "Slack: low-stock digest",
+      "parameters": {
+        "channel": "#ops",
+        "operation": "post",
+        "resource": "message",
+        "text": "=Low-stock digest (6h sync): {{ $json.count }} SKUs under 5 units. Total catalogue records: {{ $json.totalRecords }}{{ $json.truncated ? ' \u2014 TRUNCATED to page 1 (100); page through listV2 before trusting completeness.' : '' }} Backorders pending: {{ $json.backorders_pending.join(', ') || 'none' }}. Back in stock: {{ $json.backorder_ready.join(', ') || 'none' }} \u2014 re-check those orders."
+      },
+      "position": [
+        1680,
+        1000
+      ],
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3
+    },
+    {
+      "id": "f56",
+      "name": "Bad-signature digest (15m)",
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "position": [
+        240,
+        1400
+      ],
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2
+    },
+    {
+      "id": "f57",
+      "name": "Build window digest",
+      "parameters": {
+        "jsCode": "// R-A1-1/R-A1-2: scheduled window-close digest, fired every 15 minutes\n// by the Bad-signature digest (15m) Schedule Trigger. ALWAYS returns\n// one item \u2014 even with all-zero totals \u2014 so every window's total is\n// reported without waiting for another bad signature. Consumes the\n// bad-signature window (badSig reset) and advances the duplicate\n// watermark, so no count is ever reported twice. Missing-id duplicate\n// deliveries are reported as duplicate_missing_total and re-armed\n// (duplicateMissingAlerted reset), so they can never go invisible\n// after one alert. Per-order keys in the Slack text are sanitized\n// (formatting/mention chars stripped) before joining.\nconst sanitize = (v, max) => String(v == null ? '' : v)\n  .replace(/[@#<>`*~&\\r\\n\\t\\x00-\\x1F\\x7F]/g, '').slice(0, max);\nconst sd = $getWorkflowStaticData('global');\nconst bad = sd.badSig || { bucket: -1, count: 0, perKey: {}, missing: 0 };\nsd.duplicateAlerted = sd.duplicateAlerted || {};\nsd.duplicateDigestWatermark = sd.duplicateDigestWatermark || {};\nsd.duplicateMissing = sd.duplicateMissing || 0;\nconst dupPerOrder = {};\nlet dupSuppressed = 0;\nObject.entries(sd.duplicateAlerted).forEach(([orderId, count]) => {\n  const suppressed = count - 1;\n  const delta = suppressed - (sd.duplicateDigestWatermark[orderId] || 0);\n  if (delta > 0) dupPerOrder[orderId] = delta;\n  sd.duplicateDigestWatermark[orderId] = suppressed;\n});\nObject.values(dupPerOrder).forEach((n) => { dupSuppressed += n; });\nconst dupMissing = sd.duplicateMissing;\nconst report = {\n  window_bucket: (bad.bucket != null && bad.bucket >= 0) ? bad.bucket : 'none',\n  bad_signature_total: bad.count || 0,\n  bad_signature_per_order: bad.perKey || {},\n  bad_signature_missing: bad.missing || 0,\n  bad_signature_per_order_safe: Object.entries(bad.perKey || {})\n    .map(([k, v]) => sanitize(k, 80) + ':' + v),\n  duplicate_suppressed_total: dupSuppressed,\n  duplicate_suppressed_per_order: dupPerOrder,\n  duplicate_suppressed_per_order_safe: Object.entries(dupPerOrder)\n    .map(([k, v]) => sanitize(k, 80) + ':' + v),\n  duplicate_missing_total: dupMissing,\n  total_events: (bad.count || 0) + dupSuppressed + dupMissing,\n};\n// Consume: the next window starts clean; missing duplicates re-arm.\nsd.badSig = { bucket: -1, count: 0, alerted: false, perKey: {}, missing: 0 };\nsd.duplicateMissing = 0;\nsd.duplicateMissingAlerted = false;\nreturn [{ json: report }];",
+        "mode": "runOnceForAllItems"
+      },
+      "position": [
+        480,
+        1400
+      ],
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 3
+    },
+    {
+      "id": "f58",
+      "name": "Slack: window digest",
+      "parameters": {
+        "channel": "#ops",
+        "operation": "post",
+        "resource": "message",
+        "text": "=Window digest (bad signatures + duplicates, always reported): bad signatures {{ $json.bad_signature_total }} (missing-id {{ $json.bad_signature_missing }}; per order: {{ $json.bad_signature_per_order_safe.join(', ') || 'none' }}), duplicates suppressed {{ $json.duplicate_suppressed_total }} (per order: {{ $json.duplicate_suppressed_per_order_safe.join(', ') || 'none' }}), missing-id duplicates {{ $json.duplicate_missing_total }}. Window bucket {{ $json.window_bucket }}. A zero total is a real report: no bad signatures or duplicates in this window."
+      },
+      "position": [
+        720,
+        1400
+      ],
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3
+    },
+    {
+      "id": "f54",
+      "name": "SETUP \u2014 read first",
+      "parameters": {
+        "color": 4,
+        "content": "SETUP (do before activating) \u2014 v2 FIXED per review (#112 fulfilment,\n#113 security). Workflow stays INACTIVE until the reviewer + QA gates\npass AND every activation gate below is done. Nothing here is live.\nENV (placeholders only, never real values): WEBHOOK_SECRET (must match\nthe secret Medusa sends as x-medusa-secret), CJ_API_BASE =\nhttps://developers.cjdropshipping.com/api2.0/v1, CJ_API_KEY (CJ API key,\nexchanged for a token \u2014 never sent as Bearer), CJ_LOGISTIC_NAME (from a\nCJ freight calculation for the destination), CJ_FROM_COUNTRY_CODE\n(shipment origin, two-letter code), MEDUSA_API_BASE, MEDUSA_ADMIN_TOKEN\n(a Medusa SECRET API KEY for server-to-server calls, sent as\nx-medusa-access-token \u2014 see F4; a JWT goes as Bearer and expires, so do\nnot put a JWT here), SMTP_FROM. REMOVED: the payType env flip (the silent env\nvariable is gone; payment is the explicit payBalanceV2 step, F2).\nACTIVATION GATES (all must be done; none is claimed as done in JSON):\n1. WEBHOOK REACHABILITY (F-A1-1, private-network route): the webhook\nURL must be reachable ONLY from Medusa / the private network \u2014 this\nn8n instance is Tailscale-private by deployment, not by workflow JSON,\nso confirm that binding before activation. ALSO set the Order webhook\nnode Authentication = Header Auth with a header-auth credential for\nx-medusa-secret (a credential id cannot be invented in JSON, so it is\nNOT configured in this file \u2014 attaching it is an activation step, and\nthe downstream Verify node stays as defence in depth). Bad-signature\nalerts are throttled to one per 15-minute window (repeats counted and\nsurfaced on the next window's alert AND in the scheduled window-close\ndigest, which ALWAYS reports the closed window's total \u2014 even zero \u2014\nso a burst ending inside one window is never buried).\n2. REPLAY RISK \u2014 ACCEPTED IN WRITING (F-A1-2, activation gate): the\nshared secret is a plain replayable header, NOT an HMAC/body signature\nwith a timestamp or nonce. Medusa does not send an HMAC-signed webhook\nfor this flow, so no HMAC scheme is invented. ACCEPTED RISK: anyone who\ncaptures a valid webhook (secret + body) inside the private network\ncould replay it. Mitigations: private-network-only reachability (gate\n1), the secret is checked before ANY side effect, and terminal-state\ndedupe drops a replay after success. Dedupe is NOT replay protection:\na replay before terminal success can still run, and dedupe must never\nbe described as replay protection. Rotation plan: on suspected\nexposure, generate a new WEBHOOK_SECRET, update Medusa's webhook\nconfiguration and the n8n env in the same change, and change the\nwebhook path (a new path kills the old URL); the old secret is invalid\nfrom the moment the env is saved. Rotate on any exposure suspicion and\nat least on operator change.\nOWNER / SIGN-OFF / REVIEW DATE (R-A1-3 \u2014 the acceptance record):\nOwner: UNASSIGNED \u2014 activation must name an owner before activation;\nno owner is invented here. Sign-off: PENDING \u2014 no sign-off is recorded\nin this file, so this acceptance is NOT signed until the named owner\nsigns it. Review date: within 30 days of activation and on any exposure\nsuspicion (a rule, not a past date \u2014 no date is invented here).\nBLAST RADIUS, stated plainly (R-A1-3): a pre-success replay runs the\nFULL path, including CJ create-order AND payBalanceV2 \u2014 that is money\nout to CJ for an order Medusa may not have placed twice, plus a Medusa\nfulfilment marking for a duplicate shipment. Not just a duplicate\nrecord.\nDETECTION for a valid-secret replay (R-A1-3): a replay carrying the\ncorrect secret passes Verify SILENTLY \u2014 there is no in-workflow signal\nbefore terminal success. What catches it: (1) after terminal success,\ndedupe raises a duplicate alert (throttled, but its counts surface in\nevery window digest); (2) CJ order reconciliation against Medusa\norders \u2014 regularly match CJ orders by orderNumber to Medusa orders and\nalert on CJ orders with NO matching Medusa order (unmatched CJ orders\nare the replay signal). Before terminal success, reconciliation is the\nonly detection \u2014 run it; do not rely on the duplicate alert alone.\nCOMPROMISE AUDIT / RECONCILE (R-A1-3, on suspected exposure, WITH\nrotation): list every CJ order created during the exposure window,\nmatch each to a Medusa order by orderNumber, and refund/void every\nunmatched CJ order (unpaid: void/cancel in CJ; paid: refund via CJ /\nMedusa as applicable) before considering the exposure closed.\nRotation alone does not close an exposure.\nACTIVATION EVIDENCE CHECKLIST (R-A1-4): these controls are NOT IN PLACE.\nEach item must be completed AND evidenced before activation,\nand release must not describe them as in place until then; the\nworkflow stays INACTIVE until then):\n- Private-network binding evidence: record the binding check (what was\n  checked, the result, the date, the checker). Workflow JSON cannot\n  prove a binding \u2014 the Tailscale-private deployment claim must be\n  confirmed and written down here.\n- Header Auth credential: attach a header-auth credential for\n  x-medusa-secret to the Order webhook node and record its credential\n  id here. NO credential id exists in this JSON today \u2014 the webhook\n  node carries no credentials key, verified \u2014 and none is invented.\n- Bad-signature rejection test: send a delivery with a WRONG secret\n  and one with NO secret to the activation test URL, and record both\n  rejections (execution shows Verify invalid + bad-signature alert,\n  and NO CJ call) before activation.\n- Window-close digest firing: confirm the 15-minute digest Schedule\n  Trigger actually fires in the n8n UI and posts a window total,\n  including a zero-total window. The digest Schedule node follows the\n  same interval pattern as the 6h sync Schedule node in this file,\n  but offline JSON cannot prove a trigger fires \u2014 the firing itself\n  is activation evidence, not an assumption.\n3. DURABLE DEDUPE (F3): workflow static data is NOT durable across\nworkflow re-import/deletion and is capped at 5000 (transient states\npruned first). Before scale, replace the Dedupe check / Mark nodes'\nstatic-data store with a Data Table keyed on order_id carrying the\nsame outcome states (in_flight, succeeded, failed, backordered,\nneeds_lookup, payment_failed, awaiting_tracking). Until then, the\ndurable backstop is CJ itself: orderNumber uniqueness + the\nORDER_CODE_EXIST lookup branch (never a silent re-PO, never a\ndouble-ship from a lost dedupe entry alone).\n4. MEDUSA LIVE CONFIRMATION (F4, still Hana's activation gate, NOT\nclaimed here): endpoint POST /admin/orders/:id/fulfillments with body\n{items: [{item_id, quantity}], labels: [{tracking_number}]} is cited\nfrom the Medusa JS SDK (sdk.admin.order.createFulfillment, same path in\nv2; items is the required body field) and Medusa's auth separation\n(API token = x-medusa-access-token for server-to-server, Bearer\nreserved for JWT sessions \u2014 medusajs.com/blog/new-authentication-\nmethods). What is NOT yet confirmed against the DEPLOYED 2.21.2\ninstance (repo apps/backend package.json, read-only): the exact token\ntype that instance accepts for this route, whether it requires a\nlocation_id for stock-location allocation, AND whether the v2 items\nfield is `item_id` (as cited from the v1 docs above) or v2's `id` \u2014\nthe field name is NOT asserted here; it is a gate item to confirm\nagainst the deployed instance before activation. Confirm all three\nagainst the deployed instance before activation; if a location is\nrequired, add a MEDUSA_LOCATION_ID env and send location_id \u2014 do not\nguess it here.\n5. MIXED vid+sku PAIRING LIVE PROOF (B1, live proof requirement\nbefore activation): run a minimal 2-line mixed order \u2014 one line\ncarrying cj_variant_id (vid path) and one sku-only line \u2014 through\nIF \u2192 HTTP \u2192 Merge-append in a live n8n run, and observe the actual\npairedItem values on the merged stock results. PASS CRITERION: each\nstock result attributes to its own Split-order line \u2014 the vid-branch\nresult to the vid line (also confirmed by the data.vid echo) and the\nsku-branch result to the sku line. Count agreement alone is NOT a\npass: counts match even when attribution is wrong. Branch-local\npairing is UNPROVEN offline \u2014 n8n's exact pairedItem behavior through\nIF \u2192 HTTP \u2192 Merge-append cannot be verified from JSON \u2014 so this\nlive test is the proof, and mixed orders must not activate until it\npasses. If the live test shows a mismatch, the keyed-accumulator\nrestructure (Loop Over Items batch 1, line_key carried through)\nnamed in the F5 residual note becomes the REQUIRED fix before\nactivation; do not activate on a failing pairing test.\nCITATIONS (endpoint + doc URL + section):\n- CJ getAccessToken POST /authentication/getAccessToken, body {apiKey},\n  returns data.accessToken (180 days) \u2014\n  https://developers.cjdropshipping.com/en/api/api2/api/auth.html \u00a71.1\n  Authentication; token mechanism:\n  https://developers.cjdropshipping.com/en/api/start/token.html\n- CJ calls authenticate with the CJ-Access-Token header (NOT Bearer) \u2014\n  https://developers.cjdropshipping.cn/en/api/api2/api/product.html \u00a73\n  Inventory error codes (1600002: send a valid token in CJ-Access-Token)\n- CJ stock by vid GET /product/stock/queryByVid?vid=\u2026 returns\n  data.totalInventoryNum and echoes data.vid \u2014\n  https://developers.cjdropshipping.cn/en/api/api2/api/product.html \u00a73.1\n  Inventory Inquiry\n- CJ stock by SKU GET /product/stock/queryBySku?sku=\u2026 returns\n  data.totalInventoryNum (response does NOT echo the sku \u2014 matching\n  uses n8n engine pairing, F5) \u2014\n  same Product doc \u00a73.2 Query Inventory by SKU\n- CJ create order POST /shopping/order/createOrderV3, required:\n  orderNumber, shippingCountryCode + shippingCountry (BOTH required),\n  shippingProvince, shippingCity, shippingCustomerName,\n  shippingAddress, logisticName, fromCountryCode, products [{sku,\n  quantity, storeLineItemId}] (vid and sku cannot both be null; sku\n  alone resolves the variant when vid is missing), payType 2=balance /\n  3=create only, returns data.orderId / orderNumber / shipmentOrderId \u2014\n  https://developers.cjdropshipping.cn/en/api/api2/api/shopping.html \u00a71.2\n- CJ pay POST /shopping/pay/payBalanceV2, body {shipmentOrderId}\n  (default, no orderType = normal dropshipping order) \u2014\n  same Shopping doc \u00a77.9 Balance Payment V2 (the workflow's ONLY\n  payment step; activating the workflow approves this step \u2014 check the\n  CJ balance is funded before activation)\n- CJ order detail GET /shopping/order/getOrderDetail?orderId=\u2026 returns\n  data.trackNumber / trackingProvider (empty until SHIPPED) \u2014\n  same Shopping doc \u00a71.7 Query Order\n- CJ 6h sync GET /product/listV2?page&size returns\n  data.content[].productList[] with warehouseInventoryNum, plus\n  totalRecords/totalPages; size max 100, page max 1000 \u2014\n  same Product doc \u00a71.2 Product List V2 (digest only \u2014 CJ fulfills, no\n  Medusa stock writes)\n- Medusa create fulfillment POST /admin/orders/:id/fulfillments, body\n  {items: [{item_id, quantity}], labels: [{tracking_number}]} \u2014\n  https://docs.medusajs.com/v1/modules/orders/admin/manage-orders\n  (Manage Order Fulfillments) + JS SDK createFulfillment; auth:\n  https://medusajs.com/blog/new-authentication-methods (API token via\n  x-medusa-access-token; Bearer reserved for JWT).\nPAYMENT PATH (F2, the one explicit path): create-only (payType 3) \u2192\npayBalanceV2 with the returned shipmentOrderId \u2192 tracking re-check\n(getOrderDetail) \u2192 Medusa fulfilment. No payType env, no auto-charge\nat creation, no second payment route. A payBalanceV2 failure leaves\nthe CJ order UNPAID (state payment_failed): pay it by hand in CJ, never\nre-create it.\nVID MAPPING (F1, resolved for stock + PO): stock uses cj_variant_id\n(Medusa line-item metadata) when present, else queryBySku; PO sends\nvid when present, else sku. Populate cj_variant_id on variants for\nexact CJ variant matching, but the SKU path is now documented and\ntested, not a fallback that errors into a false backorder.\nKNOWN LIMITS (recorded, not papered over):\n- shippingCountry: CJ requires a country NAME, but Medusa addresses\n  carry country_code (and a country name only when the webhook payload\n  includes one). The body prefers addr.country and falls back to the\n  code \u2014 that fallback may be rejected by CJ for some destinations.\n  Follow-up: a country-code\u2192name map at the Build node, or a Medusa\n  address enrichment, before relying on code-only destinations.\n- Sync pagination: listV2 page 1 / size 100 only. Truncation is\n  SURFACED in the digest (totalRecords + truncated flag), but a\n  catalogue over 100 SKUs is not fully digested. Follow-up: page loop\n  through totalPages.\n- HTTP-level failures (a CJ/Medusa call returning a non-2xx status, a\n  timeout, a DNS failure) use n8n's default Stop Workflow: the\n  execution is marked FAILED and visible \u2014 it is not silently\n  proceeded past. Envelope-level errors (HTTP 200 with result=false)\n  ARE handled in Code nodes. Attach an Error Workflow at activation\n  so failed executions alert #ops; do not wire an invented\n  error-output connection in JSON.\n- Webhook auth (F6): x-medusa-secret is an agreed shared secret, NOT\n  a Medusa-documented HMAC scheme. It is honestly flagged here and in\n  the Verify node; the Header Auth activation gate (gate 1) is the\n  node-level control that rejects unauthenticated hits before an\n  execution starts.\n- Stock pairing residual (F5): the vid branch is cross-checked by the\n  data.vid echo, but the sku branch has no response echo, so its match\n  rests on n8n's automatic item pairing plus the count guard. Branch-\n  local pairing is UNPROVEN offline: nothing in the workflow sets\n  pairedItem explicitly on Split outputs and the two branches each\n  emit their own index sequence, so under branch-local pairing\n  semantics both branches emit pairedItem 0 and the byPaired map can\n  collide \u2014 a sku-branch result landing on a vid line, or vice versa.\n  The vid-echo cross-check does not cover this and the count guard\n  does not help. Gate 5 (mixed vid+sku pairing live proof) is the\n  required proof before activation. If that live test shows a\n  mismatch, the follow-up BECOMES the required fix: a Loop Over Items\n  (batch 1) stock check with a keyed accumulator \u2014 named here, not\n  built now, and not built on the reviewer's 0.75-confidence offline\n  theory alone.\nOTHER SETUP: connect Slack (#ops) + SMTP credentials; point Medusa\norder webhooks at this workflow's production URL; webhook responseMode\nis onReceived, so a 200 ack means RECEIVED, not verified or processed\n\u2014 bad signatures are dropped after the ack and never processed.\nFailed executions are retried from the n8n execution list, NOT by\nwebhook resend, for orders already in CJ (dedupe blocks those\nresends by design). Workflow stays INACTIVE until reviewer + QA gates\npass.",
+        "height": 300,
+        "width": 900
+      },
+      "position": [
+        240,
+        60
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "f55",
+      "name": "SOURCE",
+      "parameters": {
+        "color": 5,
+        "content": "SOURCE (v2 FIXED per review #112/#113): v1 structure corrected\nagainst public docs, not just transcribed, then fixed again against\nthe fulfilment + security reviews. Community patterns kept:\norder-to-fulfilment in one run (topic 312679: signature check, dedupe,\nstock check, PO, tracking, backorder branch, 6h sync), PO/inventory\nidempotency + dedupe guards (topic 316681), supplier-API HTTP nodes\nwith business rules before send + delta-only updates (topic 308744).\nCorrections the threads missed: CJ-Access-Token auth (not Bearer API\nkey), per-variant stock (no batch endpoint) with the documented\nqueryBySku path for SKU-only lines, tracking gated on getOrderDetail\n(createOrder returns no tracking), Medusa fulfillment body {items,\nlabels} with the API-token header, CJ result+code success envelopes,\nORDER_CODE_EXIST as a lookup branch, and ONE explicit payment path\n(create-only + payBalanceV2 + tracking re-check, no env flip).\nDropship filter: CJ fulfills, no inventory held \u2014 the 6h branch is a\nlow-stock + backorder-recheck digest only.",
+        "height": 300,
+        "width": 900
+      },
+      "position": [
+        1200,
+        60
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    }
+  ],
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
