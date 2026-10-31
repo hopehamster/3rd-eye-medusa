@@ -7,13 +7,12 @@
  *
  * Product selection (see filterShelfProducts):
  *  1. Products whose metadata.intents include the shelf slug win first.
- *     (Product metadata carries no intents yet; this takes over the moment
- *     the catalog gets tagged, with no code change.)
- *  2. Until then, the curated `handles` list below decides membership.
+ *     As of 2026-10-31 every published product carries intents, so this is the
+ *     live path — not a dormant one.
+ *  2. The curated `handles` list below is the fallback for anything untagged.
  *
- * COPY STATUS: headlines, intros and usage bullets are honest placeholders
- * (no medical claims) written by Agent Shelves. Agent Voice (#26) owns the
- * final copy — every string in a shelf definition is a slot to replace.
+ * COPY: headlines, intros and usage bullets are final shop copy, deliberately
+ * free of medical or efficacy claims.
  */
 
 export type ShelfDefinition = {
