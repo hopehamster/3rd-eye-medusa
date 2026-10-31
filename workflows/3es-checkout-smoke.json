@@ -1,0 +1,269 @@
+{
+  "name": "3ES — Checkout Smoke",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "id": "sched",
+      "name": "Every 6 hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -340,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "3es-checkout",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "wh",
+      "name": "Manual test",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -340,
+        120
+      ],
+      "webhookId": "3es-checkout"
+    },
+    {
+      "parameters": {
+        "url": "https://api.3rdeyesupply.com/store/products?limit=1&region_id=reg_us_3es",
+        "options": {},
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-publishable-api-key",
+              "value": "pk_347097bbb151f983a36796b14bf1583030351f307e8df2a0f7eea30ab404de47"
+            }
+          ]
+        }
+      },
+      "id": "prod",
+      "name": "Published products",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -100,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.3rdeyesupply.com/store/carts",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ region_id: \"reg_us_3es\" }) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-publishable-api-key",
+              "value": "pk_347097bbb151f983a36796b14bf1583030351f307e8df2a0f7eea30ab404de47"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cart",
+      "name": "Create cart",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        120,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.3rdeyesupply.com/store/carts/' + $json.cart.id + '/line-items' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ variant_id: $('Published products').first().json.products[0].variants[0].id, quantity: 1 }) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-publishable-api-key",
+              "value": "pk_347097bbb151f983a36796b14bf1583030351f307e8df2a0f7eea30ab404de47"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "item",
+      "name": "Add line item",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        340,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.3rdeyesupply.com/store/carts/' + $json.cart.id }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ email: \"smoke-test@3rdeyesupply.com\", shipping_address: { first_name: \"Smoke\", last_name: \"Test\", address_1: \"1 Test St\", city: \"Austin\", province: \"TX\", postal_code: \"78701\", country_code: \"us\" } }) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-publishable-api-key",
+              "value": "pk_347097bbb151f983a36796b14bf1583030351f307e8df2a0f7eea30ab404de47"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "addr",
+      "name": "Set address",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        560,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.3rdeyesupply.com/store/carts/' + $json.cart.id + '/shipping-methods' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ option_id: \"so_01M4MY97ZSMAD5755XZ45DB1GN\" }) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-publishable-api-key",
+              "value": "pk_347097bbb151f983a36796b14bf1583030351f307e8df2a0f7eea30ab404de47"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ship",
+      "name": "Set shipping method",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        780,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Reaching here means every HTTP step returned 2xx.\nconst cart = $('Set shipping method').first().json.cart || {};\nconst methods = cart.shipping_methods || [];\nconst items = cart.items || [];\nconst fails = [];\nif (!items.length) fails.push('cart has no line items');\nif (!methods.length) fails.push('no shipping method attached');\nif (methods.length && methods[0].shipping_option_id !== 'so_01M4MY97ZSMAD5755XZ45DB1GN') fails.push('shipping option is ' + methods[0].shipping_option_id + ', expected the CJ option');\nif (!(Number(cart.total) > 0)) fails.push('cart total is ' + cart.total);\nconst summary = { checkedAt: new Date().toISOString(), items: items.length, shippingMethod: methods[0] && methods[0].name, total: cart.total, currency: cart.currency_code };\nif (fails.length) { return [{ json: Object.assign({ ok: false, fails }, summary) }]; }\nreturn [{ json: Object.assign({ ok: true }, summary) }];"
+      },
+      "id": "eval",
+      "name": "Evaluate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        20
+      ]
+    }
+  ],
+  "connections": {
+    "Every 6 hours": {
+      "main": [
+        [
+          {
+            "node": "Published products",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual test": {
+      "main": [
+        [
+          {
+            "node": "Published products",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Published products": {
+      "main": [
+        [
+          {
+            "node": "Create cart",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create cart": {
+      "main": [
+        [
+          {
+            "node": "Add line item",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add line item": {
+      "main": [
+        [
+          {
+            "node": "Set address",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set address": {
+      "main": [
+        [
+          {
+            "node": "Set shipping method",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set shipping method": {
+      "main": [
+        [
+          {
+            "node": "Evaluate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false
+}
