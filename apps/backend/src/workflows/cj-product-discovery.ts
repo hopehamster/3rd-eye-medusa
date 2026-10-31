@@ -259,7 +259,7 @@ const importDrafts = createStep(
               priceSetId,
               prices: [
                 {
-                  amount: Math.round(Number(c.sellPrice ?? 0) * 250),
+                  amount: Math.round(Number(c.sellPrice ?? 0) * 2.5 * 100) / 100,
                   currency_code: "usd",
                 },
               ],

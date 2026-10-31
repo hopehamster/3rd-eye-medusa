@@ -31,6 +31,24 @@ export default async function initial_data_seed({
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER);
   const link = container.resolve(ContainerRegistrationKeys.LINK);
   const query = container.resolve(ContainerRegistrationKeys.QUERY);
+
+  // Idempotency guard: the VPS database is already seeded. Re-running the
+  // create workflows fails (duplicate regions, etc.), so skip when data
+  // exists.
+  try {
+    const { data: existingStores } = (await query.graph({
+      entity: "store",
+      fields: ["id"],
+      pagination: { take: 1 },
+    })) as { data: unknown[] };
+    if (existingStores.length > 0) {
+      logger.info("Store data already seeded — skipping initial-data-seed.");
+      return;
+    }
+  } catch {
+    // If we can't check, proceed with the seed (fail loudly on real errors)
+  }
+
   const fulfillmentModuleService = container.resolve(
     ModuleRegistrationName.FULFILLMENT
   );

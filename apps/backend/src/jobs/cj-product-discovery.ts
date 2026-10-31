@@ -6,6 +6,7 @@
  */
 import type { MedusaContainer } from "@medusajs/framework/types"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import * as Sentry from "@sentry/node"
 import { cjProductDiscoveryWorkflow } from "../workflows/cj-product-discovery"
 
 export default async function cjProductDiscoveryJob(
@@ -20,6 +21,8 @@ export default async function cjProductDiscoveryJob(
     )
   } catch (e) {
     logger.error(`CJ discovery job failed: ${(e as Error).message}`)
+    // Report to Sentry so silent discovery failures alert us.
+    Sentry.captureException(e)
   }
 }
 
