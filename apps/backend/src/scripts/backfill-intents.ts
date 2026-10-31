@@ -89,7 +89,43 @@ const INTENTS_BY_HANDLE: Record<string, string[]> = {
   "crystal-pyramid-home-decor-ornament": [
     "protection",
     "cleansing-purification"
-  ]
+  ],
+  // Added after the 25 drafts went live: these were published without intents, so
+  // the Oracle could never shelf them.
+  "3rd-eye-leggings": ["confidence-courage", "energy-chakra-balancing"],
+  "crystal-ring": ["energy-chakra-balancing", "clarity-focus"],
+  "crystal-rings": ["energy-chakra-balancing", "clarity-focus"],
+  "crystal-stud-earrings": ["energy-chakra-balancing", "confidence-courage"],
+  "mens-stainless-steel-cryptographic-cuban-chain-bracelet": [
+    "abundance-prosperity",
+    "confidence-courage"
+  ],
+  "natural-marble-round-spherical-incense-burner-4384ph": [
+    "cleansing-purification",
+    "spiritual-connection-ritual"
+  ],
+  "new-womens-open-style-bracelet-fashionable-woven-design": [
+    "confidence-courage",
+    "love-self"
+  ],
+  "nine-fold-vajra-knot-red-string-bracelet": [
+    "protection",
+    "spiritual-connection-ritual"
+  ],
+  "orgone-angel": ["protection", "spiritual-connection-ritual"],
+  "orgone-angels": ["protection", "spiritual-connection-ritual"],
+  "orgone-buddha": ["spiritual-connection-ritual", "calm-soothing"],
+  "orgone-mayan-pyramid": ["spiritual-connection-ritual", "energy-chakra-balancing"],
+  "orgone-pyramids": ["spiritual-connection-ritual", "energy-chakra-balancing"],
+  "orgone-starfish": ["spiritual-connection-ritual", "love-self"],
+  "protection-pouches": ["protection", "grounding"],
+  "stone-protection-pouch": ["protection", "grounding"],
+  "wood-ring": ["grounding", "spiritual-connection-ritual"],
+  "zen-incense-burner-with-ash-catching-design-256cfy": [
+    "cleansing-purification",
+    "calm-soothing"
+  ],
+  "crystal-tree-green-aventurine": ["abundance-prosperity", "calm-soothing"],
 };
 
 type Row = { id: string; handle?: string | null; metadata?: Record<string, unknown> | null }
