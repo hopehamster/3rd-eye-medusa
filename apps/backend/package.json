@@ -1,16 +1,13 @@
 {
   "name": "@dtc/backend",
   "version": "0.0.1",
-  "description": "A starter for Medusa projects.",
-  "author": "Medusa (https://medusajs.com)",
+  "description": "3rd Eye Supply Medusa backend",
+  "author": "3rd Eye Supply",
   "license": "MIT",
   "keywords": [
-    "sqlite",
-    "postgres",
-    "typescript",
+    "medusa",
     "ecommerce",
-    "headless",
-    "medusa"
+    "postgres"
   ],
   "scripts": {
     "build": "medusa build",
@@ -25,8 +22,10 @@
     "test:unit": "TEST_TYPE=unit NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit"
   },
   "dependencies": {
+    "@devx-commerce/passwordless": "^12.0.0-beta.0",
     "@medusajs/admin-sdk": "2.21.2",
     "@medusajs/admin-shared": "2.21.2",
+    "@medusajs/analytics-posthog": "^2.21.2",
     "@medusajs/caching": "2.21.2",
     "@medusajs/cli": "2.21.2",
     "@medusajs/dashboard": "2.21.2",
@@ -35,9 +34,20 @@
     "@medusajs/medusa": "2.21.2",
     "@medusajs/payment-stripe": "2.21.2",
     "@medusajs/ui": "4.2.6",
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/exporter-trace-otlp-grpc": "^0.57.0",
+    "@opentelemetry/instrumentation-pg": "^0.57.0",
+    "@opentelemetry/resources": "^1.30.0",
+    "@opentelemetry/sdk-node": "^0.57.0",
+    "@opentelemetry/sdk-trace-node": "^1.30.0",
+    "@rokmohar/medusa-plugin-meilisearch": "^2.3.1",
+    "@sentry/node": "^8.0.0",
+    "@sentry/opentelemetry": "^8.0.0",
     "@tanstack/react-query": "5.64.2",
+    "nodemailer": "^10.1.1",
     "react-i18next": "13.5.0",
     "react-router-dom": "7.18.2",
+    "twilio": "^6.2.0",
     "zod": "4.2.0"
   },
   "devDependencies": {
@@ -46,6 +56,7 @@
     "@swc/jest": "^0.2.36",
     "@types/jest": "^29.5.13",
     "@types/node": "^20.12.11",
+    "@types/nodemailer": "^6.4.17",
     "@types/react": "^18.3.2",
     "@types/react-dom": "^18.2.25",
     "jest": "^29.7.0",

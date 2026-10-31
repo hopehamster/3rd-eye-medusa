@@ -16,11 +16,13 @@
  * exact payload against https://developers.cjdropshipping.com before going
  * live — CJ occasionally renames fields.
  */
-import { Module } from "@medusajs/framework/utils"
+import { ModuleProvider, Modules } from "@medusajs/framework/utils"
 import CJFulfillmentService from "./service"
 
 export const CJ_FULFILLMENT_MODULE = "cj_fulfillment"
 
-export default Module(CJ_FULFILLMENT_MODULE, {
-  service: CJFulfillmentService,
+// Fulfillment providers use ModuleProvider (not Module) — the fulfillment
+// module wires up the services array as providers.
+export default ModuleProvider(Modules.FULFILLMENT, {
+  services: [CJFulfillmentService],
 })
