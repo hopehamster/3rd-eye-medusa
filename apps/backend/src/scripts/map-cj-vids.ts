@@ -93,6 +93,22 @@ export default async function mapCjVids({ container }: ExecArgs) {
       } else if (cjVariants.length === 0) {
         none++
         logger.warn(`  ${product.handle}: CJ returned no variants for pid ${pid}`)
+      } else if (process.env.ALLOW_MULTI === "1") {
+        // Owner decision: ship first, correct later. Every choice is logged with
+        // the variant name so a wrong one can be spotted and fixed without
+        // hunting through the CJ dashboard.
+        multi++
+        const chosen = cjVariants[0]
+        for (const v of product.variants ?? []) {
+          updates.push({
+            id: v.id,
+            metadata: { ...(v.metadata ?? {}), cj_vid: chosen.vid },
+          })
+        }
+        logger.info(
+          `  ${product.handle}: auto-picked 1 of ${cjVariants.length} CJ variants -> ` +
+            `${chosen.vid} (${chosen.variantNameEn ?? chosen.variantSku ?? "unnamed"})`
+        )
       } else {
         multi++
         logger.info(

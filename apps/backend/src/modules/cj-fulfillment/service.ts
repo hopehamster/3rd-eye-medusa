@@ -30,36 +30,62 @@ import type {
 import { CJClient } from "./cj-client"
 import type { CJModuleOptions, CJOrderPayload } from "./types"
 
+type QueryLike = {
+  graph: (q: {
+    entity: string
+    fields: string[]
+    filters: Record<string, unknown>
+  }) => Promise<{ data: Record<string, any>[] }>
+}
+
+/**
+ * Providers are instantiated in the fulfillment module's own scope, where the
+ * core `query` service is NOT eagerly injectable. Destructuring `query` in the
+ * constructor threw AwilixResolutionError ("Could not resolve 'query'"), which
+ * made the whole provider unavailable and returned 500 whenever a cart tried to
+ * use a CJ shipping option.
+ *
+ * So the cradle is kept and `query` is resolved lazily, only when a method that
+ * actually needs it runs.
+ */
 type InjectedDependencies = {
   logger: Logger
-  query: {
-    graph: (q: {
-      entity: string
-      fields: string[]
-      filters: Record<string, unknown>
-    }) => Promise<{ data: Record<string, any>[] }>
-  }
+  query?: QueryLike
 }
 
 class CJFulfillmentService extends AbstractFulfillmentProviderService {
   static identifier = "cj-fulfillment"
 
   protected logger_: Logger
-  protected query_: InjectedDependencies["query"]
+  protected container_: InjectedDependencies
+  protected query_: QueryLike | null = null
   protected options_: CJModuleOptions
   protected client_: CJClient
   protected dryRun_: boolean
 
-  constructor(
-    { logger, query }: InjectedDependencies,
-    options: CJModuleOptions = {}
-  ) {
+  constructor(container: InjectedDependencies, options: CJModuleOptions = {}) {
     super()
-    this.logger_ = logger
-    this.query_ = query
+    this.logger_ = container.logger
+    this.container_ = container
     this.options_ = options
     this.dryRun_ = options.dryRun ?? process.env.CJ_DRY_RUN !== "false"
-    this.client_ = new CJClient(options, logger)
+    this.client_ = new CJClient(options, container.logger)
+  }
+
+  /** Resolve the core query service on demand, not in the constructor. */
+  private resolveQuery(): QueryLike {
+    if (this.query_) {
+      return this.query_
+    }
+    const lazily = (this.container_ as unknown as { query?: QueryLike }).query
+    if (!lazily) {
+      throw new MedusaError(
+        MedusaError.Types.UNEXPECTED_STATE,
+        "CJ fulfillment: the query service is unavailable in this scope."
+      )
+    }
+    this.query_ = lazily
+    return lazily
   }
 
   /** Generic option names — the supplier name never reaches shoppers. */
@@ -102,7 +128,7 @@ class CJFulfillmentService extends AbstractFulfillmentProviderService {
   protected async resolveSupplierVids(
     lineItemIds: string[]
   ): Promise<Map<string, string>> {
-    const { data: lineItems } = await this.query_.graph({
+    const { data: lineItems } = await this.resolveQuery().graph({
       entity: "order_line_item",
       fields: ["id", "variant_id"],
       filters: { id: lineItemIds },
@@ -114,7 +140,7 @@ class CJFulfillmentService extends AbstractFulfillmentProviderService {
           .filter((id): id is string => typeof id === "string")
       ),
     ]
-    const { data: variants } = await this.query_.graph({
+    const { data: variants } = await this.resolveQuery().graph({
       entity: "product_variant",
       fields: ["id", "metadata"],
       filters: { id: variantIds },
