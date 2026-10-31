@@ -19,7 +19,6 @@ import {
   type OracleProduct,
 } from "../modules/oracle/deepseek"
 import { retrieveCanon } from "../modules/oracle/canon"
-import { intentTag } from "../modules/oracle/taxonomy"
 
 interface Classified {
   intents: string[]
@@ -52,8 +51,18 @@ interface ProductHit extends OracleProduct {
 }
 
 /**
- * Shared product retrieval (tag match + stock gate + semantic fallback).
+ * Shared product retrieval: intent match -> stock gate -> semantic fallback.
  * Used by the workflow and the streaming route.
+ *
+ * Intent matching reads `metadata.intents` through the search index — the same
+ * channel the storefront facet, shelves, PDP and ritual builder read.
+ *
+ * It used to query product *tags* (`intent:<id>`), but nothing in this repo has
+ * ever written those tags: ai-content's apply step and CJ product discovery both
+ * write `metadata.intents`, and there is no tag writer anywhere. So the tag query
+ * always matched zero products, `hits` was always empty, and every single
+ * consultation silently fell through to the vector fallback — i.e. the Oracle
+ * depended entirely on embeddings, exactly when they were least reliable.
  */
 export async function retrieveProducts(
   container: {
@@ -68,22 +77,51 @@ export async function retrieveProducts(
     }
 
     const query = container.resolve(ContainerRegistrationKeys.QUERY)
-    const tags = intents.map(intentTag)
 
-    const { data: products } = (await query.graph({
-      entity: "product",
-      fields: [
-        "id",
-        "title",
-        "handle",
-        "thumbnail",
-        "variants.id",
-        "variants.prices.amount",
-        "variants.prices.currency_code",
-        "variants.inventory_items.inventory_item_id",
-      ],
-      filters: { tags: { value: tags }, status: "published" },
-    })) as { data: any[] }
+    // 1. Which published products carry any of these intents?
+    //    `intents` is a filterable keyword array on the product index, so an
+    //    array filter is an overlap match (same semantics as the storefront's
+    //    refinement list).
+    let productIds: string[] = []
+    try {
+      const { data: intentHits } = (await query.search({
+        entity: "product",
+        fields: ["id"],
+        filters: { status: "published", intents },
+        pagination: { take: 24 },
+      })) as { data?: Array<{ id?: string | null }> }
+
+      productIds = (intentHits ?? [])
+        .map((hit) => hit.id)
+        .filter((id): id is string => typeof id === "string")
+    } catch {
+      // Search index unavailable — the vector fallback below may still work.
+    }
+
+    // 2. Hydrate those products with prices and inventory so the stock gate can
+    //    run. The index deliberately carries no variant/inventory data.
+    let products: any[] = []
+    if (productIds.length > 0) {
+      try {
+        const { data } = (await query.graph({
+          entity: "product",
+          fields: [
+            "id",
+            "title",
+            "handle",
+            "thumbnail",
+            "variants.id",
+            "variants.prices.amount",
+            "variants.prices.currency_code",
+            "variants.inventory_items.inventory_item_id",
+          ],
+          filters: { id: productIds, status: "published" },
+        })) as { data: any[] }
+        products = data ?? []
+      } catch {
+        products = []
+      }
+    }
 
     // Stock gate: exclude products whose inventory levels are all depleted.
     // Products with no levels at all are treated as available (new/untracked).
@@ -128,7 +166,7 @@ export async function retrieveProducts(
         )
       }
     } catch {
-      // Inventory unavailable — degrade to published+tagged (logged by caller)
+      // Inventory unavailable — degrade to the published products we found
       availableIds = null
     }
 
@@ -152,8 +190,9 @@ export async function retrieveProducts(
         }
       })
 
-    // Semantic fallback: if tag matching found nothing, ask Voyage for
-    // products whose meaning matches the question.
+    // Semantic fallback: if intent matching found nothing, ask Voyage for
+    // products whose meaning matches the question. This is now a fallback,
+    // not the only path — it used to be the only path in practice.
     if (hits.length === 0 && question.trim()) {
       try {
         const search = await query.search({

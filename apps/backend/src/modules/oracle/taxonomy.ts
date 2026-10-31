@@ -4,7 +4,12 @@
  * RULES:
  * - Intents are stable and few. Products scale; intents don't. Add a new intent
  *   only when several products genuinely fit nowhere existing. (15 intents as of 2026-10-11.)
- * - Every product needs 1-3 `intent:<id>` tags before it leaves draft status.
+ * - Every product should carry 1-3 intent ids in its `metadata.intents` array
+ *   before it leaves draft status. That is the single canonical channel: the
+ *   search index, shelves, PDP, ritual builder and the Oracle all read it.
+ *   (This comment used to say products needed `intent:<id>` *tags* — nothing in
+ *   the repo ever wrote those tags, so the Oracle's tag lookup always matched
+ *   zero products.)
  * - The Oracle's classifier is constrained to these ids — it may never invent one.
  */
 
@@ -223,6 +228,10 @@ export function getIntent(id: string): OracleIntent | undefined {
 }
 
 /** Tag value used on Medusa products, e.g. `intent:protection`. */
+/**
+ * @deprecated Left over from the product-tag approach, which nothing wrote.
+ * Intents live in `metadata.intents`; do not reintroduce tag-based lookup.
+ */
 export function intentTag(id: string): string {
   return `intent:${id}`
 }

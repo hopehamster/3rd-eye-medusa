@@ -2,7 +2,7 @@ import { MedusaService } from "@medusajs/framework/utils"
 import OracleLog from "./models/oracle-log"
 import OracleMessage from "./models/oracle-message"
 import ExpertUserProfile from "./models/expert-user-profile"
-import { ORACLE_INTENT_IDS, getIntent, intentTag } from "./taxonomy"
+import { ORACLE_INTENT_IDS, getIntent } from "./taxonomy"
 
 class OracleModuleService extends MedusaService({
   OracleLog,
@@ -23,11 +23,10 @@ class OracleModuleService extends MedusaService({
     )
   }
 
-  /** Product tag values for a set of intent ids, e.g. ["intent:protection"]. */
-  async tagsForIntents(ids: string[]): Promise<string[]> {
-    const clean = await this.sanitizeIntents(ids)
-    return clean.map(intentTag)
-  }
+  // NOTE: there is no `tagsForIntents` any more. It produced `intent:<id>`
+  // product tag values, but nothing ever wrote those tags, so every caller got
+  // a filter that matched zero products. Intent membership lives in
+  // `metadata.intents` and is read through the search index.
 
   async describeIntent(id: string): Promise<string> {
     return getIntent(id)?.description ?? id

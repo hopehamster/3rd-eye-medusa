@@ -70,12 +70,51 @@ Optional — **a blank key disables that feature; it no longer crashes the boot*
 6. Re-point the shipping options at `cj-fulfillment` (the seed still creates
    `manual_manual` options) before expecting any order to reach CJ.
 
+## Intent tagging (the Oracle's product matching)
+
+Intents are the join between a shopper's need and the catalogue. There is
+**one canonical channel**: the `metadata.intents` array on a product, holding
+1-3 ids from `apps/backend/src/modules/oracle/taxonomy.ts`.
+
+Everything reads that same array:
+
+| Consumer | Where |
+|---|---|
+| Search index (facet + Oracle lookup) | `apps/backend/src/search/product.ts` |
+| Storefront refinement facet | `modules/store/components/store-refinements` |
+| Intention shelves | `modules/store/data/shelves.ts` |
+| PDP intent chips | `modules/products/templates/product-info` |
+| Ritual builder | `modules/ritual/components/ritual-builder` |
+
+> History worth knowing: the Oracle used to query `intent:<id>` product **tags**.
+> Nothing in the repo ever wrote those tags, so the tag query matched zero
+> products every time and the Oracle silently fell back to vector search for
+> 100% of consultations. There is no tag channel any more — do not reintroduce
+> one.
+
+**To tag products:** Admin → AI Content generates suggested intents from the
+title/description; a human reviews and applies. Applying writes
+`metadata.intents` and the search index picks it up on the next product event.
+
+**To check coverage:**
+
+```bash
+pnpm --filter @dtc/backend run audit:intents
+```
+
+It is read-only. It prints how many published products carry intents, which
+products carry none, which carry ids outside the taxonomy (silently dropped by
+every consumer), and which intents have zero products. An intent with zero
+products means the Oracle can never pick for that need.
+
 ## Known-open work
 
 Tracked honestly, not aspirational:
 
-- Product "intent" tagging is **not implemented** — nothing writes `intent:*`
-  tags, so the Oracle's tag lookup always falls through to vector search.
+- The catalogue is **not intent-tagged**. The plumbing is now correct (see
+  below) but every published product needs `metadata.intents` before the
+  Oracle can match by intent; run `pnpm --filter @dtc/backend run audit:intents`
+  to see the gap.
 - There is **no CI**, and `apps/backend` has no tests. `apps/storefront` has no
   test script.
 - The n8n fulfilment workflow is inactive and has no producer.
