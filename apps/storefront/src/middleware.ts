@@ -156,7 +156,11 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
+  // Metadata image routes (/opengraph-image, /twitter-image, /icon) have no
+  // file extension, so the region redirect used to catch them and send
+  // /opengraph-image -> /us/opengraph-image -> 404, leaving every shared link
+  // without a preview image. They must bypass the middleware entirely.
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|images|assets|png|svg|jpg|jpeg|gif|webp).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|images|assets|png|svg|jpg|jpeg|gif|webp|opengraph-image|twitter-image|icon).*)",
   ],
 }
