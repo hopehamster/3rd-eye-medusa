@@ -1,71 +1,40 @@
 "use client"
 
-import React, { useActionState, useEffect } from "react"
-import Input from "@modules/common/components/input"
-import AccountInfo from "../account-info"
+import React from "react"
 import { HttpTypes } from "@medusajs/types"
-import { EMAIL_CHANGE_SUPPORT_MESSAGE } from "@lib/data/customer"
 
 type MyInformationProps = {
   customer: HttpTypes.StoreCustomer
 }
 
 /**
- * Email is the login identity, so changing it here would leave the account
- * unable to sign in. Rather than a form that always "succeeds" and changes
- * nothing, this explains the situation and hands the customer a human.
+ * Email is the login identity, so editing it here would leave the account
+ * unable to sign in. Rather than showing a form whose Save button cannot work,
+ * this is read-only and hands the customer a human who can move the identity.
  */
 const ProfileEmail: React.FC<MyInformationProps> = ({ customer }) => {
-  const [successState, setSuccessState] = React.useState(false)
-
-  const submit = async () => {
-    return { success: false, error: EMAIL_CHANGE_SUPPORT_MESSAGE }
-  }
-
-  const [state, formAction] = useActionState(submit, {
-    error: null as string | null,
-    success: false,
-  })
-
-  const clearState = () => {
-    setSuccessState(false)
-  }
-
-  useEffect(() => {
-    setSuccessState(state.success)
-  }, [state])
-
   return (
-    <form action={formAction} className="w-full">
-      <AccountInfo
-        label="Email"
-        currentInfo={`${customer.email}`}
-        isSuccess={successState}
-        isError={!!state.error}
-        errorMessage={state.error || undefined}
-        clearState={clearState}
-        data-testid="account-email-editor"
-      >
-        <div className="grid grid-cols-1 gap-y-2">
-          <Input
-            label="Email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            disabled
-            defaultValue={customer.email}
-            data-testid="email-input"
-          />
-          <p className="text-small-regular text-ui-fg-subtle">
-            Contact{" "}
-            <a className="underline" href="mailto:support@3rdeyesupply.com">
-              support@3rdeyesupply.com
-            </a>{" "}
-            to change your sign-in email.
-          </p>
+    <div
+      className="text-small-regular"
+      data-testid="account-email-editor"
+    >
+      <div className="flex items-end justify-between">
+        <div className="flex flex-col">
+          <span className="uppercase text-ui-fg-base">Email</span>
+          <span className="font-semibold" data-testid="current-info">
+            {customer.email}
+          </span>
         </div>
-      </AccountInfo>
-    </form>
+      </div>
+      <p className="mt-2 text-ui-fg-subtle">
+        Your sign-in email is tied to your login, so it can&apos;t be changed
+        here. Email{" "}
+        <a className="underline" href="mailto:support@3rdeyesupply.com">
+          support@3rdeyesupply.com
+        </a>{" "}
+        from your current address and we&apos;ll move it for you.
+      </p>
+    </div>
   )
 }
 

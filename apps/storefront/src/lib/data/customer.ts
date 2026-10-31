@@ -83,15 +83,6 @@ export const updateCustomerPassword = async (
   }
 }
 
-/**
- * Changing the sign-in email is deliberately not self-service: the login
- * identity is keyed on the email, so flipping customer.email without migrating
- * the identity would lock the account out. Point the customer at a human.
- */
-export const EMAIL_CHANGE_SUPPORT_MESSAGE =
-  "Your sign-in email can't be changed here yet — it is tied to your login. " +
-  "Email support@3rdeyesupply.com from your current address and we'll move it for you."
-
 export const retrieveCustomer =
   async (): Promise<HttpTypes.StoreCustomer | null> => {
     const authHeaders = await getAuthHeaders()
