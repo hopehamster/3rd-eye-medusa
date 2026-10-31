@@ -99,7 +99,13 @@ export default defineMiddlewares({
       middlewares: [
         // Populates req.auth_context for signed-in customers; guests pass
         // through with an empty context (memory stays guest-scoped).
-        authenticate("customer", ["session", "bearer"], { allowUnregistered: true }),
+        // allowUnauthenticated is what actually lets a request with no token
+        // through — allowUnregistered only covers a token with no actor yet.
+        // Without it every logged-out visitor got 401 from the Oracle.
+        authenticate("customer", ["session", "bearer"], {
+          allowUnregistered: true,
+          allowUnauthenticated: true,
+        }),
         oracleRateLimit,
       ],
     },
