@@ -34,3 +34,6 @@ deploy-backend.tgz
 .DS_Store
 Thumbs.db
 *.log
+
+# scratch artifacts
+.tmp_*
