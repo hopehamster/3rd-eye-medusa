@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { sdk, MEDUSA_BACKEND_URL } from "@lib/config"
 import { addToCart } from "@lib/data/cart"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 interface Pick {
   product_id: string
@@ -33,6 +34,23 @@ interface Message {
   picks?: (Pick & { product?: ProductInfo })[]
   logId?: string | null
   feedback?: boolean | null
+  /** Set when the API answered 401: the reading needs a signed-in customer. */
+  signIn?: boolean
+}
+
+const SIGNED_OUT_MESSAGE =
+  "The Oracle keeps your readings on your account, so the counter is closed until you sign in."
+
+function isUnauthorized(error: unknown): boolean {
+  if (!error || typeof error !== "object") {
+    return false
+  }
+  const status = (error as { status?: number }).status
+  if (status === 401) {
+    return true
+  }
+  const message = (error as { message?: string }).message ?? ""
+  return /unauthori[sz]ed/i.test(message)
 }
 
 const OPENERS = [
@@ -279,6 +297,17 @@ export default function OracleChat({
           }),
         }
       )
+      if (res.status === 401) {
+        // Signed out (or the session expired). Ask for a sign-in instead of
+        // silently retrying and then apologising about a thick veil.
+        setMessages((m) => m.filter((_, i) => i !== streamIndex.current))
+        setMessages((m) => [
+          ...m,
+          { role: "oracle", text: SIGNED_OUT_MESSAGE, signIn: true },
+        ])
+        setLoading(false)
+        return
+      }
       if (!res.ok || !res.body) {
         failover()
         return
@@ -410,12 +439,15 @@ export default function OracleChat({
           })),
         },
       ])
-    } catch {
+    } catch (error) {
       setMessages((m) => [
         ...m,
         {
           role: "oracle",
-          text: "The veil is thick right now — I couldn't quite hear you. Try asking again in a moment.",
+          text: isUnauthorized(error)
+            ? SIGNED_OUT_MESSAGE
+            : "The veil is thick right now — I couldn't quite hear you. Try asking again in a moment.",
+          signIn: isUnauthorized(error),
         },
       ])
     } finally {
@@ -519,6 +551,14 @@ export default function OracleChat({
                     <ThinkingDots />
                   ) : (
                     renderMarkdown(msg.text)
+                  )}
+                  {msg.signIn && (
+                    <LocalizedClientLink
+                      href="/account"
+                      className="mt-3 inline-block border border-paper-accent bg-paper-accent px-4 py-2 font-humanist text-sm font-semibold text-paper-bg transition-opacity hover:opacity-90"
+                    >
+                      Sign in to continue
+                    </LocalizedClientLink>
                   )}
                   {msg.picks?.map((pick) => (
                     <ProductCard

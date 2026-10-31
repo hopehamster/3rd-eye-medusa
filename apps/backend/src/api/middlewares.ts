@@ -97,15 +97,11 @@ export default defineMiddlewares({
     {
       matcher: '/store/oracle/*',
       middlewares: [
-        // Populates req.auth_context for signed-in customers; guests pass
-        // through with an empty context (memory stays guest-scoped).
-        // allowUnauthenticated is what actually lets a request with no token
-        // through — allowUnregistered only covers a token with no actor yet.
-        // Without it every logged-out visitor got 401 from the Oracle.
-        authenticate("customer", ["session", "bearer"], {
-          allowUnregistered: true,
-          allowUnauthenticated: true,
-        }),
+        // The Oracle is for signed-in customers only (owner's call, 2026-10-31):
+        // without a customer session this deliberately returns 401 so no LLM
+        // spend is exposed to anonymous traffic. The storefront turns that 401
+        // into a sign-in prompt rather than an error.
+        authenticate("customer", ["session", "bearer"]),
         oracleRateLimit,
       ],
     },

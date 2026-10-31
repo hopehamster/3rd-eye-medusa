@@ -1,5 +1,6 @@
 import { Metadata } from "next"
 import OracleExperience from "@modules/oracle/components/oracle-experience"
+import { retrieveCustomer } from "@lib/data/customer"
 
 export const metadata: Metadata = {
   title: "The Oracle | 3rd Eye Supply",
@@ -16,10 +17,15 @@ export default async function OraclePage({
 }) {
   const { countryCode } = await params
   const { about } = await searchParams
+  const customer = await retrieveCustomer()
   const initialQuestion = about
     ? `I'm looking at "${about.replace(/-/g, " ")}" in your shop. Tell me about it — is it right for me?`
     : undefined
   return (
-    <OracleExperience countryCode={countryCode} initialAbout={initialQuestion} />
+    <OracleExperience
+      countryCode={countryCode}
+      initialAbout={initialQuestion}
+      isSignedIn={Boolean(customer)}
+    />
   )
 }
