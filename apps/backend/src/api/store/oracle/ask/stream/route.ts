@@ -91,7 +91,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   })() as { error: (m: string) => void; warn: (m: string) => void } | null
 
   try {
-    const oracle = req.scope.resolve(ORACLE_MODULE) as OracleModuleService
+    const oracle = req.scope.resolve(ORACLE_MODULE) as unknown as OracleModuleService
 
     // Kick off independent I/O immediately. History and the user profile do
     // not depend on classification, so they run concurrently with the

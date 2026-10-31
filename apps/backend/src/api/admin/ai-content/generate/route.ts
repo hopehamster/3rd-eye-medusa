@@ -21,7 +21,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   }
 
   try {
-    const aiContent = req.scope.resolve(AI_CONTENT_MODULE) as AIContentService
+    const aiContent = req.scope.resolve(AI_CONTENT_MODULE) as unknown as AIContentService
     const draft = await aiContent.generateProductContent({
       rawTitle: raw_title,
       rawDescription: raw_description,

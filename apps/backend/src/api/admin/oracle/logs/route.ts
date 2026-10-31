@@ -19,7 +19,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   }
 
   try {
-    const oracle = req.scope.resolve(ORACLE_MODULE) as OracleModuleService
+    const oracle = req.scope.resolve(ORACLE_MODULE) as unknown as OracleModuleService
     const [logs, count] = await oracle.listAndCountOracleLogs(filters, {
       take: limit,
       skip: offset,

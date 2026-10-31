@@ -19,7 +19,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   }
 
   try {
-    const oracle = req.scope.resolve(ORACLE_MODULE) as OracleModuleService
+    const oracle = req.scope.resolve(ORACLE_MODULE) as unknown as OracleModuleService
     await oracle.updateOracleLogs({ id: logId, helpful })
     res.json({ ok: true })
   } catch (e) {
