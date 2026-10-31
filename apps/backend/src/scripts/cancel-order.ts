@@ -17,7 +17,12 @@ export default async function cancelOrder({ container, args }: ExecArgs) {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER)
   const query = container.resolve(ContainerRegistrationKeys.QUERY)
 
-  const target = (args ?? []).find((a) => a && !a.startsWith("-"))
+  // CLI args arrive loosely typed (and may include the script path itself), so
+  // coerce first and then pick the last argument that looks like an order.
+  const target = (args ?? [])
+    .map((a) => String(a))
+    .reverse()
+    .find((a) => /^\d+$/.test(a) || a.startsWith("order_"))
   if (!target) {
     logger.error("cancel-order: pass a display id or an order id")
     return
