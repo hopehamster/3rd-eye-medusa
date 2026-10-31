@@ -51,10 +51,30 @@ export default async function mapCjVids({ container }: ExecArgs) {
   let failed = 0
   const updates: { id: string; metadata: Record<string, unknown> }[] = []
 
+  // CJ allows 1 request/second (/product/query returns 1600200 otherwise), so
+  // every lookup is throttled and retried with backoff.
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+  const getProductThrottled = async (pid: string) => {
+    let lastErr: unknown
+    for (let attempt = 1; attempt <= 4; attempt++) {
+      try {
+        const detail = await client.getProduct(pid)
+        await sleep(1100)
+        return detail
+      } catch (e) {
+        lastErr = e
+        const msg = (e as Error).message ?? ""
+        if (!/Too Many Requests|QPS|429/i.test(msg)) break
+        await sleep(1200 * attempt)
+      }
+    }
+    throw lastErr instanceof Error ? lastErr : new Error(String(lastErr))
+  }
+
   for (const product of candidates) {
     const pid = String(product.metadata?.cj_pid)
     try {
-      const detail = await client.getProduct(pid)
+      const detail = await getProductThrottled(pid)
       const cjVariants = (detail.variants ?? []).filter((v) => v.vid)
 
       if ((product.variants ?? []).every((v) => v.metadata?.cj_vid)) {
