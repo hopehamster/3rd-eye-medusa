@@ -3,7 +3,7 @@
  *
  *   npx medusa exec ./src/scripts/cancel-order.ts <display_id|order_id>
  *
- * Written after verifying the Stripe integration end to end: the verification
+ * Written after verifying the Stripe integration end to end: a verification
  * order has to be cancellable without hand-editing the database, and the admin
  * UI is not always to hand.
  */
@@ -24,13 +24,18 @@ export default async function cancelOrder({ container, args }: ExecArgs) {
   }
 
   const isDisplayId = /^\d+$/.test(target)
+
+  // Filter in JS: the order filter type only accepts indexed columns, and this
+  // tool is used rarely enough that reading the (short) order list is fine.
   const { data } = (await query.graph({
     entity: "order",
     fields: ["id", "display_id", "status"],
-    filters: isDisplayId ? { display_id: Number(target) } : { id: target },
-  })) as { data: Row[] }
+  })) as unknown as { data: Row[] }
 
-  const order = (data ?? [])[0]
+  const order = (data ?? []).find((o) =>
+    isDisplayId ? String(o.display_id) === target : o.id === target
+  )
+
   if (!order) {
     logger.error(`cancel-order: no order matching ${target}`)
     return
