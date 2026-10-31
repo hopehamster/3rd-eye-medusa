@@ -1,0 +1,201 @@
+{
+  "name": "3ES — Server Verification",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "id": "sched",
+      "name": "Every 15 min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -320,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "3es-verify",
+        "responseMode": "lastNode"
+      },
+      "id": "wh",
+      "name": "Manual test",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        120
+      ],
+      "webhookId": "3es-verify"
+    },
+    {
+      "parameters": {
+        "url": "https://api.3rdeyesupply.com/health",
+        "options": {}
+      },
+      "id": "health",
+      "name": "API health",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -80,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://3rdeyesupply.com/us",
+        "options": {}
+      },
+      "id": "site",
+      "name": "Storefront",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        140,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.3rdeyesupply.com/store/regions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-publishable-api-key",
+              "value": "pk_347097bbb151f983a36796b14bf1583030351f307e8df2a0f7eea30ab404de47"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "regions",
+      "name": "Regions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        360,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.3rdeyesupply.com/store/products?limit=1&region_id=reg_us_3es",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-publishable-api-key",
+              "value": "pk_347097bbb151f983a36796b14bf1583030351f307e8df2a0f7eea30ab404de47"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "products",
+      "name": "Published products",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        580,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Nodes throw on non-2xx, so reaching this node means every check passed.\n// $input only carries the immediate predecessor, so pull earlier nodes by name.\nconst regions = $('Regions').first().json || {};\nconst products = $('Published products').first().json || {};\nconst regionCount = (regions.regions || []).length;\nconst productCount = (products.products || []).length;\nreturn [{ json: {\n  ok: regionCount > 0 && productCount > 0,\n  checkedAt: new Date().toISOString(),\n  regionCount,\n  productCount,\n  firstProduct: (products.products && products.products[0] && products.products[0].title) || null\n} }];"
+      },
+      "id": "eval",
+      "name": "Evaluate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        20
+      ]
+    }
+  ],
+  "connections": {
+    "Every 15 min": {
+      "main": [
+        [
+          {
+            "node": "API health",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual test": {
+      "main": [
+        [
+          {
+            "node": "API health",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "API health": {
+      "main": [
+        [
+          {
+            "node": "Storefront",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Storefront": {
+      "main": [
+        [
+          {
+            "node": "Regions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Regions": {
+      "main": [
+        [
+          {
+            "node": "Published products",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Published products": {
+      "main": [
+        [
+          {
+            "node": "Evaluate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false,
+  "id": "mDqyRcPFzHzd7nev"
+}
