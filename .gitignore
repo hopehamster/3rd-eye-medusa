@@ -27,6 +27,9 @@ __pycache__/
 # agent / harness scratch
 .dsh-meow/
 
+# deploy artefacts (the tarball used to ship source to the VPS)
+deploy-backend.tgz
+
 # os
 .DS_Store
 Thumbs.db
