@@ -20,7 +20,7 @@ const CANON_DIR =
 const MAX_DOCS = 3
 const MAX_CHARS_PER_DOC = 1500
 
-function parseFrontmatter(raw: string): {
+export function parseFrontmatter(raw: string): {
   title: string
   intents: string[]
   body: string
@@ -34,7 +34,10 @@ function parseFrontmatter(raw: string): {
     return { title: "", intents: [], body: raw }
   }
   const [, fm, body] = match
-  const title = fm.match(/title:\s*"([^"]+)"/)?.[1] ?? ""
+  // Canon files quote the title, but accept an unquoted one too — a hand-written
+  // doc with `title: What Is Ritual` used to parse to an empty title.
+  const title =
+    fm.match(/title:\s*"([^"]+)"/)?.[1] ?? fm.match(/title:\s*([^\n]+)/)?.[1]?.trim() ?? ""
   const intentsRaw = fm.match(/intents:\s*\[([^\]]*)\]/)?.[1] ?? ""
   const intents = intentsRaw
     .split(",")

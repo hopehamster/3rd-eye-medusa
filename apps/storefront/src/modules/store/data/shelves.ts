@@ -40,7 +40,7 @@ export const SHELVES: ShelfDefinition[] = [
     intro:
       "Some days the world feels sharp. These are the stones people reach for when they want to feel steady: worn at the wrist, kept in a pocket, set by the front door.",
     heroImage:
-      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=80",
+      "/shelves/protection.jpg",
     heroAlt: "Dark tourmaline crystals in daylight",
     usageTitle: "How people use these",
     usage: [
@@ -62,7 +62,7 @@ export const SHELVES: ShelfDefinition[] = [
     intro:
       "Prosperity is partly a mindset and partly just having things around you that you chose on purpose. These are the pieces customers buy when they are redecorating, goal-setting, or treating themselves deliberately.",
     heroImage:
-      "https://images.unsplash.com/photo-1615114814213-a245ffc79e9a?auto=format&fit=crop&w=1600&q=80",
+      "/shelves/abundance-prosperity.jpg",
     heroAlt: "Golden citrine crystals in warm light",
     usageTitle: "How people use these",
     usage: [
@@ -84,7 +84,7 @@ export const SHELVES: ShelfDefinition[] = [
     intro:
       "Amethyst has been the wind-down stone for a long time. These are the pieces that live by the bed, in the car, and wherever the day runs hot.",
     heroImage:
-      "https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?auto=format&fit=crop&w=1600&q=80",
+      "/shelves/calm-soothing.jpg",
     heroAlt: "Amethyst crystal in soft daylight",
     usageTitle: "How people use these",
     usage: [
@@ -107,7 +107,7 @@ export const SHELVES: ShelfDefinition[] = [
     intro:
       "Rose quartz is the self-love classic for a reason: it is soft, pink, and hard to ignore on a dresser. These pieces are reminders as much as they are jewelry.",
     heroImage:
-      "https://images.unsplash.com/photo-1567113463300-102a7eb3cb26?auto=format&fit=crop&w=1600&q=80",
+      "/shelves/love-self.jpg",
     heroAlt: "Rose quartz in warm daylight",
     usageTitle: "How people use these",
     usage: [
@@ -130,7 +130,7 @@ export const SHELVES: ShelfDefinition[] = [
     intro:
       "Clear quartz and amethyst are the desk stones: the ones that live next to the keyboard and the notebook. For days when your own head is the loudest thing in the room.",
     heroImage:
-      "https://images.unsplash.com/photo-1617038220319-276d3cfab638?auto=format&fit=crop&w=1600&q=80",
+      "/shelves/clarity-focus.jpg",
     heroAlt: "Clear quartz point catching daylight",
     usageTitle: "How people use these",
     usage: [
@@ -154,7 +154,7 @@ export const SHELVES: ShelfDefinition[] = [
     intro:
       "Moonstone is the bedtime stone in a lot of traditions. These are the pieces customers buy for the nightstand: the wind-down shelf.",
     heroImage:
-      "https://images.unsplash.com/photo-1602523961358-f9f03dd557db?auto=format&fit=crop&w=1600&q=80",
+      "/shelves/sleep-dreams.jpg",
     heroAlt: "Pale moonstone in evening light",
     usageTitle: "How people use these",
     usage: [

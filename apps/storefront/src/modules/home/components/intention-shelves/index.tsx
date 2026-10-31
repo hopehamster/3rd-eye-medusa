@@ -12,7 +12,8 @@ import Reveal from "@modules/common/components/reveal"
  *
  * Photography is the current Unsplash set; Agent Daylight (issue #22)
  * owns the replacement daylight photography pass.
- * Shelf names/descriptions are placeholders for Agent Voice (issue #26).
+ * Shelf names/descriptions are final copy; hero and card images are self-hosted
+ * under /public/shelves so they cannot disappear when a third-party host does.
  */
 const SHELVES = [
   {
@@ -21,7 +22,7 @@ const SHELVES = [
     label: "Protection",
     description: "Stones for the door, the car, and the travel bag.",
     image:
-      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80",
+      "/shelves/protection.jpg",
     crystal: "Black Tourmaline",
   },
   {
@@ -30,7 +31,7 @@ const SHELVES = [
     label: "Abundance",
     description: "Stones for work, money, and momentum.",
     image:
-      "https://images.unsplash.com/photo-1615114814213-a245ffc79e9a?auto=format&fit=crop&w=600&q=80",
+      "/shelves/abundance-prosperity.jpg",
     crystal: "Citrine",
   },
   {
@@ -39,7 +40,7 @@ const SHELVES = [
     label: "Calm",
     description: "Stones for loud weeks and busy rooms.",
     image:
-      "https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?auto=format&fit=crop&w=600&q=80",
+      "/shelves/calm-soothing.jpg",
     crystal: "Amethyst",
   },
   {
@@ -48,7 +49,7 @@ const SHELVES = [
     label: "Love",
     description: "Stones for the person in the mirror.",
     image:
-      "https://images.unsplash.com/photo-1567113463300-102a7eb3cb26?auto=format&fit=crop&w=600&q=80",
+      "/shelves/love-self.jpg",
     crystal: "Rose Quartz",
   },
   {
@@ -57,7 +58,7 @@ const SHELVES = [
     label: "Clarity",
     description: "Stones for foggy mornings and big decisions.",
     image:
-      "https://images.unsplash.com/photo-1617038220319-276d3cfab638?auto=format&fit=crop&w=600&q=80",
+      "/shelves/clarity-focus.jpg",
     crystal: "Clear Quartz",
   },
   {
@@ -66,7 +67,7 @@ const SHELVES = [
     label: "Sleep",
     description: "Stones for the bedside and the dark.",
     image:
-      "https://images.unsplash.com/photo-1602523961358-f9f03dd557db?auto=format&fit=crop&w=600&q=80",
+      "/shelves/sleep-dreams.jpg",
     crystal: "Selenite",
   },
 ]

@@ -90,6 +90,11 @@ export default defineMiddlewares({
       ],
     },
     {
+      // Password change must come from a signed-in customer.
+      matcher: '/store/customers/me/password',
+      middlewares: [authenticate("customer", ["session", "bearer"])],
+    },
+    {
       matcher: '/store/oracle/*',
       middlewares: [
         // Populates req.auth_context for signed-in customers; guests pass

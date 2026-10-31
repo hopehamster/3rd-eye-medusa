@@ -40,6 +40,10 @@ if (!process.env.JWT_SECRET || !process.env.COOKIE_SECRET) {
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
+    // Without this Medusa ignores REDIS_URL and falls back to a fake in-memory
+    // redis plus the Local Event Bus — events then vanish on restart, which
+    // matters now that fulfilment reacts to order events.
+    redisUrl: process.env.REDIS_URL,
     http: {
       storeCors: process.env.STORE_CORS!,
       adminCors: process.env.ADMIN_CORS!,

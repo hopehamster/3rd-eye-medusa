@@ -40,6 +40,58 @@ async function requestVerificationEmail(email: string, token: string) {
   )
 }
 
+/**
+ * Change the signed-in customer's password.
+ *
+ * The backend route (/store/customers/me/password) verifies the current
+ * password against the emailpass provider before updating it — the client never
+ * decides whether the old password was correct.
+ */
+export const updateCustomerPassword = async (
+  oldPassword: string,
+  newPassword: string
+): Promise<{ success: boolean; error?: string }> => {
+  try {
+    if (!oldPassword || !newPassword) {
+      return { success: false, error: "Both the current and new password are required." }
+    }
+    if (newPassword.length < 8) {
+      return { success: false, error: "Choose a password of at least 8 characters." }
+    }
+    if (newPassword === oldPassword) {
+      return { success: false, error: "The new password must be different." }
+    }
+
+    const authHeaders = await getAuthHeaders()
+    if (!authHeaders) {
+      return { success: false, error: "Your session expired — please sign in again." }
+    }
+
+    await sdk.client.fetch("/store/customers/me/password", {
+      method: "POST",
+      headers: authHeaders,
+      body: { old_password: oldPassword, new_password: newPassword },
+    })
+
+    return { success: true }
+  } catch (e) {
+    const message =
+      e instanceof FetchError && e.message
+        ? e.message
+        : "That current password is not correct, or the change failed."
+    return { success: false, error: message }
+  }
+}
+
+/**
+ * Changing the sign-in email is deliberately not self-service: the login
+ * identity is keyed on the email, so flipping customer.email without migrating
+ * the identity would lock the account out. Point the customer at a human.
+ */
+export const EMAIL_CHANGE_SUPPORT_MESSAGE =
+  "Your sign-in email can't be changed here yet — it is tied to your login. " +
+  "Email support@3rdeyesupply.com from your current address and we'll move it for you."
+
 export const retrieveCustomer =
   async (): Promise<HttpTypes.StoreCustomer | null> => {
     const authHeaders = await getAuthHeaders()
