@@ -16,7 +16,7 @@ export async function generateStaticParams() {
       ?.flatMap((r) => r.countries?.map((c) => c.iso_2) ?? [])
       .filter(Boolean) as string[]
     if (codes?.length) {
-      countryCodes = [...new Set(codes)]
+      countryCodes = Array.from(new Set(codes))
     }
   } catch {
     // Offline build without backend access — keep the "us" fallback.

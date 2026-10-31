@@ -198,7 +198,7 @@ export default function OracleChat({
   const [knowledgeOnly, setKnowledgeOnly] = useState(false)
   const initialSent = useRef(false)
   const sessionId = useRef(
-    `oracle-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+    (globalThis.crypto?.randomUUID?.() ?? `oracle-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`)
   )
   const bottomRef = useRef<HTMLDivElement>(null)
 

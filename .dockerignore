@@ -1,0 +1,19 @@
+# Never ship these into the build context
+**/node_modules
+**/.next
+**/.medusa
+**/dist
+**/.turbo
+.git
+.dsh-meow
+*.log
+.env
+.env.*
+
+# The storefront is deployed separately; keep only its manifest so the
+# frozen pnpm lockfile still validates, but none of its source.
+apps/storefront/**
+!apps/storefront/package.json
+
+# Pre-cutover legacy tree — not part of the pnpm workspace any more.
+backend

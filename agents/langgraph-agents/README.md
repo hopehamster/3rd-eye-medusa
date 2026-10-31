@@ -23,11 +23,19 @@ python3 -m unittest discover -s tests -v
 ../b1-service/.venv/bin/python -m unittest discover -s tests -v
 ```
 
-41 tests, all green at fix-pass completion (2026-10-27): stdlib run
-skips the 5 real-graph tests; B1-venv run executes them (failing
-verifier retries 3x then best-effort, passing verifier, no-verifier
-unverified state, MemorySaver checkpointer, verdict parity with the
-pure-Python rule). Mocked scouts only, no live services.
+**122 tests, all passing** (verified 2026-10-31: `Ran 122 tests ... OK
+(skipped=2)`). The count previously written here (41) was stale.
+
+The stdlib run now resolves its spec paths correctly (they pointed at a
+`team-work/b2-agent` layout that no longer exists, which made 9 tests error
+out at `setUp` with `FileNotFoundError`). `test_fix_specs.py` skips the one
+class whose
+`spec-fold-summary.md` is not present in this repo.
+
+The real-graph tests (failing verifier retries 3x then best-effort, passing
+verifier, no-verifier unverified state, MemorySaver checkpointer, verdict
+parity with the pure-Python rule) execute when LangGraph is installed. Mocked
+scouts only, no live services.
 
 ## LangGraph status — stated plainly (fixed 2026-10-27, B2-1)
 

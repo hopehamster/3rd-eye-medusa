@@ -219,33 +219,33 @@ class CJFulfillmentService extends AbstractFulfillmentProviderService {
 
   async cancelFulfillment(data: Record<string, unknown>): Promise<any> {
     // CJ has no reliable cancel endpoint for in-progress dropship orders.
-    // Surface clearly so ops handles it in the CJ dashboard instead of
-    // assuming a quiet success.
+    //
+    // This used to log a warning and return {} — which meant Medusa recorded
+    // the cancel as successful while the supplier order stayed live and
+    // shippable. Throwing is the honest behaviour: the admin sees a failure and
+    // knows to cancel in the CJ dashboard.
     const cjOrderId = data.cj_order_id
     this.logger_.warn(
       `CJ fulfillment: cancel requested for supplier order ${cjOrderId} — ` +
         `cancel manually in the CJ dashboard; Medusa cannot cancel it via API`
     )
-    return {}
+    throw new MedusaError(
+      MedusaError.Types.NOT_ALLOWED,
+      `CJ cannot cancel supplier order ${cjOrderId} via API. ` +
+        `Cancel it in the CJ dashboard, then mark the fulfilment cancelled in Medusa.`
+    )
   }
 
+  /**
+   * CJ does not expose a printable label/document endpoint, only tracking
+   * numbers. Returning a `{ tracking_number }` object here was misleading:
+   * callers expect label/PDF artefacts. Return an empty list and let tracking
+   * flow through the fulfilment label instead.
+   */
   async getFulfillmentDocuments(
-    data: Record<string, unknown>
+    _data: Record<string, unknown>
   ): Promise<any> {
-    const cjOrderId = data.cj_order_id
-    if (typeof cjOrderId !== "string" || this.dryRun_) {
-      return []
-    }
-    const detail = await this.client_.getOrderDetail(cjOrderId)
-    if (!detail.trackingNumber) {
-      return []
-    }
-    return [
-      {
-        tracking_number: detail.trackingNumber,
-        tracking_url: `https://www.cjdropshipping.com/track/${detail.trackingNumber}`,
-      },
-    ]
+    return []
   }
 }
 

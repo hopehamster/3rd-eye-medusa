@@ -1,5 +1,9 @@
 # 3rd Eye Supply — Medusa v2 stack (Hostinger Docker Manager project: medusa-3es)
 # Isolated project / network / volumes. Medusa listens on 127.0.0.1:9000 (internal only).
+#
+# This is the ONLY compose file for this project. A docker-compose.yaml used to
+# sit beside it and was a silent decoy: `docker compose config` resolves
+# docker-compose.yml, so edits to the .yaml had no effect.
 services:
   postgres:
     image: postgres:16-alpine
@@ -39,15 +43,40 @@ services:
       redis:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgres://medusa:${DB_PASSWORD:?DB_PASSWORD is required}@postgres:5432/medusa-3es?sslmode=disable
+      # --- required: no defaults, boot fails loudly if absent ---
+      DATABASE_URL: postgres://medusa:${DB_PASSWORD:?DB_PASSWORD is required}@postgres:5432/medusa-3es
       REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       COOKIE_SECRET: ${COOKIE_SECRET:?COOKIE_SECRET is required}
-      STORE_CORS: ${STORE_CORS:-*}
-      ADMIN_CORS: ${ADMIN_CORS:-*}
-      AUTH_CORS: ${AUTH_CORS:-*}
+
+      # --- CORS: set real origins. "*" was only ever a placeholder. ---
+      STORE_CORS: ${STORE_CORS:-http://localhost:8000}
+      ADMIN_CORS: ${ADMIN_CORS:-http://localhost:9000}
+      AUTH_CORS: ${AUTH_CORS:-http://localhost:8000}
+
+      # --- payments (owner handles billing; provider only registers when key set) ---
       STRIPE_API_KEY: ${STRIPE_API_KEY:-}
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+
+      # --- Oracle (AI guide) ---
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      ORACLE_MODEL: ${ORACLE_MODEL:-deepseek-chat}
+      ORACLE_CANON_DIR: /app/canon
+
+      # --- CJ dropship fulfilment ---
+      CJ_API_KEY: ${CJ_API_KEY:-}
+      CJ_EMAIL: ${CJ_EMAIL:-}
+      # Keep "true" until a real order is verified end-to-end.
+      CJ_DRY_RUN: ${CJ_DRY_RUN:-true}
+
+      # --- Resend transactional email ---
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL:-}
+
+      # --- Voyage embeddings for semantic search ---
+      # Required for the product search index; without it /store renders empty.
+      VOYAGE_API_KEY: ${VOYAGE_API_KEY:-}
+
       NODE_ENV: production
     ports:
       - "127.0.0.1:9000:9000"

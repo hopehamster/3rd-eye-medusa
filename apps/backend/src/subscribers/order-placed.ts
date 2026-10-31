@@ -8,11 +8,24 @@ import type {
   SubscriberArgs,
   SubscriberConfig,
 } from "@medusajs/framework"
-import { Modules } from "@medusajs/framework/utils"
+import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils"
 
 type OrderPlacedEvent = {
   id: string
 }
+
+/**
+ * Customer-supplied values (names, addresses, and AI-generated product titles)
+ * go into email HTML. Escape every interpolation — an unescaped "<" turns a
+ * confirmation email into a phishing vector or a broken layout.
+ */
+const escapeHtml = (value: unknown): string =>
+  String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;")
 
 function formatMoney(amount: number, currency: string): string {
   return new Intl.NumberFormat("en-US", {
@@ -41,7 +54,7 @@ function orderConfirmationHtml(opts: {
     .map(
       (item) => `
       <tr>
-        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">${item.title}</td>
+        <td style="padding: 8px 0; border-bottom: 1px solid #eee;">${escapeHtml(item.title)}</td>
         <td style="padding: 8px 0; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}</td>
         <td style="padding: 8px 0; border-bottom: 1px solid #eee; text-align: right;">${formatMoney(item.unitPrice, opts.currency)}</td>
       </tr>`
@@ -51,9 +64,9 @@ function orderConfirmationHtml(opts: {
   const addr = opts.shippingAddress
   const addressBlock = addr
     ? `<p style="margin: 4px 0; color: #555;">
-        ${[addr.first_name, addr.last_name].filter(Boolean).join(" ")}<br/>
-        ${addr.address_1 || ""}<br/>
-        ${[addr.city, addr.province, addr.postal_code].filter(Boolean).join(", ")}
+        ${escapeHtml([addr.first_name, addr.last_name].filter(Boolean).join(" "))}<br/>
+        ${escapeHtml(addr.address_1 || "")}<br/>
+        ${escapeHtml([addr.city, addr.province, addr.postal_code].filter(Boolean).join(", "))}
       </p>`
     : ""
 
@@ -66,7 +79,7 @@ function orderConfirmationHtml(opts: {
     <p style="color: #888; font-size: 13px; margin-top: 4px;">crystals &amp; sacred tools</p>
   </div>
 
-  <p>Hi ${name},</p>
+  <p>Hi ${escapeHtml(name)},</p>
 
   <p>Your order's confirmed — we've got it, and your pieces are being prepared with care. Here's what you picked up:</p>
 
@@ -83,7 +96,7 @@ function orderConfirmationHtml(opts: {
     </tr>
   </table>
 
-  <p style="color: #555; font-size: 14px;">Order #${opts.displayId}</p>
+  <p style="color: #555; font-size: 14px;">Order #${escapeHtml(opts.displayId)}</p>
 
   ${addressBlock ? `<p style="font-weight: bold; margin-bottom: 4px;">Shipping to:</p>${addressBlock}` : ""}
 
@@ -102,7 +115,7 @@ export default async function orderPlacedHandler({
   event: { data },
   container,
 }: SubscriberArgs<OrderPlacedEvent>) {
-  const logger = container.resolve("logger")
+  const logger = container.resolve(ContainerRegistrationKeys.LOGGER)
   const orderModule = container.resolve(Modules.ORDER)
   const notificationModule = container.resolve(Modules.NOTIFICATION)
 

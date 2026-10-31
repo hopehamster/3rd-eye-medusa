@@ -159,7 +159,12 @@ export async function retrieveProducts(
         const search = await query.search({
           entity: "product",
           fields: ["id", "title", "handle", "thumbnail"],
-          filters: {},
+          // Must stay narrowed to published products. This was `filters: {}`,
+          // which returned whatever was indexed — including drafts and products
+          // from other sales channels — and showed it to anonymous visitors.
+          // (Sales-channel narrowing still needs the request's publishable key
+          // plumbed through; until then this is the visibility floor.)
+          filters: { status: "published" },
           search_options: {
             vector: {
               query: question.trim().slice(0, 2000),

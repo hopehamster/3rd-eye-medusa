@@ -11,9 +11,18 @@ import {
  * Simple in-memory rate limiter. Protects the DeepSeek bill on the
  * Oracle endpoints — one instance, so a process-local bucket is fine.
  * If we ever scale past one backend, move this to Redis.
+ *
+ * KEYING NOTE: this used to key on the first value of the client-supplied
+ * `x-forwarded-for` header, which any caller can rotate freely — so the limit
+ * protected nothing and the DeepSeek bill was effectively unbounded. Now:
+ *   - signed-in customers are keyed by customer id (stable, unspoofable);
+ *   - everyone else is keyed by req.ip, and the forwarded header is only
+ *     honoured when TRUST_PROXY=true is set explicitly (i.e. we are genuinely
+ *     behind our own proxy and the header is not attacker-controlled).
  */
 const WINDOW_MS = 60_000
 const MAX_REQUESTS = 20
+const TRUST_PROXY = process.env.TRUST_PROXY === "true"
 
 const buckets = new Map<string, number[]>()
 
@@ -42,11 +51,21 @@ async function oracleRateLimit(
   res: MedusaResponse,
   next: MedusaNextFunction
 ) {
-  const ip =
-    (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ??
-    req.ip ??
-    "unknown"
-  if (isRateLimited(`oracle:${ip}`)) {
+  const customerId = (req as any).auth_context?.actor_id as string | undefined
+
+  let key: string
+  if (customerId) {
+    key = `oracle:cust:${customerId}`
+  } else if (TRUST_PROXY) {
+    const forwarded = (req.headers["x-forwarded-for"] as string)
+      ?.split(",")[0]
+      ?.trim()
+    key = `oracle:ip:${forwarded ?? req.ip ?? "unknown"}`
+  } else {
+    key = `oracle:ip:${req.ip ?? "unknown"}`
+  }
+
+  if (isRateLimited(key)) {
     res.status(429).json({
       error: "The Oracle needs a moment — please wait a minute and try again.",
     })

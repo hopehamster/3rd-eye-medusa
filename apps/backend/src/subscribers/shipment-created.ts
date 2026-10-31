@@ -1,32 +1,51 @@
 /**
  * Shipping update email.
  *
- * Fires on `shipment.created`. Tells the customer their order is on its
- * way, with tracking info when available.
+ * Fires on `shipment.created` (emitted by the core create-shipment workflow,
+ * payload: { id: fulfillmentId, no_notification }).
+ *
+ * Two rules this subscriber enforces, because getting them wrong emails the
+ * customer something false:
+ *
+ *  1. Never send without a real tracking number. A dry-run CJ fulfillment
+ *     produces no labels; telling the customer "it just shipped" in that case
+ *     is a lie, so we skip and log instead.
+ *  2. Respect `no_notification` from the event — the admin UI sets it when a
+ *     shipment is cancelled or manually corrected.
+ *
+ * Medusa v2 has no Shipment entity; a "shipment" is a Fulfillment that has been
+ * marked shipped. Labels live on the fulfillment.
  */
 import type {
   SubscriberArgs,
   SubscriberConfig,
 } from "@medusajs/framework"
-import { Modules } from "@medusajs/framework/utils"
+import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils"
 
 type ShipmentCreatedEvent = {
   id: string
+  no_notification?: boolean
 }
+
+const escapeHtml = (value: unknown): string =>
+  String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;")
 
 function shipmentHtml(opts: {
   displayId: string | number
   name: string
-  trackingNumber?: string
+  trackingNumber: string
   trackingUrl?: string
 }): string {
-  const trackingBlock = opts.trackingNumber
-    ? `<p style="background: #f4f1ec; padding: 16px; border-radius: 8px; text-align: center;">
+  const trackingBlock = `<p style="background: #f4f1ec; padding: 16px; border-radius: 8px; text-align: center;">
         <span style="color: #888; font-size: 13px;">Tracking number</span><br/>
-        <strong style="font-size: 18px; letter-spacing: 1px;">${opts.trackingNumber}</strong>
-        ${opts.trackingUrl ? `<br/><a href="${opts.trackingUrl}" style="color: #7a6a53;">Track your package</a>` : ""}
+        <strong style="font-size: 18px; letter-spacing: 1px;">${escapeHtml(opts.trackingNumber)}</strong>
+        ${opts.trackingUrl ? `<br/><a href="${escapeHtml(opts.trackingUrl)}" style="color: #7a6a53;">Track your package</a>` : ""}
       </p>`
-    : `<p>Tracking details will follow in a separate note once the carrier picks it up.</p>`
 
   return `
 <!DOCTYPE html>
@@ -37,9 +56,9 @@ function shipmentHtml(opts: {
     <p style="color: #888; font-size: 13px; margin-top: 4px;">crystals &amp; sacred tools</p>
   </div>
 
-  <p>Hi ${opts.name},</p>
+  <p>Hi ${escapeHtml(opts.name)},</p>
 
-  <p>Good news — your order #${opts.displayId} just shipped. It's on its way to you now.</p>
+  <p>Good news — your order #${escapeHtml(opts.displayId)} just shipped. It's on its way to you now.</p>
 
   ${trackingBlock}
 
@@ -53,50 +72,96 @@ function shipmentHtml(opts: {
 }
 
 export default async function shipmentCreatedHandler({
-  event: { data },
+  event,
   container,
 }: SubscriberArgs<ShipmentCreatedEvent>) {
-  const logger = container.resolve("logger")
-  const fulfillmentModule = container.resolve(Modules.FULFILLMENT)
-  const orderModule = container.resolve(Modules.ORDER)
+  const logger = container.resolve(ContainerRegistrationKeys.LOGGER)
+  const query = container.resolve(ContainerRegistrationKeys.QUERY)
   const notificationModule = container.resolve(Modules.NOTIFICATION)
 
+  const fulfillmentId = event.data?.id
+
+  if (!fulfillmentId) {
+    logger.warn("shipment-created: event had no fulfillment id, skipping")
+    return
+  }
+
+  if (event.data?.no_notification) {
+    logger.info(
+      `shipment-created: no_notification set for fulfillment ${fulfillmentId}, skipping`
+    )
+    return
+  }
+
   try {
-    const shipment = await fulfillmentModule.retrieveShipment(data.id, {
-      relations: ["labels", "order"],
+    const { data } = await query.graph({
+      entity: "fulfillment",
+      fields: [
+        "id",
+        "labels.tracking_number",
+        "labels.tracking_url",
+        "order.id",
+        "order.email",
+        "order.display_id",
+        "order.shipping_address.first_name",
+      ],
+      filters: { id: fulfillmentId },
     })
 
-    // The shipment's order may be a stub — fetch the full order for the email
-    const orderId = (shipment as any).order_id ?? (shipment as any).order?.id
-    if (!orderId) {
-      logger.warn(`shipment-created: shipment ${data.id} has no order, skipping`)
+    const fulfillment = data?.[0] as
+      | {
+          id: string
+          labels?: { tracking_number?: string | null; tracking_url?: string | null }[]
+          order?: {
+            id: string
+            email?: string | null
+            display_id?: number | string | null
+            shipping_address?: { first_name?: string | null } | null
+          } | null
+        }
+      | undefined
+
+    if (!fulfillment) {
+      logger.warn(
+        `shipment-created: fulfillment ${fulfillmentId} not found, skipping`
+      )
       return
     }
 
-    const order = await orderModule.retrieveOrder(orderId, {
-      relations: ["shipping_address"],
-    })
+    const order = fulfillment.order
+
+    if (!order?.id) {
+      logger.warn(
+        `shipment-created: fulfillment ${fulfillmentId} has no order, skipping`
+      )
+      return
+    }
 
     if (!order.email) {
-      logger.warn(`shipment-created: order ${orderId} has no email, skipping`)
+      logger.warn(
+        `shipment-created: order ${order.id} has no email, skipping`
+      )
       return
     }
 
-    const name =
-      (order.shipping_address as any)?.first_name || "friend"
+    const label = fulfillment.labels?.find((l) => l.tracking_number)
+    const trackingNumber = label?.tracking_number?.trim()
 
-    // Tracking info lives on shipment labels in v2
-    const labels = (shipment as any).labels ?? []
-    const trackingNumber =
-      labels[0]?.tracking_number ?? (shipment as any).tracking_number
-    const trackingUrl =
-      labels[0]?.tracking_url ?? (shipment as any).tracking_url
+    // Rule 1: no tracking number means nothing has actually shipped as far as
+    // the customer is concerned. Do not send a "shipped" email.
+    if (!trackingNumber) {
+      logger.info(
+        `shipment-created: fulfillment ${fulfillmentId} has no tracking number ` +
+          `(dry run or label pending) — no shipping email sent`
+      )
+      return
+    }
 
     const html = shipmentHtml({
-      displayId: (order as any).display_id ?? orderId,
-      name,
+      displayId: order.display_id ?? order.id,
+      name: order.shipping_address?.first_name || "friend",
       trackingNumber,
-      trackingUrl,
+      trackingUrl: label?.tracking_url ?? undefined,
     })
 
     await notificationModule.createNotifications({
@@ -104,15 +169,17 @@ export default async function shipmentCreatedHandler({
       channel: "email",
       template: "shipment-created",
       data: {
-        subject: `Your 3rd Eye Supply order is on its way`,
+        subject: "Your 3rd Eye Supply order is on its way",
         html,
       },
     })
 
-    logger.info(`shipment-created: shipping update sent to ${order.email}`)
+    logger.info(
+      `shipment-created: shipping update sent for fulfillment ${fulfillmentId}`
+    )
   } catch (err) {
     logger.error(
-      `shipment-created: failed for shipment ${data.id}: ${(err as Error).message}`
+      `shipment-created: failed for fulfillment ${fulfillmentId}: ${(err as Error).message}`
     )
   }
 }

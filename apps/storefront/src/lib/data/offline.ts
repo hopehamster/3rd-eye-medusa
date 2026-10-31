@@ -12,10 +12,34 @@ import { HttpTypes } from "@medusajs/types"
  * Fallback content is clearly demo data, not real inventory.
  */
 
-export const isOfflineMode = () => {
+const offlineFlagSet = () => {
   const value = process.env.NEXT_PUBLIC_STOREFRONT_OFFLINE_MODE
   return value === "1" || value?.toLowerCase() === "true"
 }
+
+/**
+ * Offline/demo mode is a *build-time* switch: NEXT_PUBLIC_* values are inlined
+ * into the client bundle, so unsetting the env var without rebuilding does
+ * nothing. (The previous comment here claimed "no code changes needed" — that
+ * was wrong, a rebuild is required.)
+ *
+ * It is also hard-disabled in production. Serving invented products, prices and
+ * stock to real shoppers is worse than being down, and offline mode has no
+ * cart/checkout fallback, so it can never complete a sale anyway.
+ */
+export const isOfflineMode = () => {
+  if (!offlineFlagSet()) {
+    return false
+  }
+  if (process.env.NODE_ENV === "production") {
+    return false
+  }
+  return true
+}
+
+/** True when the flag is on but production disabled it — used to warn loudly. */
+export const isOfflineModeBlockedInProduction = () =>
+  offlineFlagSet() && process.env.NODE_ENV === "production"
 
 const OFFLINE_COUNTRY = (
   process.env.NEXT_PUBLIC_DEFAULT_REGION || "us"

@@ -1,33 +1,34 @@
+# syntax=docker/dockerfile:1
 # 3rd Eye Supply — Medusa v2 backend (production)
-# Build context: repo root. The Medusa project lives in ./backend/
-FROM node:20-alpine AS base
+# Build context: repo root. The Medusa app lives in ./apps/backend (pnpm workspace).
+# The pre-cutover legacy ./backend starter is NOT built here any more.
+
+FROM node:22-alpine AS base
+RUN apk add --no-cache libc6-compat openssl
 RUN corepack enable
+ENV PNPM_HOME=/pnpm
+ENV PATH=$PNPM_HOME:$PATH
 
-FROM base AS deps
-WORKDIR /app/backend
-COPY backend/package.json backend/.yarnrc.yml ./
-# No yarn.lock shipped (exceeds push API limits) — yarn resolves fresh and
-# writes its own lockfile in the image. Medusa deps are pinned in package.json.
-RUN yarn install
-
+# ---------- build ----------
 FROM base AS builder
-WORKDIR /app/backend
-COPY --from=deps /app/backend/node_modules ./node_modules
-COPY --from=deps /app/backend/yarn.lock ./yarn.lock
-COPY backend/ ./
-RUN yarn build
+WORKDIR /app
+COPY . .
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile
+RUN pnpm --filter @dtc/backend run build
 
+# ---------- runtime ----------
 FROM base AS runner
-WORKDIR /app/backend
+WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=builder /app/backend/node_modules ./node_modules
-COPY --from=builder /app/backend/.medusa ./.medusa
-COPY --from=builder /app/backend/package.json ./package.json
-COPY --from=builder /app/backend/yarn.lock ./yarn.lock
-COPY --from=builder /app/backend/.yarnrc.yml ./.yarnrc.yml
-COPY --from=builder /app/backend/medusa-config.ts ./medusa-config.ts
-COPY --from=builder /app/backend/tsconfig.json ./tsconfig.json
-COPY --from=builder /app/backend/src ./src
+
+# `medusa build` emits a self-contained app in .medusa/server
+COPY --from=builder /app/apps/backend/.medusa/server ./
+# The Oracle reads brand/canon markdown from ./canon at runtime.
+COPY --from=builder /app/apps/backend/canon ./canon
+
+RUN npm install --omit=dev --no-audit --no-fund
+
 EXPOSE 9000
-# Migrations are idempotent — safe to run on every start
-CMD ["sh", "-c", "yarn medusa db:migrate && yarn medusa start"]
+# Migrations are idempotent — safe to run on every start.
+CMD ["sh", "-c", "npx medusa db:migrate && npx medusa start"]

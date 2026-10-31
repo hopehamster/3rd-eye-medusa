@@ -1,0 +1,33 @@
+# There was no root .gitignore, so `git add .` would have staged
+# node_modules (hundreds of MB), build output and agent scratch files.
+
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build output
+.next/
+.medusa/
+dist/
+.turbo/
+*.tsbuildinfo
+
+# env — never commit real secrets
+.env
+.env.*
+!.env.template
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+.venv-*/
+.pytest_cache/
+
+# agent / harness scratch
+.dsh-meow/
+
+# os
+.DS_Store
+Thumbs.db
+*.log

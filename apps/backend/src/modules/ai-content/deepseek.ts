@@ -6,7 +6,7 @@
 import { MedusaError } from "@medusajs/framework/utils"
 
 const DEEPSEEK_API_URL = "https://api.deepseek.com/chat/completions"
-const MODEL = process.env.AI_CONTENT_MODEL || "deepseek-v4-pro"
+const MODEL = process.env.AI_CONTENT_MODEL || "deepseek-chat"
 
 export interface ChatMessage {
   role: "system" | "user"

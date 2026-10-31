@@ -26,7 +26,9 @@ function parseFrontmatter(raw: string): {
   body: string
 } {
   const meta: Record<string, string> = {}
-  const match = raw.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/)
+  // \r?\n, not \n: a Windows checkout materialises these files with CRLF and
+    // an \n-only regex silently fails to match.
+    const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/)
   if (!match) {
     return { meta, body: raw }
   }

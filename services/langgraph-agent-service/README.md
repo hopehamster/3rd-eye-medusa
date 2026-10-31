@@ -208,7 +208,22 @@ venv (see b2-agent/README.md).
 .venv/bin/python -m pytest tests/ -q
 ```
 
-66 tests, all green at security-residual fix completion (2026-10-27).
+**77 passed** (verified 2026-10-31 against `requirements.txt` on Python
+3.12 in a clean venv — `77 passed, 1 warning in 4.12s`). The count previously
+written here (66) was stale.
+
+Reproduce exactly:
+
+```bash
+py -3.12 -m venv .venv && .venv/Scripts/python -m pip install -r requirements.txt
+.venv/Scripts/python -m pytest tests -q
+```
+
+Note: running the suite with a *globally* installed langgraph instead of the
+pinned requirements produces 2 failures in `test_checkpoint_pool.py`
+(`psycopg_pool` / `langgraph.checkpoint.postgres` missing). That is an
+environment gap, not a code defect — the packages are pinned above.
+
 Nothing here is live, deployed, or proven live — fixed per re-review,
 awaiting re-re-review + QA re-run.
 

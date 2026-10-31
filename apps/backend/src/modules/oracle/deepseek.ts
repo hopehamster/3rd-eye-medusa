@@ -6,7 +6,10 @@ import { MedusaError } from "@medusajs/framework/utils"
 import { EXPERT_PERSONAS, getExpert, type ExpertId } from "./experts"
 
 const DEEPSEEK_API_URL = "https://api.deepseek.com/chat/completions"
-const MODEL = process.env.ORACLE_MODEL || "deepseek-v4-pro"
+// DeepSeek's published chat models are deepseek-chat / deepseek-reasoner.
+// The old default "deepseek-v4-pro" is not a real model id, which would make
+// every Oracle call fail with a provider 400.
+const MODEL = process.env.ORACLE_MODEL || "deepseek-chat"
 
 function apiKey(): string {
   const key = process.env.DEEPSEEK_API_KEY

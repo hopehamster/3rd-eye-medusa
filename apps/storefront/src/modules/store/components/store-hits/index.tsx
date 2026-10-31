@@ -65,12 +65,31 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
       {showSkeleton ? (
         <SkeletonProductGrid numberOfProducts={hitsPerPage} />
       ) : !items.length ? (
-        <Text
+        <div
           className="py-16 text-center text-ui-fg-subtle"
           data-testid="no-products"
         >
-          No products matched these filters.
-        </Text>
+          {/* Two very different situations used to look identical here: a
+              filter that matched nothing, and a search index that was never
+              built (no VOYAGE_API_KEY => /store renders empty while the
+              homepage still shows products). The second one is a setup
+              failure, so say so rather than implying the catalogue is empty. */}
+          {refinementKey.trim() ? (
+            <Text>No products matched these filters.</Text>
+          ) : (
+            <>
+              <Text>The collection couldn&apos;t be loaded.</Text>
+              <Text className="mt-2 text-sm">
+                The product search index is empty or unreachable. Try again in a
+                moment — or{" "}
+                <LocalizedClientLink href="/" className="underline">
+                  browse from the homepage
+                </LocalizedClientLink>
+                .
+              </Text>
+            </>
+          )}
+        </div>
       ) : (
         <ul
           className="grid grid-cols-2 w-full small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8"

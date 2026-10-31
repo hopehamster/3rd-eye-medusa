@@ -24,11 +24,16 @@ const nextConfig = {
       fullUrl: true,
     },
   },
+  // Type errors FAIL the build. This gate was previously off, which meant
+  // "the build passed" said nothing about whether the code was type-correct.
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  // ESLint does NOT gate the build: the rule set here (react/no-unescaped-
+  // entities, no-explicit-any, ban-ts-comment) is stylistic and would block
+  // deploys over formatting. Lint runs as its own command: `pnpm lint`.
   eslint: {
     ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
   },
   images: {
     unoptimized: true,

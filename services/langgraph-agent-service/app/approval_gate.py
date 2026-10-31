@@ -12,10 +12,14 @@ a second gate implementation.
 import sys
 from pathlib import Path
 
-_TEAM_WORK = Path(__file__).resolve().parents[2]
-_B2_AGENT = _TEAM_WORK / "b2-agent"
-if str(_B2_AGENT) not in sys.path:
-    sys.path.insert(0, str(_B2_AGENT))
+# The canonical gate lives in the agent package at
+# <repo>/agents/langgraph-agents/research_agent/approval.py.
+# (It used to sit at <team-work>/b2-agent — that directory does not exist in
+# this repo, so this import failed with ModuleNotFoundError.)
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+_AGENT_PKG = _REPO_ROOT / "agents" / "langgraph-agents"
+if str(_AGENT_PKG) not in sys.path:
+    sys.path.insert(0, str(_AGENT_PKG))
 
 from research_agent.approval import (  # noqa: E402
     Approval,

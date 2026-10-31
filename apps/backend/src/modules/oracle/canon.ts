@@ -25,7 +25,11 @@ function parseFrontmatter(raw: string): {
   intents: string[]
   body: string
 } {
-  const match = raw.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/)
+  // \r?\n, not \n: the repo has no .gitattributes, so a Windows checkout
+    // materialises these files with CRLF and an \n-only regex silently fails to
+    // match — which emptied the Oracle's knowledge base and rendered the raw
+    // frontmatter as body text on /guides pages.
+    const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/)
   if (!match) {
     return { title: "", intents: [], body: raw }
   }
