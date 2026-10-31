@@ -69,10 +69,12 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     return
   }
 
+  // The emailpass provider keys its update on the provider identity's
+  // entity_id (the email), NOT on an `email` field — passing `email` silently
+  // returns { success: false } with no error.
   const updated = await auth.updateProvider("emailpass", {
-    email,
+    entity_id: email,
     password: new_password,
-    actor_id: customerId,
   } as unknown as Parameters<typeof auth.updateProvider>[1])
 
   if (!updated?.success) {
