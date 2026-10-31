@@ -169,6 +169,27 @@ export default async function Footer() {
                 </li>
               </ul>
             </div>
+            <div className="flex flex-col gap-y-2">
+              <span className="txt-small-plus text-cosmos-text">Policies</span>
+              <ul className="grid grid-cols-1 gap-y-2 text-cosmos-muted txt-small">
+                {[
+                  { href: "/shipping", label: "Shipping" },
+                  { href: "/returns", label: "Returns" },
+                  { href: "/terms", label: "Terms" },
+                  { href: "/privacy", label: "Privacy" },
+                  { href: "/contact", label: "Contact" },
+                ].map((link) => (
+                  <li key={link.href}>
+                    <LocalizedClientLink
+                      href={link.href}
+                      className="hover:text-cosmos-goldBright transition-colors"
+                    >
+                      {link.label}
+                    </LocalizedClientLink>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
         <div className="gold-hairline w-full" aria-hidden="true" />
