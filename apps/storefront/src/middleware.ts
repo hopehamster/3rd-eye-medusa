@@ -160,7 +160,11 @@ export const config = {
   // file extension, so the region redirect used to catch them and send
   // /opengraph-image -> /us/opengraph-image -> 404, leaving every shared link
   // without a preview image. They must bypass the middleware entirely.
+  //
+  // /monitoring is Sentry's tunnel endpoint (next.config.js tunnelRoute). It has
+  // no extension either, so the redirect was turning it into /us/monitoring and
+  // every error envelope 404'd — client error reporting was silently dead.
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|images|assets|png|svg|jpg|jpeg|gif|webp|opengraph-image|twitter-image|icon).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|images|assets|png|svg|jpg|jpeg|gif|webp|opengraph-image|twitter-image|icon|monitoring).*)",
   ],
 }
