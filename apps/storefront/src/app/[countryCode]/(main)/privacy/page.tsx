@@ -25,7 +25,7 @@ export default async function PrivacyPage() {
             past.
           </p>
           <p className="mt-6 font-humanist text-xs uppercase tracking-widest text-paper-muted">
-            Last updated: [FILL: date] &middot; Effective: [FILL: date]
+            Last updated: 31 October 2026 &middot; Effective: 31 October 2026
           </p>
         </header>
 
@@ -55,8 +55,7 @@ export default async function PrivacyPage() {
               street address], Las Vegas, Nevada [FILL: ZIP], United States
             </li>
             <li>
-              <span className="font-semibold">Privacy contact:</span> [FILL:
-              privacy email address]
+              <span className="font-semibold">Privacy contact:</span> support@3rdeyesupply.com
             </li>
             <li>
               <span className="font-semibold">
@@ -751,7 +750,7 @@ export default async function PrivacyPage() {
             We instruct the model not to solicit that kind of detail. If it
             surfaces anyway, we delete what we can [FILL: describe the deletion
             process and who performs it]. If you have already sent something you
-            regret, write to [FILL: privacy email address] and we will remove the
+            regret, write to support@3rdeyesupply.com and we will remove the
             conversation and any profile drawn from it.
           </p>
           <p className="mt-4 font-humanist text-[15px] leading-7 text-paper-text">
@@ -792,7 +791,7 @@ export default async function PrivacyPage() {
             If that trade-off is not one you want to make, simply do not use the
             Oracle. Browsing, ordering, and everything else on this site work
             without it. You can also ask us for a copy of the safeguards we rely
-            on for any processor, at [FILL: privacy email address].
+            on for any processor, at support@3rdeyesupply.com.
           </p>
         </section>
 
@@ -980,7 +979,7 @@ export default async function PrivacyPage() {
             </li>
           </ul>
           <p className="mt-5 font-humanist text-[15px] leading-7 text-paper-text">
-            Write to [FILL: privacy email address] and say what you want. We answer
+            Write to support@3rdeyesupply.com and say what you want. We answer
             within one month. If a request is genuinely complex we may extend that
             by two further months and will tell you why before the first month is
             up. Requests are free. If we cannot be confident who is asking, we may
@@ -1042,7 +1041,7 @@ export default async function PrivacyPage() {
             </li>
           </ul>
           <p className="mt-5 font-humanist text-[15px] leading-7 text-paper-text">
-            Ask at [FILL: privacy email address or request form]. We respond within
+            Ask at support@3rdeyesupply.com. We respond within
             45 days, and may extend once by a further 45 with notice. An authorised
             agent may ask on your behalf, with written permission we can check.
           </p>
@@ -1103,7 +1102,7 @@ export default async function PrivacyPage() {
             The shop is for adults. We do not knowingly collect personal data from
             anyone under 16 in the EU or under 13 in the United States, and we do
             not direct the Oracle at children. If you believe a child has given us
-            information, write to [FILL: privacy email address] and we will delete
+            information, write to support@3rdeyesupply.com and we will delete
             the account and its data.
           </p>
         </section>
@@ -1130,9 +1129,9 @@ export default async function PrivacyPage() {
           </p>
           <ul className="mt-5 list-disc pl-5 space-y-2 font-humanist text-[15px] leading-7 text-paper-text marker:text-paper-border">
             <li>
-              Privacy and data requests: [FILL: privacy email address]
+              Privacy and data requests: support@3rdeyesupply.com
             </li>
-            <li>General support: [FILL: support email address]</li>
+            <li>General support: support@3rdeyesupply.com</li>
             <li>
               Post: 3rd Eye Supply, [FILL: street address], Las Vegas, Nevada
               [FILL: ZIP], United States

@@ -24,7 +24,7 @@ export default async function ReturnsPage() {
             statutory right EU customers have on top of all of it.
           </p>
           <p className="mt-6 font-humanist text-xs uppercase tracking-widest text-paper-muted">
-            Last updated: [FILL: date] &middot; Effective: [FILL: date]
+            Last updated: 31 October 2026 &middot; Effective: 31 October 2026
           </p>
         </header>
 
@@ -43,7 +43,7 @@ export default async function ReturnsPage() {
               </li>
               <li>
                 <strong className="font-semibold">Start here.</strong>{" "}
-                [FILL: support email], before you post anything.
+                support@3rdeyesupply.com, before you post anything.
               </li>
               <li>
                 <strong className="font-semibold">EU withdrawal.</strong>{" "}
@@ -66,8 +66,7 @@ export default async function ReturnsPage() {
             within fourteen days of us agreeing to it.
           </p>
           <p className="mt-4 font-humanist text-[15px] leading-7 text-paper-text">
-            A return has to start with a message, not a parcel. Write to [FILL:
-            support email] with your order number and what you want to return,
+            A return has to start with a message, not a parcel. Write to support@3rdeyesupply.com with your order number and what you want to return,
             and wait for our reply before posting anything.
           </p>
         </section>
@@ -78,7 +77,7 @@ export default async function ReturnsPage() {
           </h2>
           <ol className="mt-5 list-decimal pl-5 space-y-2 font-humanist text-[15px] leading-7 text-paper-text marker:text-paper-border">
             <li>
-              Email [FILL: support email] with your order number, the items, and
+              Email support@3rdeyesupply.com with your order number, the items, and
               the reason — plus a photograph if anything is damaged.
             </li>
             <li>
@@ -240,8 +239,7 @@ export default async function ReturnsPage() {
             </li>
             <li>
               <strong className="font-semibold">How to use it.</strong> Send us a
-              clear statement that you are withdrawing — an email to [FILL:
-              support email] is enough, or use the model form below. You do not
+              clear statement that you are withdrawing — an email to support@3rdeyesupply.com is enough, or use the model form below. You do not
               need our permission and you do not need to give a reason.
             </li>
             <li>
@@ -286,8 +284,7 @@ export default async function ReturnsPage() {
             </p>
             <div className="mt-5 space-y-4 font-humanist text-[15px] leading-7 text-paper-text">
               <p>
-                To 3rd Eye Supply, [FILL: business address], [FILL: support
-                email]:
+                To 3rd Eye Supply, [FILL: business address], support@3rdeyesupply.com:
               </p>
               <p>
                 I/We (*) hereby give notice that I/We (*) withdraw from my/our (*)

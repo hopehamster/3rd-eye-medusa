@@ -25,7 +25,7 @@ export default async function ShippingPage() {
             charges at the border.
           </p>
           <p className="mt-6 font-humanist text-xs uppercase tracking-widest text-paper-muted">
-            Last updated: [FILL: date] &middot; Effective: [FILL: date]
+            Last updated: 31 October 2026 &middot; Effective: 31 October 2026
           </p>
         </header>
 
@@ -166,7 +166,7 @@ export default async function ShippingPage() {
           </p>
           <p className="mt-4 font-humanist text-[15px] leading-7 text-paper-text">
             If there has been no movement at all for [FILL: tracking stall
-            window], write to [FILL: support email] with your order number and we
+            window], write to support@3rdeyesupply.com with your order number and we
             will open a trace with the carrier and the supplier.
           </p>
         </section>
@@ -225,7 +225,7 @@ export default async function ShippingPage() {
           <p className="font-humanist text-[15px] leading-7 text-paper-text">
             Check the address at checkout — it is passed to the supplier exactly
             as you typed it, and it cannot always be changed after dispatch. If
-            you spot a mistake, email [FILL: support email] immediately; we will
+            you spot a mistake, email support@3rdeyesupply.com immediately; we will
             try to intercept, but we cannot promise it.
           </p>
           <p className="mt-4 font-humanist text-[15px] leading-7 text-paper-text">
@@ -294,7 +294,7 @@ export default async function ShippingPage() {
             Questions
           </h2>
           <p className="font-humanist text-[15px] leading-7 text-paper-text">
-            Write to [FILL: support email] with your order number in the subject
+            Write to support@3rdeyesupply.com with your order number in the subject
             line. The Contact page explains what to include and when to expect a
             reply; Terms of Sale covers the contract itself; Returns &amp; Refunds
             covers sending something back.

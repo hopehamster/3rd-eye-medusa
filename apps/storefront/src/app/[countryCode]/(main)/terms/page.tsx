@@ -24,7 +24,7 @@ export default async function TermsPage() {
             something is still to be confirmed, it is marked rather than guessed.
           </p>
           <p className="mt-6 font-humanist text-xs uppercase tracking-widest text-paper-muted">
-            Last updated: [FILL: date] &middot; Effective: [FILL: date]
+            Last updated: 31 October 2026 &middot; Effective: 31 October 2026
           </p>
         </header>
 
@@ -67,7 +67,7 @@ export default async function TermsPage() {
           </p>
           <p className="mt-4 font-humanist text-[15px] leading-7 text-paper-text">
             Our postal address is [FILL: business address] and our support email
-            is [FILL: support email]. Either is the address for a notice under
+            is support@3rdeyesupply.com. Either is the address for a notice under
             these terms.
           </p>
         </section>
@@ -95,7 +95,7 @@ export default async function TermsPage() {
             than that.
           </p>
           <p className="mt-4 font-humanist text-[15px] leading-7 text-paper-text">
-            If you need to change or cancel, write to [FILL: support email] as
+            If you need to change or cancel, write to support@3rdeyesupply.com as
             quickly as you can. Before dispatch we can usually manage it. Once a
             parcel is dispatched it belongs to the returns process, not the
             cancellation one.
@@ -442,7 +442,7 @@ export default async function TermsPage() {
             procedure that is open to you.
           </p>
           <p className="mt-4 font-humanist text-[15px] leading-7 text-paper-text">
-            Before anything formal, please write to [FILL: support email]. Most
+            Before anything formal, please write to support@3rdeyesupply.com. Most
             problems are a parcel update and two emails away from being solved.
           </p>
         </section>

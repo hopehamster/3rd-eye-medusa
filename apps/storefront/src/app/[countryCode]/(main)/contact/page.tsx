@@ -24,7 +24,7 @@ export default async function ContactPage() {
             shop, so a clear message gets a useful reply.
           </p>
           <p className="mt-6 font-humanist text-xs uppercase tracking-widest text-paper-muted">
-            Last updated: [FILL: date] &middot; Effective: [FILL: date]
+            Last updated: 31 October 2026 &middot; Effective: 31 October 2026
           </p>
         </header>
 
@@ -33,7 +33,7 @@ export default async function ContactPage() {
             The one route: email
           </h2>
           <p className="font-humanist text-[15px] leading-7 text-paper-text">
-            <strong className="font-semibold">[FILL: support email]</strong>
+            <strong className="font-semibold">support@3rdeyesupply.com</strong>
           </p>
           <p className="mt-4 font-humanist text-[15px] leading-7 text-paper-text">
             Orders, returns, damaged parcels, payment questions and data requests
