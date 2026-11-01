@@ -491,9 +491,9 @@ export default async function PrivacyPage() {
           <p className="font-humanist text-[15px] leading-7 text-paper-text">
             The first four are set without asking, because sign-in and checkout
             do not work without them. Analytics cookies are set only if you
-            accept them [FILL: confirm a consent banner is live before this page
-            is published]. We do not use advertising cookies, cross-site
-            tracking, or advertising profiles.
+            accept them in the consent banner — declining, or never answering,
+            means no analytics runs at all. We do not use advertising cookies,
+            cross-site tracking, or advertising profiles.
           </p>
           <p className="mt-4 font-humanist text-[15px] leading-7 text-paper-muted">
             You can block or delete cookies in your browser. Blocking the

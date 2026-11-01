@@ -14,7 +14,8 @@ export function isAnalyticsEnabled(): boolean {
 }
 
 /**
- * Initialize PostHog. Called once from the PostHogProvider.
+ * Initialize PostHog. Only ever called after the visitor has granted consent
+ * (see lib/consent.ts), so no analytics request fires before that choice.
  * No-op when the key is missing.
  */
 export function initAnalytics(): void {
@@ -31,6 +32,25 @@ export function initAnalytics(): void {
     disable_session_recording: false,
   })
   initialized = true
+}
+
+/**
+ * Called when the consent decision changes. Granting turns collection on;
+ * withdrawing stops it and removes the client-side identity PostHog holds.
+ */
+export function setAnalyticsConsent(granted: boolean): void {
+  if (typeof window === "undefined") return
+  if (granted) {
+    initAnalytics()
+    return
+  }
+  if (!initialized) return
+  try {
+    posthog.opt_out_capturing()
+    posthog.reset()
+  } catch {
+    // never let consent handling break the shop
+  }
 }
 
 function capture(event: string, properties?: Record<string, any>): void {
