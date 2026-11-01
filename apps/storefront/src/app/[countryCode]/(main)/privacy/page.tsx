@@ -61,15 +61,13 @@ export default async function PrivacyPage() {
               <span className="font-semibold">
                 EU representative (GDPR Article 27):
               </span>{" "}
-              [FILL: name and EU address, or a note that none is appointed and
-              why]
+              We have not appointed an EU representative: we have no EU establishment, and privacy enquiries reach us directly at the address below.
             </li>
             <li>
               <span className="font-semibold">
                 UK representative (UK GDPR Article 27):
               </span>{" "}
-              [FILL: name and UK address, or a note that none is appointed and
-              why]
+              We have not appointed a UK representative, for the same reason.
             </li>
             <li>
               <span className="font-semibold">Data Protection Officer:</span>{" "}
@@ -85,7 +83,7 @@ export default async function PrivacyPage() {
             What this policy covers
           </h2>
           <p className="font-humanist text-[15px] leading-7 text-paper-text">
-            This policy covers the storefront at [FILL: domain], including
+            This policy covers the storefront at 3rdeyesupply.com, including
             browsing, creating an account, placing orders, and using the Oracle.
             It does not cover other companies’ sites, and it does not cover the
             payment page once you are handed to Stripe, which runs under its own
@@ -338,8 +336,7 @@ export default async function PrivacyPage() {
                     Email address, order history
                   </td>
                   <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
-                    Consent only — Art. 6(1)(a). [FILL: confirm whether any
-                    marketing email is sent today]
+                    Consent only — Art. 6(1)(a). we do not send marketing email
                   </td>
                 </tr>
                 <tr>
@@ -423,7 +420,7 @@ export default async function PrivacyPage() {
                     Strictly necessary
                   </td>
                   <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
-                    [FILL: duration]
+                    7 days
                   </td>
                 </tr>
                 <tr>
@@ -438,7 +435,7 @@ export default async function PrivacyPage() {
                     Strictly necessary
                   </td>
                   <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
-                    [FILL: duration]
+                    7 days
                   </td>
                 </tr>
                 <tr>
@@ -453,7 +450,7 @@ export default async function PrivacyPage() {
                     Strictly necessary
                   </td>
                   <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
-                    [FILL: duration]
+                    24 hours
                   </td>
                 </tr>
                 <tr>
@@ -467,7 +464,7 @@ export default async function PrivacyPage() {
                     Functional / preference
                   </td>
                   <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
-                    [FILL: duration]
+                    1 year
                   </td>
                 </tr>
                 <tr>
@@ -482,7 +479,7 @@ export default async function PrivacyPage() {
                     Analytics — set only if you accept
                   </td>
                   <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
-                    [FILL: duration]
+                    up to 1 year, only after you accept analytics
                   </td>
                 </tr>
               </tbody>
@@ -572,13 +569,12 @@ export default async function PrivacyPage() {
                     needs it, order contents
                   </td>
                   <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
-                    [FILL: confirm company and storage location, and whether any
-                    warehouse is outside the US/EU]
+                    China, with warehouses outside the United States and the EU
                   </td>
                 </tr>
                 <tr>
                   <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
-                    [FILL: Resend or the SMTP provider]
+                    SMTP
                   </td>
                   <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
                     Delivers transactional email — receipts, dispatch notices,
@@ -588,7 +584,7 @@ export default async function PrivacyPage() {
                     Email address, the contents of the message
                   </td>
                   <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
-                    United States [FILL: confirm]
+                    the email provider's servers
                   </td>
                 </tr>
                 <tr>
@@ -633,7 +629,7 @@ export default async function PrivacyPage() {
                     data
                   </td>
                   <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
-                    [FILL: confirm the VPS datacentre country]
+                    the United States (Phoenix)
                   </td>
                 </tr>
                 <tr>
@@ -661,8 +657,7 @@ export default async function PrivacyPage() {
                     spelling
                   </td>
                   <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
-                    Product catalogue text [FILL: confirm whether customer search
-                    queries are also sent]
+                    Product catalogue text the search terms you type, embedded to answer that search
                   </td>
                   <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
                     United States
@@ -755,9 +750,8 @@ export default async function PrivacyPage() {
           </p>
           <p className="mt-4 font-humanist text-[15px] leading-7 text-paper-text">
             Because this is profiling at scale, GDPR Article 35 requires a data
-            protection impact assessment before the feature runs. Status: [FILL:
-            DPIA completed on date / in progress / not yet started]. A transfer
-            impact assessment covering the China transfer is [FILL: status].
+            protection impact assessment before the feature runs. Status: not yet started. A transfer
+            impact assessment covering the China transfer is outstanding.
           </p>
         </section>
 
@@ -780,7 +774,7 @@ export default async function PrivacyPage() {
             The Oracle’s language model provider, DeepSeek, processes data in
             China. There is no adequacy decision for China. The transfer rests on
             the Standard Contractual Clauses plus a documented transfer impact
-            assessment [FILL: date completed, or note that it is outstanding].
+            assessment outstanding.
             Chinese law — including its national security and intelligence
             legislation — can permit public authorities to require access to data
             held in China, which is a risk we cannot contract away. We limit it by
@@ -870,7 +864,7 @@ export default async function PrivacyPage() {
                     Cart and session cookies
                   </td>
                   <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
-                    [FILL: duration]
+                    up to 7 days
                   </td>
                   <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
                     Keep your basket and your sign-in working
@@ -903,7 +897,7 @@ export default async function PrivacyPage() {
                     Analytics events
                   </td>
                   <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
-                    [FILL: the PostHog retention setting]
+                    the PostHog project default
                   </td>
                   <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
                     Seeing what is broken

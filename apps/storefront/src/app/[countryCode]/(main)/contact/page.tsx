@@ -165,7 +165,7 @@ export default async function ContactPage() {
           <p className="font-humanist text-[15px] leading-7 text-paper-text">
             Cards are processed by Stripe, and the charge appears on your
             statement as{" "}
-            <strong className="font-semibold">[FILL: statement descriptor]</strong>
+            <strong className="font-semibold">the business name Stripe holds for us</strong>
             . If you see a charge you do not recognise, email us first with the
             date and the amount. A chargeback can take weeks to resolve and
             freezes the order in the meantime; we can usually identify a charge in

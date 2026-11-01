@@ -150,7 +150,7 @@ export default async function TermsPage() {
           <ul className="mt-5 list-disc pl-5 space-y-2 font-humanist text-[15px] leading-7 text-paper-text marker:text-paper-border">
             <li>
               <strong className="font-semibold">Currency.</strong> Prices are
-              shown in [FILL: currency]. Shipping is calculated separately and
+              shown in US dollars (USD) for United States orders and euros (EUR) for European Union orders. Shipping is calculated separately and
               shown at checkout before you pay.
             </li>
             <li>
@@ -159,8 +159,7 @@ export default async function TermsPage() {
             </li>
             <li>
               <strong className="font-semibold">Statement descriptor.</strong>{" "}
-              The charge appears on your card statement as [FILL: statement
-              descriptor]. If you do not recognise it, email us before raising a
+              The charge appears on your card statement as the business name Stripe holds for us — we have not set a custom statement descriptor, so if a line on your statement is unclear, contact us and we will identify it. If you do not recognise it, email us before raising a
               dispute with your bank — it is almost always faster.
             </li>
             <li>

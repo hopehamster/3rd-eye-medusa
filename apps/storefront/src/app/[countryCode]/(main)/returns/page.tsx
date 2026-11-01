@@ -205,7 +205,7 @@ export default async function ReturnsPage() {
             Damaged, faulty, or the wrong item
           </h2>
           <p className="font-humanist text-[15px] leading-7 text-paper-text">
-            Message us within [FILL: reporting window] of delivery with
+            Message us within 72 hours of delivery with
             photographs of the item and the packaging, and we will sort out a
             replacement or a refund with return postage on us. Keep the packaging
             until we are done — carriers and customs sometimes ask to see it, and

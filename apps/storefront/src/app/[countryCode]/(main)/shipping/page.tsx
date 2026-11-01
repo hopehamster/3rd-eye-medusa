@@ -241,7 +241,7 @@ export default async function ShippingPage() {
             Lost, damaged or held
           </h2>
           <p className="font-humanist text-[15px] leading-7 text-paper-text">
-            Tell us within [FILL: reporting window] of the expected delivery date,
+            Tell us within 72 hours of the expected delivery date,
             or of the delivery itself if it arrived damaged. Send your order
             number, a photograph of the parcel and its label, and a photograph of
             the damage. We will open a claim with the carrier and the supplier,
