@@ -10,6 +10,7 @@ import type {
   CJOrderResult,
   CJProductSummary,
   CJProductDetail,
+  CJVariant,
   CJInventoryEntry,
 } from "./types"
 
@@ -148,18 +149,85 @@ export class CJClient {
       pageNum: String(params.page ?? 1),
       pageSize: String(params.size ?? 20),
     })
-    const data = await this.request<{ list?: CJProductSummary[] }>(
+    // CJ returns pid / productImage / listingCount, and productImage is a
+    // JSON-encoded array string. Normalise here so callers get real ids and
+    // images instead of undefined fields.
+    const asString = (v: unknown) => (typeof v === "string" ? v : undefined)
+    const imageList = (v: unknown): string[] => {
+      if (typeof v === "string") {
+        const t = v.trim()
+        if (t.startsWith("[")) {
+          try {
+            const parsed = JSON.parse(t)
+            if (Array.isArray(parsed)) {
+              return parsed.filter((x): x is string => typeof x === "string")
+            }
+          } catch {
+            // not JSON — treat as a single url below
+          }
+        }
+        return t ? [t] : []
+      }
+      if (Array.isArray(v)) return v.filter((x): x is string => typeof x === "string")
+      return []
+    }
+
+    const data = await this.request<{ list?: Record<string, unknown>[] }>(
       `/product/list?${q.toString()}`
     )
-    return data.list ?? []
+    return (data.list ?? []).map((row) => ({
+      id: String(row.pid ?? ""),
+      nameEn: asString(row.productNameEn),
+      sku: asString(row.productSku),
+      bigImage: imageList(row.productImage)[0],
+      sellPrice: asString(row.sellPrice),
+      listedNum: typeof row.listingCount === "number" ? row.listingCount : undefined,
+    }))
   }
 
   /** Full product detail incl. variants. */
   async getProduct(pid: string): Promise<CJProductDetail> {
     await this.getToken()
-    return this.request<CJProductDetail>(
+    const imageList = (v: unknown): string[] => {
+      if (typeof v === "string") {
+        const t = v.trim()
+        if (t.startsWith("[")) {
+          try {
+            const parsed = JSON.parse(t)
+            if (Array.isArray(parsed)) {
+              return parsed.filter((x): x is string => typeof x === "string")
+            }
+          } catch {
+            // not JSON — treat as a single url below
+          }
+        }
+        return t ? [t] : []
+      }
+      if (Array.isArray(v)) return v.filter((x): x is string => typeof x === "string")
+      return []
+    }
+
+    // /product/query answers with pid, productNameEn, bigImage and
+    // productImageSet (or a JSON-encoded productImage) — not the id/images
+    // names declared on the DTO.
+    const raw = await this.request<Record<string, unknown>>(
       `/product/query?pid=${encodeURIComponent(pid)}`
     )
+    const gallery = raw.productImageSet
+      ? imageList(raw.productImageSet)
+      : imageList(raw.productImage)
+    return {
+      id: String(raw.pid ?? pid),
+      nameEn: typeof raw.productNameEn === "string" ? raw.productNameEn : undefined,
+      description:
+        typeof raw.description === "string" ? raw.description : undefined,
+      bigImage:
+        typeof raw.bigImage === "string" ? raw.bigImage : gallery[0],
+      images: gallery,
+      variants: Array.isArray(raw.variants)
+        ? (raw.variants as CJVariant[])
+        : [],
+    }
   }
 
   /** Inventory per warehouse for a product. */
