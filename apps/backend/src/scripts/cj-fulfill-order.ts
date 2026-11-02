@@ -1,6 +1,12 @@
 import { ExecArgs } from "@medusajs/framework/types"
-import { Modules } from "@medusajs/framework/utils"
+import {
+  ContainerRegistrationKeys,
+  MedusaError,
+  Modules,
+} from "@medusajs/framework/utils"
 import CJFulfillmentService from "../modules/cj-fulfillment/service"
+
+type OrderLine = { id: string; quantity: number }
 
 /**
  * Send a Medusa order to CJ Dropshipping.
@@ -15,8 +21,8 @@ import CJFulfillmentService from "../modules/cj-fulfillment/service"
  *
  * This script therefore drives the registered CJ provider directly, with the
  * real order (real shipping address, real cj_vid lookups), and records the
- * supplier order id on the order's metadata. CJ_DRY_RUN still governs whether
- * a real supplier order is placed.
+ * result on the order's metadata. CJ_DRY_RUN still governs whether a real
+ * supplier order is placed.
  *
  * Usage:
  *   npx medusa exec ./src/scripts/cj-fulfill-order.ts <order_id>
@@ -24,10 +30,13 @@ import CJFulfillmentService from "../modules/cj-fulfillment/service"
 export default async function cjFulfillOrder({ container, args }: ExecArgs) {
   const orderId = typeof args?.[0] === "string" ? args[0] : ""
   if (!orderId) {
-    throw new Error("usage: medusa exec ./src/scripts/cj-fulfill-order.ts <order_id>")
+    throw new MedusaError(
+      MedusaError.Types.INVALID_DATA,
+      "usage: medusa exec ./src/scripts/cj-fulfill-order.ts <order_id>"
+    )
   }
 
-  const query = container.resolve("query")
+  const query = container.resolve(ContainerRegistrationKeys.QUERY)
   const { data } = await query.graph({
     entity: "order",
     fields: [
@@ -45,18 +54,28 @@ export default async function cjFulfillOrder({ container, args }: ExecArgs) {
   })
   const order = data[0]
   if (!order) {
-    throw new Error(`cj-fulfill-order: order ${orderId} not found`)
+    throw new MedusaError(
+      MedusaError.Types.NOT_FOUND,
+      `cj-fulfill-order: order ${orderId} not found`
+    )
   }
   if (!order.shipping_address) {
-    throw new Error(`cj-fulfill-order: order ${orderId} has no shipping address`)
+    throw new MedusaError(
+      MedusaError.Types.INVALID_DATA,
+      `cj-fulfill-order: order ${orderId} has no shipping address`
+    )
   }
 
-  const items = (order.items ?? []).map((i: { id: string; quantity: number }) => ({
+  const lines = ((order.items ?? []) as OrderLine[]).filter(Boolean)
+  const items = lines.map((i) => ({
     line_item_id: i.id,
     quantity: i.quantity,
   }))
   if (items.length === 0) {
-    throw new Error(`cj-fulfill-order: order ${orderId} has no items`)
+    throw new MedusaError(
+      MedusaError.Types.INVALID_DATA,
+      `cj-fulfill-order: order ${orderId} has no items`
+    )
   }
 
   const provider = new CJFulfillmentService(
@@ -71,8 +90,8 @@ export default async function cjFulfillOrder({ container, args }: ExecArgs) {
     {}
   )
 
-  const data_ = (result.data ?? {}) as Record<string, unknown>
-  const dryRun = data_.dry_run === true
+  const payload = (result.data ?? {}) as Record<string, unknown>
+  const dryRun = payload.dry_run === true
 
   const orderService = container.resolve(Modules.ORDER)
   await orderService.updateOrders([
@@ -81,15 +100,21 @@ export default async function cjFulfillOrder({ container, args }: ExecArgs) {
       metadata: {
         ...(order.metadata ?? {}),
         cj_fulfillment: dryRun
-          ? { dry_run: true, payload: data_.cj_payload }
-          : { cj_order_id: data_.cj_order_id, cj_order_number: data_.cj_order_number },
+          ? { dry_run: true, payload: payload.cj_payload }
+          : {
+              cj_order_id: payload.cj_order_id,
+              cj_order_number: payload.cj_order_number,
+            },
       },
     },
   ])
 
   console.log(
     dryRun
-      ? "CJ DRY RUN — nothing was sent. Payload: " + JSON.stringify(data_.cj_payload)
-      : `CJ order created: ${String(data_.cj_order_id)} (${String(data_.cj_order_number)})`
+      ? "CJ DRY RUN — nothing was sent. Payload: " +
+          JSON.stringify(payload.cj_payload)
+      : `CJ order created: ${String(payload.cj_order_id)} (${String(
+          payload.cj_order_number
+        )})`
   )
 }
