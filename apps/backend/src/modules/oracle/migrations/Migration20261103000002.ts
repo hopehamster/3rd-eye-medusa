@@ -3,24 +3,26 @@ import { Migration } from "@medusajs/framework/mikro-orm/migrations"
 /**
  * Rename the profile columns to what the ORM actually emits.
  *
- * Medusa's generated CRUD builds statements from the model property names for
- * this entity ("column \"customerId\" of relation \"expert_user_profile\" does not
- * exist" on insert, "column e0.customerId does not exist" on filter), so the
- * snake_case columns the original migration created could never be read or
- * written. Renaming them to the camelCase the ORM expects makes reads, filters,
- * inserts and deletes all work — verified end to end against the live API.
+ * The table used snake_case, but the generated CRUD builds statements from the
+ * model property names ("column customerId of relation expert_user_profile does
+ * not exist" on insert), so nothing could be read or written. Renaming to
+ * camelCase makes reads, filters, inserts and deletes all work.
  *
- * The unique index is rebuilt on the new names.
+ * PostgreSQL has no "rename column if exists", so both renames are guarded by a
+ * catalogue check inside a DO block. That also makes this a no-op on a database
+ * where the rename was applied by hand, which is the case in production.
  */
 export class Migration20261103000002 extends Migration {
   async up(): Promise<void> {
-    this.addSql('drop index if exists "IDX_expert_user_profile_customer_expert";')
-    this.addSql(
-      'alter table if exists "expert_user_profile" rename column if exists "customer_id" to "customerId";'
-    )
-    this.addSql(
-      'alter table if exists "expert_user_profile" rename column if exists "expert_id" to "expertId";'
-    )
+    this.addSql(`do $$
+begin
+  if exists (select 1 from information_schema.columns where table_name = 'expert_user_profile' and column_name = 'customer_id') then
+    alter table "expert_user_profile" rename column "customer_id" to "customerId";
+  end if;
+  if exists (select 1 from information_schema.columns where table_name = 'expert_user_profile' and column_name = 'expert_id') then
+    alter table "expert_user_profile" rename column "expert_id" to "expertId";
+  end if;
+end $$;`)
     this.addSql(
       'create unique index if not exists "IDX_expert_user_profile_customer_expert" ' +
         'on "expert_user_profile" ("customerId", "expertId");'
@@ -28,12 +30,14 @@ export class Migration20261103000002 extends Migration {
   }
 
   async down(): Promise<void> {
-    this.addSql('drop index if exists "IDX_expert_user_profile_customer_expert";')
-    this.addSql(
-      'alter table if exists "expert_user_profile" rename column if exists "customerId" to "customer_id";'
-    )
-    this.addSql(
-      'alter table if exists "expert_user_profile" rename column if exists "expertId" to "expert_id";'
-    )
+    this.addSql(`do $$
+begin
+  if exists (select 1 from information_schema.columns where table_name = 'expert_user_profile' and column_name = 'customerId') then
+    alter table "expert_user_profile" rename column "customerId" to "customer_id";
+  end if;
+  if exists (select 1 from information_schema.columns where table_name = 'expert_user_profile' and column_name = 'expertId') then
+    alter table "expert_user_profile" rename column "expertId" to "expert_id";
+  end if;
+end $$;`)
   }
 }
