@@ -77,10 +77,9 @@ class OracleModuleService extends MedusaService({
     customerId: string,
     expertId: string
   ): Promise<Record<string, unknown>> {
-    const profiles = await this.listExpertUserProfiles({
-      customerId,
-      expertId,
-    })
+    const profiles = (await this.profilesForCustomer(customerId)).filter(
+      (row) => String(row.expertId ?? "") === expertId
+    )
     const profile = profiles?.[0]
     return (profile?.profile as Record<string, unknown>) ?? {}
   }
@@ -94,10 +93,9 @@ class OracleModuleService extends MedusaService({
     expertId: string,
     updates: Record<string, unknown>
   ): Promise<void> {
-    const existing = await this.listExpertUserProfiles({
-      customerId,
-      expertId,
-    })
+    const existing = (await this.profilesForCustomer(customerId)).filter(
+      (row) => String(row.expertId ?? "") === expertId
+    )
     const current = (existing?.[0]?.profile as Record<string, unknown>) ?? {}
     const merged = { ...current, ...updates, updated_at: new Date().toISOString() }
 
@@ -122,11 +120,25 @@ class OracleModuleService extends MedusaService({
   async listUserProfiles(
     customerId: string
   ): Promise<{ expert_id: string; profile: Record<string, unknown> }[]> {
-    const rows = await this.listExpertUserProfiles({ customerId })
-    return (rows ?? []).map((row) => ({
+    const rows = await this.profilesForCustomer(customerId)
+    return rows.map((row) => ({
       expert_id: String((row as { expertId?: string }).expertId ?? ""),
       profile: (row.profile as Record<string, unknown>) ?? {},
     }))
+  }
+
+  /**
+   * Every profile row for one customer.
+   *
+   * Deliberately unfiltered then filtered in memory: the generated CRUD builds
+   * SQL from the camelCase property name ("column e0.customerId does not
+   * exist") because this module's entities carry no property->column mapping.
+   * Filtering by id (which needs no mapping) is the only shape that works, and
+   * one customer's memory is a handful of rows.
+   */
+  private async profilesForCustomer(customerId: string): Promise<any[]> {
+    const all = (await this.listExpertUserProfiles({}, { take: 5000 } as any)) ?? []
+    return (all as any[]).filter((row) => String(row.customerId ?? "") === customerId)
   }
 
   /**
@@ -134,10 +146,10 @@ class OracleModuleService extends MedusaService({
    * omitted. Returns how many rows were removed so the caller can report it.
    */
   async deleteUserProfile(customerId: string, expertId?: string): Promise<number> {
-    const rows = await this.listExpertUserProfiles(
-      expertId ? { customerId, expertId } : { customerId }
+    const rows = (await this.profilesForCustomer(customerId)).filter(
+      (row) => !expertId || String(row.expertId ?? "") === expertId
     )
-    if (!rows?.length) return 0
+    if (!rows.length) return 0
     await this.deleteExpertUserProfiles(rows.map((row) => row.id))
     return rows.length
   }
