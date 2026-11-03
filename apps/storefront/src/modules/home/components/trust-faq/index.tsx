@@ -7,7 +7,7 @@
 const FAQS = [
   {
     q: "Are these crystals real?",
-    a: "Yes. The stones in this shop are natural stone — quartz, amethyst, agate, obsidian, moonstone — not resin, not glass, not plastic. Here is the honest test: hold your piece up to the light. Natural stone has inclusions, uneven color, and small imperfections, because it grew in the ground over a very long time. If two beads look identical, that is the fake. No two pieces here are exactly alike, and that is the point.",
+    a: "That is what the listings say, and it is what I am selling you: quartz, amethyst, agate, obsidian, moonstone. I do not assay stones in a lab, so here is the honest test you can run instead. Hold your piece up to the light. Natural stone has inclusions, uneven color, and small imperfections, because it grew in the ground over a very long time. If two beads look identical, that is the fake. And if a piece arrives and it is plainly not what the listing described, that is a refund — no argument.",
   },
   {
     q: "Then why do the photos look so polished?",
@@ -15,7 +15,7 @@ const FAQS = [
   },
   {
     q: "Where does my order come from?",
-    a: "We curate pieces from a small set of suppliers we have worked with over time, and your order ships directly from them to you. That keeps prices where they are, but it means delivery takes longer than a big-box warehouse — plan on days, not hours. We will never tell you a stone was handmade in a local workshop or shipped from down the road. It was not.",
+    a: "From CJ Dropshipping, our supplier, whose warehouses ship your order directly to you. They are a large marketplace rather than one small workshop, which is how the prices stay where they are — and why delivery runs in days rather than hours. We will never tell you a stone was handmade in a local workshop or shipped from down the road. It was not.",
   },
   {
     q: "What if my stone arrives damaged, or it is just not for me?",
