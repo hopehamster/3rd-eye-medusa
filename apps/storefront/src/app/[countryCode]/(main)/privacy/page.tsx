@@ -634,6 +634,36 @@ export default async function PrivacyPage() {
                 </tr>
                 <tr>
                   <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
+                    Vercel
+                  </td>
+                  <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
+                    Serves the shop’s pages and images
+                  </td>
+                  <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
+                    The requests that reach the site — pages viewed, browser and
+                    device, IP address
+                  </td>
+                  <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
+                    the United States (global delivery network)
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
+                    Sentry
+                  </td>
+                  <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
+                    Error monitoring — records what broke so it can be fixed
+                  </td>
+                  <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
+                    Error messages, stack traces, the page you were on, and
+                    technical request details
+                  </td>
+                  <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
+                    the United States
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
                     DeepSeek
                   </td>
                   <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
