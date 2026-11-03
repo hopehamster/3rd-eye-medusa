@@ -416,6 +416,29 @@ export interface OracleConsultationInput {
   customerId?: string
 }
 
+
+/**
+ * Has this customer opted in to the Oracle remembering them?
+ *
+ * Fails closed: an unreadable customer record means "no consent", because the
+ * cost of wrongly profiling someone is higher than the cost of losing a memory
+ * update.
+ */
+async function hasProfileConsent(
+  customerId: string,
+  container: { resolve: (key: string) => any }
+): Promise<boolean> {
+  try {
+    const customerService = container.resolve(Modules.CUSTOMER)
+    const customer = await customerService.retrieveCustomer(customerId, {
+      select: ["id", "metadata"],
+    })
+    return customer?.metadata?.oracle_profile_consent === true
+  } catch {
+    return false
+  }
+}
+
 const memorizeStep = createStep(
   "memorize",
   async (
@@ -434,6 +457,13 @@ const memorizeStep = createStep(
   ): Promise<StepResponse<{ updated: boolean }>> => {
     // Only memorize for signed-in users with an expert
     if (!customerId || !expertId) {
+      return new StepResponse({ updated: false })
+    }
+    // Profiling is opt-in. The Oracle used to extract a profile from whatever a
+    // member typed and store it with no consent and no way to see or remove it
+    // (#137). Nothing is written unless the customer has explicitly turned this
+    // on, which the storefront records as metadata.oracle_profile_consent.
+    if (!(await hasProfileConsent(customerId, container))) {
       return new StepResponse({ updated: false })
     }
     try {

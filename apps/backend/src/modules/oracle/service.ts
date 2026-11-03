@@ -114,6 +114,33 @@ class OracleModuleService extends MedusaService({
       })
     }
   }
+
+  /**
+   * Everything the Oracle remembers about a customer, per expert.
+   * Used by the transparency route so a member can read their own profile.
+   */
+  async listUserProfiles(
+    customerId: string
+  ): Promise<{ expert_id: string; profile: Record<string, unknown> }[]> {
+    const rows = await this.listExpertUserProfiles({ customerId })
+    return (rows ?? []).map((row) => ({
+      expert_id: String((row as { expertId?: string }).expertId ?? ""),
+      profile: (row.profile as Record<string, unknown>) ?? {},
+    }))
+  }
+
+  /**
+   * Forget a customer: one expert's profile, or every profile if expertId is
+   * omitted. Returns how many rows were removed so the caller can report it.
+   */
+  async deleteUserProfile(customerId: string, expertId?: string): Promise<number> {
+    const rows = await this.listExpertUserProfiles(
+      expertId ? { customerId, expertId } : { customerId }
+    )
+    if (!rows?.length) return 0
+    await this.deleteExpertUserProfiles(rows.map((row) => row.id))
+    return rows.length
+  }
 }
 
 export default OracleModuleService
