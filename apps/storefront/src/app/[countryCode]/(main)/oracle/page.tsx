@@ -1,5 +1,6 @@
 import { Metadata } from "next"
 import OracleExperience from "@modules/oracle/components/oracle-experience"
+import OracleMemory from "@modules/oracle/components/oracle-memory"
 import { retrieveCustomer } from "@lib/data/customer"
 
 export const metadata: Metadata = {
@@ -22,10 +23,14 @@ export default async function OraclePage({
     ? `I'm looking at "${about.replace(/-/g, " ")}" in your shop. Tell me about it — is it right for me?`
     : undefined
   return (
-    <OracleExperience
-      countryCode={countryCode}
-      initialAbout={initialQuestion}
-      isSignedIn={Boolean(customer)}
-    />
+    <>
+      <OracleExperience
+        countryCode={countryCode}
+        initialAbout={initialQuestion}
+        isSignedIn={Boolean(customer)}
+      />
+      {/* Renders nothing for guests; the control is for members with memory. */}
+      <OracleMemory />
+    </>
   )
 }

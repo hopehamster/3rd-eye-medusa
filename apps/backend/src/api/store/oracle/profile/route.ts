@@ -76,3 +76,45 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
 
   res.json({ deleted, expert_id: expertId ?? null, consent: false })
 }
+
+/**
+ * POST /store/oracle/profile   — turn memory on or off
+ * Body: { consent: boolean }
+ *
+ * Consent has to be a deliberate act, so it is its own request rather than a
+ * side effect of asking a question. Turning it off keeps the existing notes
+ * (DELETE is the "forget me" action) but stops any further writing.
+ */
+export async function POST(req: MedusaRequest, res: MedusaResponse) {
+  const customerId = (req as { auth_context?: { actor_id?: string } }).auth_context
+    ?.actor_id
+
+  if (!customerId) {
+    res.status(401).json({ message: "Sign in to change what the Oracle remembers." })
+    return
+  }
+
+  const body = (req.body ?? {}) as { consent?: unknown }
+  if (typeof body.consent !== "boolean") {
+    res.status(400).json({ message: "Send { consent: true } or { consent: false }." })
+    return
+  }
+
+  try {
+    const customers = req.scope.resolve(Modules.CUSTOMER)
+    await customers.updateCustomers(customerId, {
+      metadata: {
+        oracle_profile_consent: body.consent,
+        oracle_profile_consent_at: new Date().toISOString(),
+      },
+    })
+  } catch {
+    res.status(500).json({ message: "Could not save that choice. Try again." })
+    return
+  }
+
+  const oracle = req.scope.resolve(ORACLE_MODULE) as OracleModuleService
+  const profiles = body.consent ? await oracle.listUserProfiles(customerId) : []
+
+  res.json({ consent: body.consent, remembers: profiles.length > 0, profiles })
+}
