@@ -2,6 +2,7 @@ import type { ExecArgs } from "@medusajs/framework/types"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import { createProductsWorkflow } from "@medusajs/medusa/core-flows"
 import { CJClient } from "../modules/cj-fulfillment/cj-client"
+import { qualifiesBrand } from "./lib/cj-brand"
 
 /**
  * Import wellness / metaphysical products from CJ's catalogue.
@@ -76,7 +77,12 @@ const MAX_VARIANTS = 12
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 const slug = (s: string) =>
-  s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60)
+  s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60)
+    .replace(/-+$/g, "")
 
 const money = (usd: number) => Math.max(1, Math.round(usd * 100))
 
@@ -155,7 +161,7 @@ export default async function cjImportProducts({ container }: ExecArgs) {
       for (const r of results) {
         const name = (r.nameEn ?? "").toLowerCase()
         if (!r.id || havePids.has(r.id) || candidates.has(r.id)) continue
-        if (!qualifies(name)) continue
+        if (!qualifiesBrand(name)) continue
         candidates.set(r.id, r.nameEn ?? "")
       }
     } catch (e) {
@@ -201,6 +207,11 @@ export default async function cjImportProducts({ container }: ExecArgs) {
       }
 
       const title = (detail.nameEn ?? name).trim()
+      // CJ's search name and detail name can differ, so re-check the real title.
+      if (!qualifiesBrand(title)) {
+        skipped++
+        continue
+      }
       const key = titleKey(title)
       if (!key || haveTitles.has(key)) {
         skipped++
