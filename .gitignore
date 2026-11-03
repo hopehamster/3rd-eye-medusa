@@ -37,3 +37,9 @@ Thumbs.db
 
 # scratch artifacts
 .tmp_*
+
+# agent tooling scratch
+.scratch/
+.taste-skill/
+.dsh/
+%SystemDrive%/
