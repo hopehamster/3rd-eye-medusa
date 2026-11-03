@@ -45,7 +45,7 @@ export default async function Home(props: {
     <>
       <Hero />
       <QuizGreeter />
-      <IntentionShelves />
+      <IntentionShelves region={region} />
       <BestSellers region={region} />
       <TrustFaq />
       <ReviewWall />

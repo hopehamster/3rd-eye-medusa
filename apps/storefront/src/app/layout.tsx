@@ -2,6 +2,7 @@ import { getBaseURL } from "@lib/util/env"
 import { Metadata } from "next"
 import { Fraunces, Inter } from "next/font/google"
 import FilmGrain from "@modules/common/components/film-grain"
+import ScrollReset from "@modules/common/components/scroll-reset"
 import PostHogProvider from "@modules/analytics/components/posthog-provider"
 import "styles/globals.css"
 
@@ -48,10 +49,23 @@ export default function RootLayout(props: { children: React.ReactNode }) {
       data-mode="dark"
       className={`dark ${fraunces.variable} ${inter.variable}`}
     >
-      <body className="bg-cosmos-bg text-cosmos-text antialiased">
+      <body className="bg-cosmos-bg text-cosmos-text antialiased flex h-[100dvh] flex-col overflow-hidden">
         <PostHogProvider>
+          <ScrollReset />
           <FilmGrain />
-          <main className="relative">{props.children}</main>
+          {/*
+            Issue #149: the app shell is a height-locked flex column. <main> is
+            the only scroll area and takes whatever height the consent band
+            (rendered by PostHogProvider after it) leaves. The band therefore
+            reserves its own space at the bottom of the viewport instead of
+            overlaying content, so no primary action can sit underneath it.
+          */}
+          <main
+            data-scroll-root
+            className="relative flex-1 min-h-0 overflow-y-auto"
+          >
+            {props.children}
+          </main>
         </PostHogProvider>
       </body>
     </html>

@@ -5,6 +5,11 @@
  * The six slugs match the homepage intention-grid taxonomy and the intent
  * values used by the store's `?intent=` refinement (INTENTS_ATTRIBUTE).
  *
+ * ONE SOURCE FOR EVERY SURFACE: the homepage cards, the /store shelf index and
+ * the /store/shelf/<intent> header all read this file and the product media
+ * helper below. Shelf cards show the shelf's own first product, so a card can
+ * never picture something that is not for sale on that shelf (#150).
+ *
  * Product selection (see filterShelfProducts):
  *  1. Products whose metadata.intents include the shelf slug win first.
  *     As of 2026-10-31 every published product carries intents, so this is the
@@ -21,10 +26,12 @@ export type ShelfDefinition = {
   /** Shelf name, e.g. "Protection" */
   label: string
   stone: string
+  /** Shelf name as printed on the homepage card, e.g. "Guard & Ground" */
+  cardName: string
+  /** One-line teaser under the card name on the homepage card */
+  cardTeaser: string
   headline: string
   intro: string
-  heroImage: string
-  heroAlt: string
   usageTitle: string
   usage: string[]
   /** Curated product handles, in display order */
@@ -36,12 +43,11 @@ export const SHELVES: ShelfDefinition[] = [
     intent: "protection",
     label: "Protection",
     stone: "Black Tourmaline",
+    cardName: "Guard & Ground",
+    cardTeaser: "Stones for the door, the car, and the travel bag.",
     headline: "A little armor for the day",
     intro:
       "Some days the world feels sharp. These are the stones people reach for when they want to feel steady: worn at the wrist, kept in a pocket, set by the front door.",
-    heroImage:
-      "/shelves/protection.jpg",
-    heroAlt: "Dark tourmaline crystals in daylight",
     usageTitle: "How people use these",
     usage: [
       "Wear the bracelet through the day and take it off when you get home.",
@@ -58,12 +64,11 @@ export const SHELVES: ShelfDefinition[] = [
     intent: "abundance-prosperity",
     label: "Abundance",
     stone: "Citrine",
+    cardName: "The Full Cup",
+    cardTeaser: "Stones for work, money, and momentum.",
     headline: "Room for good things",
     intro:
       "Prosperity is partly a mindset and partly just having things around you that you chose on purpose. These are the pieces customers buy when they are redecorating, goal-setting, or treating themselves deliberately.",
-    heroImage:
-      "/shelves/abundance-prosperity.jpg",
-    heroAlt: "Golden citrine crystals in warm light",
     usageTitle: "How people use these",
     usage: [
       "Set the pyramid where you will see it every morning, not in a drawer.",
@@ -80,12 +85,11 @@ export const SHELVES: ShelfDefinition[] = [
     intent: "calm-soothing",
     label: "Calm",
     stone: "Amethyst",
+    cardName: "Quiet Hours",
+    cardTeaser: "Stones for loud weeks and busy rooms.",
     headline: "Turn the volume down",
     intro:
       "Amethyst has been the wind-down stone for a long time. These are the pieces that live by the bed, in the car, and wherever the day runs hot.",
-    heroImage:
-      "/shelves/calm-soothing.jpg",
-    heroAlt: "Amethyst crystal in soft daylight",
     usageTitle: "How people use these",
     usage: [
       "Rest the mala beads on your nightstand so the evening ends with them, not your phone.",
@@ -103,12 +107,11 @@ export const SHELVES: ShelfDefinition[] = [
     intent: "love-self",
     label: "Love",
     stone: "Rose Quartz",
+    cardName: "Open Heart",
+    cardTeaser: "Stones for the person in the mirror.",
     headline: "Start with the person in the mirror",
     intro:
       "Rose quartz is the self-love classic for a reason: it is soft, pink, and hard to ignore on a dresser. These pieces are reminders as much as they are jewelry.",
-    heroImage:
-      "/shelves/love-self.jpg",
-    heroAlt: "Rose quartz in warm daylight",
     usageTitle: "How people use these",
     usage: [
       "Wear the bracelet daily; let it be the reminder, not the fix.",
@@ -126,12 +129,11 @@ export const SHELVES: ShelfDefinition[] = [
     intent: "clarity-focus",
     label: "Clarity",
     stone: "Clear Quartz",
+    cardName: "Clear Water",
+    cardTeaser: "Stones for foggy mornings and big decisions.",
     headline: "Cut through your own noise",
     intro:
       "Clear quartz and amethyst are the desk stones: the ones that live next to the keyboard and the notebook. For days when your own head is the loudest thing in the room.",
-    heroImage:
-      "/shelves/clarity-focus.jpg",
-    heroAlt: "Clear quartz point catching daylight",
     usageTitle: "How people use these",
     usage: [
       "Keep one piece on the desk where you work, in sight line.",
@@ -150,12 +152,11 @@ export const SHELVES: ShelfDefinition[] = [
     intent: "sleep-dreams",
     label: "Sleep",
     stone: "Selenite",
+    cardName: "The Night Table",
+    cardTeaser: "Stones for the bedside and the dark.",
     headline: "Your brain needs the dark too",
     intro:
       "Moonstone is the bedtime stone in a lot of traditions. These are the pieces customers buy for the nightstand: the wind-down shelf.",
-    heroImage:
-      "/shelves/sleep-dreams.jpg",
-    heroAlt: "Pale moonstone in evening light",
     usageTitle: "How people use these",
     usage: [
       "Keep the bracelet on the nightstand at night instead of on your wrist.",
@@ -222,4 +223,51 @@ export const filterShelfProducts = <
   )
 
   return [...curated, ...tagged]
+}
+
+/** The catalogue fields a shelf card needs to picture and name a product. */
+type ShelfProductLike = {
+  handle?: string | null
+  metadata?: Record<string, unknown> | null
+  title?: string | null
+  thumbnail?: string | null
+  material?: string | null
+  images?: ({ url?: string | null } | null)[] | null
+}
+
+export type ShelfCardMedia = {
+  /** Product thumbnail URL */
+  src: string
+  /** Alt text naming the product and its material, both taken from the listing */
+  alt: string
+  /** Product name, as listed */
+  title: string
+  /** Product material, as listed; null when the catalogue has not filled it in */
+  material: string | null
+}
+
+/**
+ * Media for a shelf card: the shelf's own first product, with its real name
+ * and material. Returns null when the shelf has no product (or the product has
+ * no image) so callers render no image rather than stock scenery (#150).
+ */
+export const getShelfCardMedia = <T extends ShelfProductLike>(
+  products: T[],
+  shelf: ShelfDefinition
+): ShelfCardMedia | null => {
+  const [product] = filterShelfProducts(products, shelf)
+  if (!product) return null
+
+  const src = product.thumbnail || product.images?.[0]?.url || null
+  const title = (product.title ?? "").trim()
+  if (!src || !title) return null
+
+  const material = (product.material ?? "").trim() || null
+
+  return {
+    src,
+    alt: material ? `${title}, ${material}` : title,
+    title,
+    material,
+  }
 }

@@ -27,7 +27,7 @@ export default async function StorePage(props: {
   if (isOfflineMode()) {
     return (
       <>
-        <ShelfIndex />
+        <ShelfIndex region={region} />
         <div className="py-6 content-container" data-testid="category-container">
           <div className="mb-8 text-2xl-semi">
             <h1 data-testid="store-page-title">All products</h1>
@@ -44,7 +44,7 @@ export default async function StorePage(props: {
 
   return (
     <>
-      <ShelfIndex />
+      <ShelfIndex region={region} />
       <StoreTemplate currencyCode={region.currency_code} />
     </>
   )

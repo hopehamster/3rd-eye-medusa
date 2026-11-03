@@ -96,10 +96,10 @@ const OptionRefinements = () => {
             <Accordion.Header>
               <Accordion.Trigger className="flex w-full items-center justify-between py-3 text-left">
                 <div className="flex items-center gap-2">
-                  <span className="txt-compact-small-plus text-ui-fg-base">
+                  <span className="text-sm font-medium text-ui-fg-base">
                     {group.title}
                   </span>
-                  <span className="txt-compact-small-plus text-ui-fg-muted">
+                  <span className="text-sm text-ui-fg-muted">
                     ({selectedCount})
                   </span>
                 </div>
@@ -121,7 +121,7 @@ const OptionRefinements = () => {
                     onClick={() => refine(value.value)}
                     aria-pressed={value.isRefined}
                     className={clsx(
-                      "border-ui-border-base border text-small-regular h-10 rounded-rounded px-3 flex items-center gap-x-1.5 transition-colors duration-150",
+                      "border-ui-border-base border text-sm h-10 rounded-rounded px-3 flex items-center gap-x-1.5 transition-colors duration-150",
                       {
                         "border-ui-border-interactive text-ui-fg-base":
                           value.isRefined,

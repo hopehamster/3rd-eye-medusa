@@ -39,20 +39,48 @@ async function fetchRelated(
     )
     if (!region) return []
 
+    const fields =
+      "id,handle,title,thumbnail,collection_id,*variants.calculated_price"
+
+    // Ask the API for the product's own collection first (#147). Deriving
+    // "same collection" from the first 100 products silently dropped
+    // collection mates that lived beyond that cap; the collection filter is
+    // exact, so the priority set is now complete no matter how big the
+    // catalogue gets. The rail only ever shows 4, so it stays two bounded
+    // requests rather than a full pagination walk.
+    const sameCollection: HttpTypes.StoreProduct[] = []
+    if (product.collection_id) {
+      const collectionRes = await fetch(
+        `${backendUrl}/store/products?limit=10&collection_id=${encodeURIComponent(product.collection_id)}&region_id=${region.id}&fields=${fields}`,
+        { headers }
+      )
+      if (collectionRes.ok) {
+        const collectionData = await collectionRes.json()
+        sameCollection.push(
+          ...(collectionData.products ?? []).filter(
+            (p: HttpTypes.StoreProduct) => p.id !== product.id
+          )
+        )
+      }
+    }
+
+    if (sameCollection.length >= 4) {
+      return sameCollection.slice(0, 4)
+    }
+
+    // Fill the remainder from the wider catalogue. Which 4 "other" pieces show
+    // is deliberately arbitrary — there is no ranking signal — so one page is
+    // enough here.
     const res = await fetch(
-      `${backendUrl}/store/products?limit=100&region_id=${region.id}&fields=id,handle,title,thumbnail,collection_id,*variants.calculated_price`,
+      `${backendUrl}/store/products?limit=100&region_id=${region.id}&fields=${fields}`,
       { headers }
     )
-    if (!res.ok) return []
+    if (!res.ok) return sameCollection.slice(0, 4)
     const data = await res.json()
-    const all: HttpTypes.StoreProduct[] = (data.products ?? []).filter(
-      (p: HttpTypes.StoreProduct) => p.id !== product.id
+    const picked = new Set(sameCollection.map((p) => p.id))
+    const rest: HttpTypes.StoreProduct[] = (data.products ?? []).filter(
+      (p: HttpTypes.StoreProduct) => p.id !== product.id && !picked.has(p.id)
     )
-
-    const sameCollection = product.collection_id
-      ? all.filter((p) => p.collection_id === product.collection_id)
-      : []
-    const rest = all.filter((p) => !sameCollection.includes(p))
 
     return [...sameCollection, ...rest].slice(0, 4)
   } catch {

@@ -21,7 +21,7 @@ const RefinementGroup = ({ attribute, title }: RefinementGroupProps) => {
 
   return (
     <div className="flex flex-col gap-y-3">
-      <span className="txt-compact-small-plus text-ui-fg-subtle">
+      <span className="text-sm font-medium text-ui-fg-subtle">
         {title}
       </span>
       <ul className="flex flex-col gap-y-2 pr-6">
@@ -36,14 +36,14 @@ const RefinementGroup = ({ attribute, title }: RefinementGroupProps) => {
                 data-testid={`refinement-${attribute}`}
               />
               <span
-                className={clsx("text-small-regular min-w-0 break-words", {
+                className={clsx("text-base min-w-0 break-words", {
                   "text-ui-fg-base": item.isRefined,
                   "text-ui-fg-subtle": !item.isRefined,
                 })}
               >
                 {item.label}
               </span>
-              <span className="text-small-regular shrink-0 text-ui-fg-muted">
+              <span className="text-sm shrink-0 text-ui-fg-muted">
                 ({item.count})
               </span>
             </label>

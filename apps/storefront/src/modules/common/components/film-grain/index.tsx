@@ -1,14 +1,26 @@
 "use client"
 
 import { motion, useScroll, useSpring, useTransform, useVelocity } from "framer-motion"
+import { useEffect, useMemo, useState } from "react"
 
 /**
  * Sitewide film grain that intensifies with scroll velocity.
  * Base 0.03 opacity, up to 0.15 at high scroll speed. Spring-damped.
  * Respects prefers-reduced-motion.
+ *
+ * The storefront shell scrolls <main> rather than the document (issue #149),
+ * so the scroll source is the shell's scroll area; falling back to the window
+ * keeps this working anywhere the shell is not mounted.
  */
 const FilmGrain = () => {
-  const { scrollY } = useScroll()
+  const [scrollRoot, setScrollRoot] = useState<HTMLElement | null>(null)
+  const container = useMemo(() => ({ current: scrollRoot }), [scrollRoot])
+
+  useEffect(() => {
+    setScrollRoot(document.querySelector<HTMLElement>("[data-scroll-root]"))
+  }, [])
+
+  const { scrollY } = useScroll(scrollRoot ? { container } : undefined)
   const scrollVelocity = useVelocity(scrollY)
   const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 400 })
   const opacity = useTransform(smoothVelocity, [-2000, 0, 2000], [0.15, 0.03, 0.15])

@@ -3,6 +3,14 @@ import { clx } from "@modules/common/components/ui"
 import { getProductPrice } from "@lib/util/get-product-price"
 import { HttpTypes } from "@medusajs/types"
 
+/**
+ * PDP price on the paper specimen panel.
+ *
+ * Colour comes from the `paper` token family, not `ui-fg-*`. The storefront
+ * sets `data-mode="dark"` / `class="dark"` on <html> (src/app/layout.tsx), so
+ * every `text-ui-fg-base` resolves near-white (#F4F4F5) — invisible against the
+ * warm cream surface it sits on. Paper pages use paper tokens throughout.
+ */
 export default function ProductPrice({
   product,
   variant,
@@ -18,14 +26,14 @@ export default function ProductPrice({
   const selectedPrice = variant ? variantPrice : cheapestPrice
 
   if (!selectedPrice) {
-    return <div className="block w-32 h-9 bg-gray-100 animate-pulse" />
+    return <div className="block w-32 h-9 bg-paper-surface animate-pulse" />
   }
 
   return (
-    <div className="flex flex-col text-ui-fg-base">
+    <div className="flex flex-col text-paper-text">
       <span
         className={clx("text-xl-semi", {
-          "text-ui-fg-interactive": selectedPrice.price_type === "sale",
+          "text-paper-accent": selectedPrice.price_type === "sale",
         })}
       >
         {!variant && "From "}
@@ -39,7 +47,7 @@ export default function ProductPrice({
       {selectedPrice.price_type === "sale" && (
         <>
           <p>
-            <span className="text-ui-fg-subtle">Original: </span>
+            <span className="text-paper-muted">Original: </span>
             <span
               className="line-through"
               data-testid="original-product-price"
@@ -48,7 +56,7 @@ export default function ProductPrice({
               {selectedPrice.original_price}
             </span>
           </p>
-          <span className="text-ui-fg-interactive">
+          <span className="text-paper-accent">
             -{selectedPrice.percentage_diff}%
           </span>
         </>

@@ -1,6 +1,10 @@
 import Image from "next/image"
+import { HttpTypes } from "@medusajs/types"
+
+import { listAllProducts } from "@lib/data/products"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Reveal from "@modules/common/components/reveal"
+import { getShelfCardMedia, SHELVES } from "@modules/store/data/shelves"
 
 /**
  * Intention shelves (issue #21) — curated shelves with editorial names,
@@ -10,69 +14,21 @@ import Reveal from "@modules/common/components/reveal"
  * LINK CONTRACT: cards link to the dedicated shelf pages built by
  * Agent Shelves (issue #23): /store/shelf/<intent>.
  *
- * Photography is the current Unsplash set; Agent Daylight (issue #22)
- * owns the replacement daylight photography pass.
- * Shelf names/descriptions are final copy; hero and card images are self-hosted
- * under /public/shelves so they cannot disappear when a third-party host does.
+ * ONE DATA SOURCE (#150): shelf copy comes from store/data/shelves.ts and the
+ * picture is that shelf's own first product, named with its real name and
+ * material. The homepage and the /store shelf pages read the same helper, so
+ * they cannot disagree. A shelf with no product renders no image — never
+ * stock scenery, and never an alt string naming a stone that is not there.
  */
-const SHELVES = [
-  {
-    intent: "protection",
-    shelf: "Guard & Ground",
-    label: "Protection",
-    description: "Stones for the door, the car, and the travel bag.",
-    image:
-      "/shelves/protection.jpg",
-    crystal: "Black Tourmaline",
-  },
-  {
-    intent: "abundance-prosperity",
-    shelf: "The Full Cup",
-    label: "Abundance",
-    description: "Stones for work, money, and momentum.",
-    image:
-      "/shelves/abundance-prosperity.jpg",
-    crystal: "Citrine",
-  },
-  {
-    intent: "calm-soothing",
-    shelf: "Quiet Hours",
-    label: "Calm",
-    description: "Stones for loud weeks and busy rooms.",
-    image:
-      "/shelves/calm-soothing.jpg",
-    crystal: "Amethyst",
-  },
-  {
-    intent: "love-self",
-    shelf: "Open Heart",
-    label: "Love",
-    description: "Stones for the person in the mirror.",
-    image:
-      "/shelves/love-self.jpg",
-    crystal: "Rose Quartz",
-  },
-  {
-    intent: "clarity-focus",
-    shelf: "Clear Water",
-    label: "Clarity",
-    description: "Stones for foggy mornings and big decisions.",
-    image:
-      "/shelves/clarity-focus.jpg",
-    crystal: "Clear Quartz",
-  },
-  {
-    intent: "sleep-dreams",
-    shelf: "The Night Table",
-    label: "Sleep",
-    description: "Stones for the bedside and the dark.",
-    image:
-      "/shelves/sleep-dreams.jpg",
-    crystal: "Selenite",
-  },
-]
+export default async function IntentionShelves({
+  region,
+}: {
+  region: HttpTypes.StoreRegion
+}) {
+  const {
+    response: { products },
+  } = await listAllProducts({ regionId: region.id })
 
-const IntentionShelves = () => {
   return (
     <section className="bg-paper-bg paper-grain text-paper-text">
       <div className="content-container relative z-[2] py-16 small:py-24">
@@ -87,43 +43,53 @@ const IntentionShelves = () => {
         </div>
 
         <div className="grid grid-cols-1 gap-5 xsmall:grid-cols-2 small:grid-cols-3">
-          {SHELVES.map((item, i) => (
-            <Reveal key={item.intent} delay={(i % 3) * 0.08}>
-              <LocalizedClientLink
-                href={`/store/shelf/${item.intent}`}
-                className="group block"
-              >
-                <article className="specimen-card overflow-hidden transition-colors duration-200 group-hover:border-paper-accent">
-                  <div className="relative aspect-[3/2] w-full overflow-hidden">
-                    <Image
-                      src={item.image}
-                      alt={`${item.crystal} crystal`}
-                      fill
-                      loading="lazy"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="px-5 pb-5 pt-4">
-                    <div className="specimen-label flex items-baseline justify-between gap-3">
-                      <span>{item.shelf}</span>
-                      <span className="font-humanist text-sm text-paper-faint">
-                        {item.label}
-                      </span>
+          {SHELVES.map((shelf, i) => {
+            const media = getShelfCardMedia(products, shelf)
+
+            return (
+              <Reveal key={shelf.intent} delay={(i % 3) * 0.08}>
+                <LocalizedClientLink
+                  href={`/store/shelf/${shelf.intent}`}
+                  className="group block"
+                >
+                  <article className="specimen-card overflow-hidden transition-colors duration-200 group-hover:border-paper-accent">
+                    {media && (
+                      <div className="relative aspect-[3/2] w-full overflow-hidden bg-paper-surface">
+                        <Image
+                          src={media.src}
+                          alt={media.alt}
+                          fill
+                          loading="lazy"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          className="object-contain"
+                        />
+                      </div>
+                    )}
+                    <div className="px-5 pb-5 pt-4">
+                      {media && (
+                        <p className="specimen-meta mb-2">
+                          {media.title}
+                          {media.material ? ` — ${media.material}` : ""}
+                        </p>
+                      )}
+                      <div className="specimen-label flex items-baseline justify-between gap-3">
+                        <span>{shelf.cardName}</span>
+                        <span className="font-humanist text-sm text-paper-faint">
+                          {shelf.label}
+                        </span>
+                      </div>
+                      <p className="specimen-meta mt-3">{shelf.cardTeaser}</p>
+                      <p className="mt-3 font-humanist text-sm font-semibold text-paper-accent">
+                        Shop the shelf
+                      </p>
                     </div>
-                    <p className="specimen-meta mt-3">{item.description}</p>
-                    <p className="mt-3 font-humanist text-sm font-semibold text-paper-accent">
-                      Shop the shelf
-                    </p>
-                  </div>
-                </article>
-              </LocalizedClientLink>
-            </Reveal>
-          ))}
+                  </article>
+                </LocalizedClientLink>
+              </Reveal>
+            )
+          })}
         </div>
       </div>
     </section>
   )
 }
-
-export default IntentionShelves

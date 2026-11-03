@@ -72,20 +72,31 @@ async function fetchProduct(
     )
     if (!region) return { product: null, region: null }
 
-    // Get products (no handle filter - Medusa v2 returns 400 for it)
-    // Include all fields ProductTemplate needs, plus the specimen-label
-    // fields (metadata, specs, collection) used by the PDP redesign (#24)
+    // Resolve the product by handle (#147). The store API does support a
+    // `handle` filter on Medusa 2.21.2 — the old "v2 returns 400" note here was
+    // wrong, and listing the first 100 products then `find`-ing the handle made
+    // every page past that cap a 404. `region_id` must stay: without it the
+    // `*variants.calculated_price` expansion comes back null.
+    // Fields cover what ProductTemplate needs, plus the specimen-label fields
+    // (metadata, specs, collection) used by the PDP redesign (#24).
+    const query = new URLSearchParams({
+      limit: "1",
+      handle,
+      region_id: region.id,
+      fields:
+        "id,handle,title,subtitle,description,thumbnail,images,metadata,material,origin_country,weight,length,width,height,*collection,*variants.calculated_price,*variants.images,*variants.options,*options",
+    })
+
     const productsRes = await fetch(
-      `${backendUrl}/store/products?limit=100&region_id=${region.id}&fields=id,handle,title,subtitle,description,thumbnail,images,metadata,material,origin_country,weight,length,width,height,*collection,*variants.calculated_price,*variants.images,*variants.options,*options`,
+      `${backendUrl}/store/products?${query.toString()}`,
       { headers }
     )
     if (!productsRes.ok) return { product: null, region: null }
     const productsData = await productsRes.json()
-    const product = productsData.products?.find(
-      (p: HttpTypes.StoreProduct) => p.handle === handle
-    )
+    const product: HttpTypes.StoreProduct | null =
+      productsData.products?.[0] ?? null
 
-    return { product: product || null, region }
+    return { product, region }
   } catch {
     return { product: null, region: null }
   }

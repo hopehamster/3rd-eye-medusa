@@ -54,10 +54,16 @@ const MobileActions: React.FC<MobileActionsProps> = ({
 
   return (
     <>
+      {/* bottom-[var(--consent-dock)] stacks this bar above the analytics
+          consent band (issue #149) instead of underneath it; it is 0px when no
+          decision is pending, so the bar drops back to the viewport edge. */}
       <div
-        className={clx("lg:hidden inset-x-0 bottom-0 fixed z-50", {
-          "pointer-events-none": !show,
-        })}
+        className={clx(
+          "lg:hidden inset-x-0 bottom-[var(--consent-dock)] fixed z-50",
+          {
+            "pointer-events-none": !show,
+          }
+        )}
       >
         <Transition
           as={Fragment}
@@ -87,8 +93,8 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                   )}
                   <span
                     className={clx({
-                      "text-ui-fg-interactive":
-                        selectedPrice.price_type === "sale",
+                      // Paper token: this bar sits on the paper surface.
+                      "text-paper-accent": selectedPrice.price_type === "sale",
                     })}
                   >
                     {selectedPrice.calculated_price}

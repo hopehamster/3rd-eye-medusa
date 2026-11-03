@@ -9,6 +9,14 @@
     color-scheme: dark;
   }
 
+  :root {
+    /* Height of the analytics consent band (issue #149). The band publishes
+       its measured height here; fixed bars (mobile add-to-cart, free-shipping
+       popup) offset their bottom edge by it so they stack above the band
+       instead of under it. 0 when no decision is pending. */
+    --consent-dock: 0px;
+  }
+
   body {
     background-color: #0b0b10;
     color: #edeae2;

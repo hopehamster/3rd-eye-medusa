@@ -3,7 +3,11 @@ import { HttpTypes } from "@medusajs/types"
 
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import ShelfProductCard from "@modules/store/components/shelf-product-card"
-import { SHELVES, ShelfDefinition } from "@modules/store/data/shelves"
+import {
+  getShelfCardMedia,
+  SHELVES,
+  ShelfDefinition,
+} from "@modules/store/data/shelves"
 
 /**
  * Intention shelf page template (issue #23) on Agent Palette's bright
@@ -18,6 +22,9 @@ export default function ShelfTemplate({
   products: HttpTypes.StoreProduct[]
 }) {
   const siblings = SHELVES.filter((s) => s.intent !== shelf.intent).slice(0, 3)
+  // Same helper as the homepage cards: the shelf's own first product (#150).
+  // No product means no header image at all.
+  const media = getShelfCardMedia(products, shelf)
 
   return (
     <div className="paper-grain bg-paper-bg text-paper-text">
@@ -38,16 +45,18 @@ export default function ShelfTemplate({
               </span>
             </p>
           </div>
-          <div className="relative aspect-[4/3] overflow-hidden border border-paper-border">
-            <Image
-              src={shelf.heroImage}
-              alt={shelf.heroAlt}
-              fill
-              className="object-cover"
-              sizes="(max-width: 640px) 100vw, 50vw"
-              priority
-            />
-          </div>
+          {media && (
+            <div className="relative aspect-[4/3] overflow-hidden border border-paper-border bg-paper-surface">
+              <Image
+                src={media.src}
+                alt={media.alt}
+                fill
+                className="object-contain"
+                sizes="(max-width: 640px) 100vw, 50vw"
+                priority
+              />
+            </div>
+          )}
         </div>
       </header>
 

@@ -7,6 +7,11 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
  * Daylight photo of a real stone, plain headline, one specific claim.
  * No eyebrow caption, no centered cosmic type, no glow effects.
  *
+ * Headline is two deliberate lines at every width (issue #144). It used to
+ * run three lines at 1440 and five at 390 and push the CTA to the fold edge.
+ * The cut clause — "Nothing promised but the stone itself." — opens the
+ * supporting paragraph instead, so the voice still reads as a decision.
+ *
  * Photo: the Gray Moonstone bracelet shot already live on its PDP.
  * Agent Daylight (issue #22) owns a dedicated hero photograph pass;
  * swap the image here when that lands.
@@ -17,13 +22,15 @@ const Hero = () => {
       <div className="content-container relative z-[2] grid grid-cols-1 items-center gap-10 py-16 small:grid-cols-2 small:gap-14 small:py-24">
         <div>
           <h1 className="font-display text-5xl font-light leading-[1.05] tracking-tight text-paper-text small:text-6xl">
-            Real stones. Plain talk. Nothing promised but the stone itself.
+            Real stones.
+            <br />
+            Plain talk.
           </h1>
           <p className="mt-6 max-w-md font-humanist text-lg leading-8 text-paper-muted">
-            Bracelets, sets, and small ritual objects in natural stone.
-            Every piece is described the way it actually is — color, cut,
-            weight, and what people have traditionally reached for it
-            for.
+            Nothing promised but the stone itself. Bracelets, sets, and small
+            ritual objects in natural stone. Every piece is described the way
+            it actually is — color, cut, weight, and what people have
+            traditionally reached for it for.
           </p>
           <div className="mt-9 flex flex-col gap-3 xsmall:flex-row xsmall:items-center">
             <LocalizedClientLink

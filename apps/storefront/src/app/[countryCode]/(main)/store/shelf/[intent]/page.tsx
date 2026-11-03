@@ -1,7 +1,7 @@
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
 
-import { listProducts } from "@lib/data/products"
+import { listAllProducts } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
 import ShelfTemplate from "@modules/store/templates/shelf"
 import {
@@ -41,10 +41,12 @@ export default async function ShelfPage(props: Props) {
     notFound()
   }
 
+  // Shelves filter the catalogue by `metadata.intents` in memory, so they need
+  // every product — a single 100-item page left the lower shelves silently
+  // short of pieces that exist (#147).
   const {
     response: { products },
-  } = await listProducts({
-    queryParams: { limit: 100 },
+  } = await listAllProducts({
     countryCode,
   })
 

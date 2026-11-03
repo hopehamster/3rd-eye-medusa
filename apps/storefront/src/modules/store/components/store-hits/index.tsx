@@ -51,7 +51,7 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
   if (status === "error") {
     return (
       <Text
-        className="py-16 text-center text-ui-fg-error"
+        className="py-16 text-center text-base text-ui-fg-error"
         data-testid="products-error"
       >
         Couldn&apos;t load products
@@ -75,11 +75,13 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
               homepage still shows products). The second one is a setup
               failure, so say so rather than implying the catalogue is empty. */}
           {refinementKey.trim() ? (
-            <Text>No products matched these filters.</Text>
+            <Text className="text-base">No products matched these filters.</Text>
           ) : (
             <>
-              <Text>The collection couldn&apos;t be loaded.</Text>
-              <Text className="mt-2 text-sm">
+              <Text className="text-base">
+                The collection couldn&apos;t be loaded.
+              </Text>
+              <Text className="mt-2 text-base">
                 The product search index is empty or unreachable. Try again in a
                 moment — or{" "}
                 <LocalizedClientLink href="/" className="underline">
@@ -106,7 +108,7 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
                     <Thumbnail thumbnail={hit.thumbnail} size="full" />
                     <div className="flex txt-compact-medium mt-4 justify-between">
                       <Text
-                        className="text-ui-fg-subtle"
+                        className="text-base text-ui-fg-subtle"
                         data-testid="product-title"
                       >
                         {hit.title}

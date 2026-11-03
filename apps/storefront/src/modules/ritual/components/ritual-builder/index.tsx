@@ -109,6 +109,38 @@ const RITUAL_SCRIPTS: Record<string, (items: string[]) => string[]> = {
   ],
 }
 
+const PAGE_SIZE = 100
+const MAX_PAGES = 50
+
+/**
+ * Every product, page by page (#147).
+ *
+ * The builder offers pieces matched on `metadata.intents`, so a single
+ * `limit: 100` request meant pieces past the cap simply never appeared as
+ * options — the ritual could be assembled around a partially-stocked shelf.
+ */
+async function listAllBuilderProducts(): Promise<HttpTypes.StoreProduct[]> {
+  const collected: HttpTypes.StoreProduct[] = []
+  let offset = 0
+
+  for (let page = 0; page < MAX_PAGES; page++) {
+    const { products, count } = await sdk.store.product.list({
+      limit: PAGE_SIZE,
+      offset,
+      fields: "id,title,thumbnail,variants,metadata",
+    })
+
+    collected.push(...products)
+    offset += products.length
+
+    if (products.length < PAGE_SIZE || collected.length >= (count ?? 0)) {
+      break
+    }
+  }
+
+  return collected
+}
+
 export default function RitualBuilder({
   countryCode,
 }: {
@@ -125,9 +157,8 @@ export default function RitualBuilder({
   useEffect(() => {
     if (step === 1 && intention) {
       setLoading(true)
-      sdk.store.product
-        .list({ limit: 100, fields: "id,title,thumbnail,variants,metadata" })
-        .then(({ products: list }) => {
+      listAllBuilderProducts()
+        .then((list) => {
           const mapped: BuilderProduct[] = list.map((p) => ({
             id: p.id,
             title: p.title,
