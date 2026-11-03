@@ -134,6 +134,35 @@ export const listProducts = async ({
 }
 
 /**
+ * One product by handle, with the fields the home hero needs.
+ *
+ * The hero used to hard-code a third-party image URL, so the section was
+ * disconnected from the catalogue: whatever shipped in that file was what the
+ * shop looked like. The hero now shows a real product that is actually on sale,
+ * captioned from its own listing.
+ */
+export const getProductByHandle = async (
+  handle: string,
+  regionId: string
+): Promise<HttpTypes.StoreProduct | null> => {
+  try {
+    const { response } = await listProducts({
+      regionId,
+      // Only the fields the hero renders, so the override cannot strip pricing
+      // from callers that share the cache tag.
+      queryParams: {
+        handle,
+        fields: "id,handle,title,subtitle,thumbnail,images,material",
+      },
+    })
+
+    return response.products[0] ?? null
+  } catch {
+    return null
+  }
+}
+
+/**
  * Every product matching `queryParams`, not just the first page.
  *
  * Callers that filter, sort or list the catalogue locally (shelf pages,

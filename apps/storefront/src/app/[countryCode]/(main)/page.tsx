@@ -8,6 +8,8 @@ import OracleFrontDoor from "@modules/home/components/oracle-front-door"
 import QuizGreeter from "@modules/home/components/quiz-greeter"
 import ReviewWall from "@modules/home/components/review-wall"
 import TrustFaq from "@modules/home/components/trust-faq"
+import { FEATURED_HERO_HANDLES } from "@modules/home/data/featured"
+import { getProductByHandle } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
 
 export const metadata: Metadata = {
@@ -41,9 +43,19 @@ export default async function Home(props: {
     return null
   }
 
+  // First featured handle that resolves to a real, photo-carrying product.
+  let featured = null
+  for (const handle of FEATURED_HERO_HANDLES) {
+    const candidate = await getProductByHandle(handle, region.id)
+    if (candidate?.thumbnail || candidate?.images?.length) {
+      featured = candidate
+      break
+    }
+  }
+
   return (
     <>
-      <Hero />
+      <Hero product={featured} />
       <QuizGreeter />
       <IntentionShelves region={region} />
       <BestSellers region={region} />

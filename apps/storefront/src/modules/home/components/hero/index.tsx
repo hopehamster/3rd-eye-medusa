@@ -1,4 +1,5 @@
 import Image from "next/image"
+import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 /**
@@ -12,11 +13,16 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
  * The cut clause — "Nothing promised but the stone itself." — opens the
  * supporting paragraph instead, so the voice still reads as a decision.
  *
- * Photo: the Gray Moonstone bracelet shot already live on its PDP.
- * Agent Daylight (issue #22) owns a dedicated hero photograph pass;
- * swap the image here when that lands.
+ * Photo: a real product from the catalogue, chosen in
+ * modules/home/data/featured.ts and captioned from its own listing (#145
+ * follow-up). It used to be a hard-coded third-party URL, which meant the
+ * biggest image on the site was not something the shop sells.
  */
-const Hero = () => {
+const Hero = ({ product }: { product: HttpTypes.StoreProduct | null }) => {
+  const picture = product?.thumbnail || product?.images?.[0]?.url || null
+  const caption = product?.title?.trim() || null
+  const material = product?.material?.trim() || "natural stone"
+
   return (
     <section className="bg-paper-bg paper-grain text-paper-text">
       <div className="content-container relative z-[2] grid grid-cols-1 items-center gap-10 py-16 small:grid-cols-2 small:gap-14 small:py-24">
@@ -48,24 +54,29 @@ const Hero = () => {
           </div>
         </div>
 
-        <div className="specimen-card overflow-hidden">
-          <div className="relative aspect-[4/3] w-full">
-            <Image
-              src="https://i.imgur.com/oc2kv2D.jpeg"
-              alt="Gray Moonstone bracelet photographed in daylight"
-              fill
-              priority
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover"
-            />
-          </div>
-          <div className="specimen-label mx-5 my-4 flex items-baseline justify-between gap-4">
-            <span>Gray Moonstone</span>
-            <span className="font-humanist text-sm text-paper-muted">
-              bracelet, natural stone
-            </span>
-          </div>
-        </div>
+        {picture && (
+          <LocalizedClientLink
+            href={product?.handle ? `/products/${product.handle}` : "/store"}
+            className="specimen-card block overflow-hidden"
+          >
+            <div className="relative aspect-[4/3] w-full">
+              <Image
+                src={picture}
+                alt={caption ? `${caption}, ${material}` : "A piece from the shop"}
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
+              />
+            </div>
+            <div className="specimen-label mx-5 my-4 flex items-baseline justify-between gap-4">
+              <span>{caption}</span>
+              <span className="font-humanist text-sm text-paper-muted">
+                {material}
+              </span>
+            </div>
+          </LocalizedClientLink>
+        )}
       </div>
     </section>
   )
