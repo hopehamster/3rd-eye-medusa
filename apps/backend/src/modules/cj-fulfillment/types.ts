@@ -19,7 +19,8 @@ export interface CJOrderPayload {
   emailAddress?: string
   /** Country the goods ship FROM — CJ requires it and rejects the order without it. */
   fromCountryCode: string
-  shippingCountryCode: string
+  /** CJ's key is `shippingCountry`; `shippingCountryCode` is reported as empty. */
+  shippingCountry: string
   shippingProvince?: string
   shippingCity?: string
   shippingAddress: string

@@ -92,7 +92,7 @@ export function buildCJOrderPayload(
     // CJ rejects the order without this ("1600300 fromCountryCode must not be
     // empty"). The catalogue is CJ China stock; override with CJ_FROM_COUNTRY.
     fromCountryCode: (process.env.CJ_FROM_COUNTRY ?? "CN").toUpperCase(),
-    shippingCountryCode: (addr.country_code ?? "").toUpperCase(),
+    shippingCountry: (addr.country_code ?? "").toUpperCase(),
     shippingProvince: addr.province ?? undefined,
     shippingCity: addr.city ?? undefined,
     shippingAddress: addr.address_1 ?? "",
