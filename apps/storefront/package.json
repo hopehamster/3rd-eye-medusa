@@ -13,6 +13,7 @@
     "start": "next start -p 8000",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
+    "check:policy": "node scripts/check-policy-placeholders.mjs",
     "analyze": "ANALYZE=true next build"
   },
   "dependencies": {
