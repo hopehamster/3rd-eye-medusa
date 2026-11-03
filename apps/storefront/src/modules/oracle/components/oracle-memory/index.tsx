@@ -22,6 +22,13 @@ const LABELS: Record<string, string> = {
   intentions: "What you are working on",
   aesthetic_preference: "The kind of thing you like",
   updated_at: "Last updated",
+  seeking: "What you are looking for",
+  favorites: "Stones you keep coming back to",
+  dislikes: "Stones you have said no to",
+  concerns: "What you are dealing with",
+  experience: "How much you already know",
+  location: "Where you are",
+  budget: "What you want to spend",
 }
 
 const pretty = (key: string) => LABELS[key] ?? key.replace(/_/g, " ")
