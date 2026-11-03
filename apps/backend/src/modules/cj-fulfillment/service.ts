@@ -28,7 +28,7 @@ import type {
   Logger,
 } from "@medusajs/framework/types"
 import { CJClient } from "./cj-client"
-import type { CJModuleOptions, CJOrderPayload } from "./types"
+import type { CJModuleOptions, CJOrderPayload, CJOrderLine } from "./types"
 
 type QueryLike = {
   graph: (q: {
@@ -51,6 +51,57 @@ type QueryLike = {
 type InjectedDependencies = {
   logger: Logger
   query?: QueryLike
+}
+
+
+/**
+ * The CJ order payload, built in one place so the contract probe can exercise
+ * the real shape instead of a copy of it.
+ *
+ * Exported for scripts/cj-contract-probe.ts: CJ has no sandbox, so the only way
+ * to check this payload without buying anything is to send it with a product id
+ * CJ cannot resolve and read the validation error.
+ */
+export function buildCJOrderPayload(
+  order: {
+    id?: string
+    display_id?: number | string | null
+    email?: string | null
+    shipping_address?: {
+      first_name?: string | null
+      last_name?: string | null
+      country_code?: string | null
+      province?: string | null
+      city?: string | null
+      address_1?: string | null
+      address_2?: string | null
+      postal_code?: string | null
+      phone?: string | null
+    } | null
+  },
+  data: { cj_option_id?: string | null },
+  lines: CJOrderLine[]
+): CJOrderPayload {
+  const addr = order.shipping_address ?? {}
+  return {
+    externalOrderNumber: `3ES-${order.display_id ?? order.id ?? "unknown"}`,
+    customerName: `${addr.first_name ?? ""} ${addr.last_name ?? ""}`.trim(),
+    emailAddress: order.email ?? undefined,
+    // CJ rejects the order without this ("1600300 fromCountryCode must not be
+    // empty"). The catalogue is CJ China stock; override with CJ_FROM_COUNTRY.
+    fromCountryCode: (process.env.CJ_FROM_COUNTRY ?? "CN").toUpperCase(),
+    shippingCountryCode: (addr.country_code ?? "").toUpperCase(),
+    shippingProvince: addr.province ?? undefined,
+    shippingCity: addr.city ?? undefined,
+    shippingAddress: addr.address_1 ?? "",
+    shippingAddress2: addr.address_2 ?? undefined,
+    shippingZip: addr.postal_code ?? undefined,
+    shippingPhone: addr.phone ?? undefined,
+    products: lines,
+    logisticName:
+      data.cj_option_id === "cj-express" ? "CJPacket Express" : "CJPacket Ordinary",
+    remark: "3rd Eye Supply",
+  }
 }
 
 class CJFulfillmentService extends AbstractFulfillmentProviderService {
@@ -199,30 +250,7 @@ class CJFulfillmentService extends AbstractFulfillmentProviderService {
       return { vid, quantity: item.quantity ?? 1 }
     })
 
-    const addr = order.shipping_address
-    const payload: CJOrderPayload = {
-      externalOrderNumber: `3ES-${order.display_id ?? order.id}`,
-      customerName: `${addr.first_name ?? ""} ${addr.last_name ?? ""}`.trim(),
-      emailAddress: order.email ?? undefined,
-      // CJ rejected the first contract probe with
-      // "1600300 fromCountryCode must not be empty": the payload never sent it.
-      // The catalogue is CJ China stock, so CN is the default; override with
-      // CJ_FROM_COUNTRY if a warehouse changes.
-      fromCountryCode: (process.env.CJ_FROM_COUNTRY ?? "CN").toUpperCase(),
-      shippingCountryCode: (addr.country_code ?? "").toUpperCase(),
-      shippingProvince: addr.province ?? undefined,
-      shippingCity: addr.city ?? undefined,
-      shippingAddress: addr.address_1 ?? "",
-      shippingAddress2: addr.address_2 ?? undefined,
-      shippingZip: addr.postal_code ?? undefined,
-      shippingPhone: addr.phone ?? undefined,
-      products: lines,
-      logisticName:
-        data.cj_option_id === "cj-express"
-          ? "CJPacket Express"
-          : "CJPacket Ordinary",
-      remark: "3rd Eye Supply",
-    }
+    const payload = buildCJOrderPayload(order, data, lines)
 
     if (this.dryRun_) {
       this.logger_.warn(
