@@ -83,16 +83,22 @@ export function buildCJOrderPayload(
   lines: CJOrderLine[]
 ): CJOrderPayload {
   const addr = order.shipping_address ?? {}
+  const name = `${addr.first_name ?? ""} ${addr.last_name ?? ""}`.trim()
+  const country = (addr.country_code ?? "").toUpperCase()
   return {
     externalOrderNumber: `3ES-${order.display_id ?? order.id ?? "unknown"}`,
     // CJ rejected `customerName` with "1600300 shippingCustomerName must be not
     // empty" — the key has to be shippingCustomerName.
-    shippingCustomerName: `${addr.first_name ?? ""} ${addr.last_name ?? ""}`.trim(),
+    // CJ wants both spellings: dropping either yields "1600300 <name> must be
+    // not empty" for the one you dropped.
+    shippingCustomerName: name,
+    customerName: name,
     emailAddress: order.email ?? undefined,
     // CJ rejects the order without this ("1600300 fromCountryCode must not be
     // empty"). The catalogue is CJ China stock; override with CJ_FROM_COUNTRY.
     fromCountryCode: (process.env.CJ_FROM_COUNTRY ?? "CN").toUpperCase(),
-    shippingCountry: (addr.country_code ?? "").toUpperCase(),
+    shippingCountry: country,
+    shippingCountryCode: country,
     shippingProvince: addr.province ?? undefined,
     shippingCity: addr.city ?? undefined,
     shippingAddress: addr.address_1 ?? "",

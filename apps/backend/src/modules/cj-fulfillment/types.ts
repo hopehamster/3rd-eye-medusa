@@ -14,13 +14,15 @@ export interface CJOrderLine {
 
 export interface CJOrderPayload {
   externalOrderNumber: string
-  /** CJ wants this exact key; `customerName` is silently rejected as empty. */
+  /** CJ requires both spellings; omit either and it reports that one as empty. */
   shippingCustomerName: string
+  customerName: string
   emailAddress?: string
   /** Country the goods ship FROM — CJ requires it and rejects the order without it. */
   fromCountryCode: string
-  /** CJ's key is `shippingCountry`; `shippingCountryCode` is reported as empty. */
+  /** CJ requires BOTH of these; omit either and it reports that one as empty. */
   shippingCountry: string
+  shippingCountryCode: string
   shippingProvince?: string
   shippingCity?: string
   shippingAddress: string
