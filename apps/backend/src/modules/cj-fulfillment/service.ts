@@ -204,6 +204,11 @@ class CJFulfillmentService extends AbstractFulfillmentProviderService {
       externalOrderNumber: `3ES-${order.display_id ?? order.id}`,
       customerName: `${addr.first_name ?? ""} ${addr.last_name ?? ""}`.trim(),
       emailAddress: order.email ?? undefined,
+      // CJ rejected the first contract probe with
+      // "1600300 fromCountryCode must not be empty": the payload never sent it.
+      // The catalogue is CJ China stock, so CN is the default; override with
+      // CJ_FROM_COUNTRY if a warehouse changes.
+      fromCountryCode: (process.env.CJ_FROM_COUNTRY ?? "CN").toUpperCase(),
       shippingCountryCode: (addr.country_code ?? "").toUpperCase(),
       shippingProvince: addr.province ?? undefined,
       shippingCity: addr.city ?? undefined,

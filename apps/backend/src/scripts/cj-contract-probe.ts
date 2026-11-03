@@ -47,6 +47,7 @@ export default async function cjContractProbe({ container }: ExecArgs) {
   const payload = {
     orderNumber: `probe-${Date.now()}`,
     shippingCustomerName: "Contract Probe",
+    fromCountryCode: "CN",
     shippingCountryCode: "US",
     shippingProvince: "NV",
     shippingCity: "Las Vegas",

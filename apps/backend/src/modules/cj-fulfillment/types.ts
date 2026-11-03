@@ -16,6 +16,8 @@ export interface CJOrderPayload {
   externalOrderNumber: string
   customerName: string
   emailAddress?: string
+  /** Country the goods ship FROM — CJ requires it and rejects the order without it. */
+  fromCountryCode: string
   shippingCountryCode: string
   shippingProvince?: string
   shippingCity?: string
