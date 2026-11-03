@@ -53,6 +53,29 @@ function isUnauthorized(error: unknown): boolean {
   return /unauthori[sz]ed/i.test(message)
 }
 
+/**
+ * Ask the Oracle through the same-origin proxy.
+ *
+ * Throws an object with a `status` so isUnauthorized() can spot the 401 and the
+ * UI can offer sign-in, exactly as it did when this went through the sdk.
+ */
+async function askThroughProxy(q: string, payload: {
+  question: string
+  sessionId?: string
+  expertId?: string
+}): Promise<OracleResponse> {
+  const res = await fetch("/api/oracle/ask", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  })
+  if (!res.ok) {
+    const body = await res.text().catch(() => "")
+    throw { status: res.status, message: body || res.statusText }
+  }
+  return (await res.json()) as OracleResponse
+}
+
 const OPENERS = [
   "I need protection for my home",
   "I've been feeling scattered lately",
@@ -237,9 +260,10 @@ export default function OracleChat({
       m.map((mm, i) => (i === index ? { ...mm, feedback: helpful } : mm))
     )
     try {
-      await sdk.client.fetch(`/store/oracle/feedback`, {
+      await fetch("/api/oracle/feedback", {
         method: "POST",
-        body: { logId: msg.logId, helpful },
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ logId: msg.logId, helpful }),
       })
     } catch {
       // best-effort; the UI already reflects the tap
@@ -279,16 +303,13 @@ export default function OracleChat({
     }
 
     try {
-      const publishableKey =
-        process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY ?? ""
-      const res = await fetch(
-        `${MEDUSA_BACKEND_URL}/store/oracle/ask/stream`,
-        {
+      // Same-origin proxy: it attaches the httpOnly auth cookie server-side,
+      // which the browser sdk never did (#137).
+      const res = await fetch("/api/oracle/ask/stream", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Accept: "text/event-stream",
-            ...(publishableKey ? { "x-publishable-api-key": publishableKey } : {}),
           },
           body: JSON.stringify({
             question: knowledgeOnly ? `[knowledge only] ${q}` : q,
@@ -418,13 +439,10 @@ export default function OracleChat({
   const askLegacy = async (q: string) => {
     setLoading(true)
     try {
-      const res = await sdk.client.fetch<OracleResponse>(`/store/oracle/ask`, {
-        method: "POST",
-        body: {
-          question: knowledgeOnly ? `[knowledge only] ${q}` : q,
-          sessionId: sessionId.current,
-          expertId,
-        },
+      const res = await askThroughProxy(q, {
+        question: knowledgeOnly ? `[knowledge only] ${q}` : q,
+        sessionId: sessionId.current,
+        expertId,
       })
       const productById = new Map(res.products.map((p) => [p.id, p]))
       setMessages((m) => [

@@ -42,10 +42,10 @@ const OracleMemory = () => {
 
   const load = useCallback(async () => {
     try {
-      const res = await sdk.client.fetch<{
-        consent: boolean
-        profiles: Profile[]
-      }>("/store/oracle/profile", { method: "GET" })
+      const res = await fetch("/api/oracle/profile", { cache: "no-store" }).then(async (res) => {
+        if (!res.ok) throw new Error(String(res.status))
+        return res.json()
+      })
       setConsent(!!res.consent)
       setProfiles(res.profiles ?? [])
       setState("ready")
@@ -63,10 +63,12 @@ const OracleMemory = () => {
     setBusy(true)
     setError(null)
     try {
-      await sdk.client.fetch("/store/oracle/profile", {
+      const res = await fetch("/api/oracle/profile", {
         method: "POST",
-        body: { consent: next },
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ consent: next }),
       })
+      if (!res.ok) throw new Error(String(res.status))
       setConsent(next)
       if (!next) setProfiles([])
       else await load()
@@ -81,7 +83,8 @@ const OracleMemory = () => {
     setBusy(true)
     setError(null)
     try {
-      await sdk.client.fetch("/store/oracle/profile", { method: "DELETE" })
+      const res = await fetch("/api/oracle/profile", { method: "DELETE" })
+      if (!res.ok) throw new Error(String(res.status))
       setProfiles([])
       setConsent(false)
     } catch {
