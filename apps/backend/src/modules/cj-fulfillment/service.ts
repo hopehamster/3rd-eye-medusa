@@ -180,6 +180,61 @@ class CJFulfillmentService extends AbstractFulfillmentProviderService {
   }
 
   /**
+   * Refuse to place a second supplier order for the same Medusa order.
+   *
+   * Nothing in the provider prevented this before: every call reached
+   * /shopping/order/createOrder, so a retry, a double-click or a replayed
+   * workflow would buy the goods twice and ship two parcels. The CJ order id is
+   * written back onto the order's metadata when a real order is placed, so that
+   * is the record we check.
+   *
+   * Cancelled orders are refused too — placing a supplier order for an order the
+   * shop has already cancelled is money spent on nothing.
+   */
+  protected async assertNotAlreadyPlaced(
+    order: Partial<FulfillmentOrderDTO>
+  ): Promise<void> {
+    const orderId = order.id
+    if (!orderId) {
+      return
+    }
+
+    let row: { metadata?: Record<string, unknown> | null; status?: string | null } | undefined
+    try {
+      const { data } = await this.resolveQuery().graph({
+        entity: "order",
+        fields: ["id", "status", "metadata"],
+        filters: { id: orderId },
+      })
+      row = (data as typeof row[])?.[0]
+    } catch {
+      // If the order cannot be read, fall through: refusing to fulfil because a
+      // lookup failed would be worse than the duplicate the guard prevents.
+      return
+    }
+    if (!row) {
+      return
+    }
+
+    const placed = row.metadata?.cj_order_id
+    if (typeof placed === "string" && placed.length > 0) {
+      throw new MedusaError(
+        MedusaError.Types.DUPLICATE_ERROR,
+        `CJ fulfillment: order ${orderId} was already placed with CJ as ` +
+          `${placed}. Refusing to create a second supplier order.`
+      )
+    }
+
+    if (row.status === "canceled") {
+      throw new MedusaError(
+        MedusaError.Types.INVALID_DATA,
+        `CJ fulfillment: order ${orderId} is cancelled. Refusing to buy goods ` +
+          `for a cancelled order.`
+      )
+    }
+  }
+
+  /**
    * Resolve the supplier variant id for each fulfillment item.
    * Source of truth: variant metadata `cj_vid` (set by the catalog sync).
    * Path: fulfillment item -> order line item -> product variant -> metadata.
@@ -238,6 +293,12 @@ class CJFulfillmentService extends AbstractFulfillmentProviderService {
         "CJ fulfillment: order has no shipping address"
       )
     }
+
+    // Idempotency: a second call for the same order must never place a second
+    // supplier order. CJ charges per order and ships per order, so a retry, a
+    // double-submit or a replayed workflow would cost real money and send the
+    // customer a duplicate parcel. The order's own metadata is the record.
+    await this.assertNotAlreadyPlaced(order)
 
     const lineItemIds = items
       .map((i) => i.line_item_id)
