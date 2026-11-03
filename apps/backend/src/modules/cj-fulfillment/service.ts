@@ -85,7 +85,9 @@ export function buildCJOrderPayload(
   const addr = order.shipping_address ?? {}
   return {
     externalOrderNumber: `3ES-${order.display_id ?? order.id ?? "unknown"}`,
-    customerName: `${addr.first_name ?? ""} ${addr.last_name ?? ""}`.trim(),
+    // CJ rejected `customerName` with "1600300 shippingCustomerName must be not
+    // empty" — the key has to be shippingCustomerName.
+    shippingCustomerName: `${addr.first_name ?? ""} ${addr.last_name ?? ""}`.trim(),
     emailAddress: order.email ?? undefined,
     // CJ rejects the order without this ("1600300 fromCountryCode must not be
     // empty"). The catalogue is CJ China stock; override with CJ_FROM_COUNTRY.

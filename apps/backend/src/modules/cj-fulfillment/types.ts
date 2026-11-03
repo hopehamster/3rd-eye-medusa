@@ -14,7 +14,8 @@ export interface CJOrderLine {
 
 export interface CJOrderPayload {
   externalOrderNumber: string
-  customerName: string
+  /** CJ wants this exact key; `customerName` is silently rejected as empty. */
+  shippingCustomerName: string
   emailAddress?: string
   /** Country the goods ship FROM — CJ requires it and rejects the order without it. */
   fromCountryCode: string
