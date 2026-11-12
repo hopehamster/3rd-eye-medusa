@@ -28,6 +28,35 @@ const PRODUCTS_PAGE_SIZE = 100
 /** Safety valve so a bad `count` can never spin us into an endless fetch loop. */
 const PRODUCTS_MAX_PAGES = 50
 
+/**
+ * Offline/demo filtering for the fallback catalogue. The search page passes
+ * `q` through listProducts, and the live backend filters on it — but the
+ * offline branch used to ignore `q` entirely and return every demo product,
+ * so a search in preview mode showed the whole catalogue. Filter the demo
+ * products the same way: by handle when asked, and by keyword across title,
+ * handle and description when a query is given.
+ */
+const filterFallbackProducts = (
+  queryParams?: ProductListQueryParams
+): HttpTypes.StoreProduct[] => {
+  const query =
+    typeof queryParams?.q === "string" ? queryParams.q.trim().toLowerCase() : ""
+  return fallbackProducts.filter((p) => {
+    if (queryParams?.handle && p.handle !== queryParams.handle) {
+      return false
+    }
+    if (
+      query &&
+      ![p.title, p.handle, p.description].some((value) =>
+        value?.toLowerCase().includes(query)
+      )
+    ) {
+      return false
+    }
+    return true
+  })
+}
+
 export const listProducts = async ({
   pageParam = 1,
   queryParams,
@@ -76,9 +105,7 @@ export const listProducts = async ({
   }
 
   if (isOfflineMode()) {
-    const filtered = queryParams?.handle
-      ? fallbackProducts.filter((p) => p.handle === queryParams.handle)
-      : fallbackProducts
+    const filtered = filterFallbackProducts(queryParams)
 
     return {
       response: { products: filtered, count: filtered.length },
@@ -119,9 +146,7 @@ export const listProducts = async ({
       })
   } catch (error) {
     if (isOfflineMode()) {
-      const filtered = queryParams?.handle
-        ? fallbackProducts.filter((p) => p.handle === queryParams.handle)
-        : fallbackProducts
+      const filtered = filterFallbackProducts(queryParams)
 
       return {
         response: { products: filtered, count: filtered.length },
