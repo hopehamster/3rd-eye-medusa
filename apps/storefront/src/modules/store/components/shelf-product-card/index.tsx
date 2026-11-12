@@ -1,6 +1,6 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { motion, useReducedMotion } from "framer-motion"
 import { HttpTypes } from "@medusajs/types"
 
 import { getProductPrice } from "@lib/util/get-product-price"
@@ -21,6 +21,10 @@ import Thumbnail from "@modules/products/components/thumbnail"
  * wrapper. The glide only works because the shelf template keys each
  * <li> by product id, so this component keeps its identity across a
  * filter/sort change instead of remounting.
+ *
+ * Reduced motion (issue #201 fix round): when the visitor prefers
+ * reduced motion the layout animation is off, so the card snaps
+ * instead of gliding.
  */
 export default function ShelfProductCard({
   product,
@@ -28,10 +32,11 @@ export default function ShelfProductCard({
   product: HttpTypes.StoreProduct
 }) {
   const { cheapestPrice } = getProductPrice({ product })
+  const shouldReduceMotion = useReducedMotion()
 
   return (
     <motion.div
-      layout="position"
+      layout={shouldReduceMotion ? false : "position"}
       transition={{ layout: { duration: 0.35, ease: "easeOut" } }}
     >
       <LocalizedClientLink
