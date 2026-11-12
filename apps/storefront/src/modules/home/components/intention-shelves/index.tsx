@@ -46,8 +46,13 @@ export default async function IntentionShelves({
           {SHELVES.map((shelf, i) => {
             const media = getShelfCardMedia(products, shelf)
 
+            {/* Stagger (issue #231): cards fade in one after another down
+                the grid — sequential delay per card, not per column, so
+                the second row does not replay the first row's delays.
+                Step 0.08s; with 4 shelves the last card starts at 0.24s.
+                Quiet opacity-only fade via Reveal, 0.4s per card. */}
             return (
-              <Reveal key={shelf.intent} delay={(i % 3) * 0.08}>
+              <Reveal key={shelf.intent} delay={i * 0.08} duration={0.4}>
                 <LocalizedClientLink
                   href={`/store/shelf/${shelf.intent}`}
                   className="group block"
