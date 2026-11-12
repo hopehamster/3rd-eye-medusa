@@ -11,7 +11,7 @@
     "dev": "next dev --turbopack -p 8000",
     "build": "next build",
     "start": "next start -p 8000",
-    "lint": "next lint",
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "check:policy": "node scripts/check-policy-placeholders.mjs",
     "analyze": "ANALYZE=true next build"
