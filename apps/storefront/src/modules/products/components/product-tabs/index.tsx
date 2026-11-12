@@ -16,6 +16,13 @@ type ProductTabsProps = {
  * Spec rows moved into the specimen-label panel; this keeps shipping and
  * returns only. Copy is honest for this store (CJ dropshipping): pieces ship
  * directly from supplier partners — no fast-delivery promises.
+ *
+ * Revised 2026-11-11 (#157): the shipping tab used to say "Most orders
+ * arrive within 7-15 days", a range the shipping policy deliberately leaves
+ * as [FILL] until the owner confirms dispatch and transit times — the same
+ * contradiction fixed in TrustNotes by #139. The line now mirrors the
+ * TrustNotes wording: prepared by supplier partners, shipped with tracking,
+ * estimates on the shipping page.
  */
 const ProductTabs = ({ product: _product }: ProductTabsProps) => {
   const tabs = [
@@ -53,8 +60,8 @@ const ShippingInfoTab = () => {
             <span className="font-semibold">Shipping with tracking</span>
             <p className="max-w-sm">
               Orders are prepared by our supplier partners and shipped
-              directly to you. Most orders arrive within 7-15 days, and
-              every order includes tracking.
+              directly to you, with tracking. Dispatch and delivery estimates
+              are on the shipping page.
             </p>
           </div>
         </div>
