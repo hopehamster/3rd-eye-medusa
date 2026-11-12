@@ -1,5 +1,6 @@
 "use client"
 
+import { motion, useAnimationControls, useReducedMotion } from "framer-motion"
 import { Badge, Heading, Input, Label, Text } from "@modules/common/components/ui"
 import React from "react"
 
@@ -17,8 +18,13 @@ type DiscountCodeProps = {
 const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
   const [isOpen, setIsOpen] = React.useState(false)
   const [errorMessage, setErrorMessage] = React.useState("")
+  const prefersReducedMotion = useReducedMotion()
+  const shakeControls = useAnimationControls()
 
   const { promotions = [] } = cart
+  // Keyed so the applied block fades in again whenever the applied set
+  // changes — i.e. when a good code lands.
+  const promotionKey = promotions.map((promotion) => promotion.id).join(",")
   const removePromotionCode = async (code: string) => {
     const validPromotions = promotions.filter(
       (promotion) => promotion.code !== code
@@ -46,6 +52,14 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
       await applyPromotions(codes)
     } catch (e) {
       setErrorMessage(e instanceof Error ? e.message : String(e))
+      // A bad code shakes the field once. Quiet and short (0.35s), and
+      // skipped entirely when reduced motion is preferred.
+      if (prefersReducedMotion !== true) {
+        void shakeControls.start({
+          x: [0, -6, 6, -4, 4, 0],
+          transition: { duration: 0.35 },
+        })
+      }
     }
 
     if (input) {
@@ -74,7 +88,10 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
 
           {isOpen && (
             <>
-              <div className="flex w-full gap-x-2">
+              <motion.div
+                animate={shakeControls}
+                className="flex w-full gap-x-2"
+              >
                 <Input
                   className="size-full"
                   id="promotion-input"
@@ -89,7 +106,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
                 >
                   Apply
                 </SubmitButton>
-              </div>
+              </motion.div>
 
               <ErrorMessage
                 error={errorMessage}
@@ -100,7 +117,13 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
         </form>
 
         {promotions.length > 0 && (
-          <div className="w-full flex items-center">
+          <motion.div
+            key={promotionKey}
+            initial={prefersReducedMotion ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="w-full flex items-center"
+          >
             <div className="flex flex-col w-full">
               <Heading className="txt-medium mb-2">
                 Promotion(s) applied:
@@ -166,7 +189,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
                 )
               })}
             </div>
-          </div>
+          </motion.div>
         )}
       </div>
     </div>
