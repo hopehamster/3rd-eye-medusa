@@ -21,9 +21,9 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
 }) => {
   // Dedupe values so a repeated option value renders one button, not two.
   // Only values the product actually has are rendered; nothing is invented.
-  const filteredOptions = [
-    ...new Set((option.values ?? []).map((v) => v.value)),
-  ]
+  const filteredOptions = Array.from(
+    new Set((option.values ?? []).map((v) => v.value))
+  )
 
   return (
     <div className="flex flex-col gap-y-3">
