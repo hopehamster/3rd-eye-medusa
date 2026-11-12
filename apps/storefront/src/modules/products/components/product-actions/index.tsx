@@ -248,7 +248,7 @@ export default function ProductActions({
           variant="primary"
           className={
             justAdded
-              ? "w-full h-10 bg-green-600 hover:bg-green-600"
+              ? "w-full h-10 bg-green-700 hover:bg-green-700"
               : "w-full h-10"
           }
           isLoading={isAdding}
