@@ -79,24 +79,29 @@ async function fetchRelated(
     const tagIds = (product.tags ?? []).map((tag) => tag.id).filter(Boolean)
     const sameTag: HttpTypes.StoreProduct[] = []
     if (tagIds.length) {
-      const tagParams = new URLSearchParams()
-      tagParams.set("limit", "10")
-      tagIds.forEach((tagId) => tagParams.append("tag_id", tagId))
-      tagParams.set("region_id", region.id)
-      tagParams.set("fields", fields)
-      const tagRes = await fetch(
-        `${backendUrl}/store/products?${tagParams.toString()}`,
-        { headers }
-      )
-      if (tagRes.ok) {
-        const tagData = await tagRes.json()
-        const picked = new Set(sameCollection.map((p) => p.id))
-        sameTag.push(
-          ...(tagData.products ?? []).filter(
-            (p: HttpTypes.StoreProduct) =>
-              p.id !== product.id && !picked.has(p.id)
-          )
+      try {
+        const tagParams = new URLSearchParams()
+        tagParams.set("limit", "10")
+        tagIds.forEach((tagId) => tagParams.append("tag_id", tagId))
+        tagParams.set("region_id", region.id)
+        tagParams.set("fields", fields)
+        const tagRes = await fetch(
+          `${backendUrl}/store/products?${tagParams.toString()}`,
+          { headers }
         )
+        if (tagRes.ok) {
+          const tagData = await tagRes.json()
+          const picked = new Set(sameCollection.map((p) => p.id))
+          sameTag.push(
+            ...(tagData.products ?? []).filter(
+              (p: HttpTypes.StoreProduct) =>
+                p.id !== product.id && !picked.has(p.id)
+            )
+          )
+        }
+      } catch {
+        // A failed tag fetch degrades to the old behaviour: sameTag stays
+        // empty and the fill tops up from the collection tier alone.
       }
     }
 
