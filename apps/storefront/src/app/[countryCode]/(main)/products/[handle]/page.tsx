@@ -84,7 +84,7 @@ async function fetchProduct(
       handle,
       region_id: region.id,
       fields:
-        "id,handle,title,subtitle,description,thumbnail,images,metadata,material,origin_country,weight,length,width,height,*collection,*variants.calculated_price,*variants.images,*variants.options,*options",
+        "id,handle,title,subtitle,description,thumbnail,images,metadata,material,origin_country,weight,length,width,height,*collection,*variants.calculated_price,*variants.images,*variants.options,*options,*tags",
     })
 
     const productsRes = await fetch(

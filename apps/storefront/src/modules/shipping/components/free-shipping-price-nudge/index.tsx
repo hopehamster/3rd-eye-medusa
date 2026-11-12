@@ -8,6 +8,7 @@ import {
   StoreCartShippingOption,
   StorePrice,
 } from "@medusajs/types"
+import { useReducedMotion } from "framer-motion"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { Button, clx } from "@modules/common/components/ui"
 import { useState } from "react"
@@ -144,6 +145,16 @@ function FreeShippingInline({
     remaining_percentage: number
   }
 }) {
+  // Free-shipping bar glide (issue #199): the bar already carried
+  // duration-500, but with no transition-* class Tailwind never emitted a
+  // transition-property, so the width snapped to its new value.
+  // transition-[width] supplies it, so the bar eases to its new width
+  // over half a second when the cart changes. The "Only $X away" text
+  // comes from the same render, so it updates in step with the glide.
+  // Reduced motion (#201/#203 precedent): when reduced motion is
+  // preferred the transition classes are left off and the width snaps.
+  const shouldReduceMotion = useReducedMotion()
+
   return (
     <div
       className="bg-paper-surface p-3 rounded-soft border border-paper-border"
@@ -181,10 +192,12 @@ function FreeShippingInline({
         <div className="flex justify-between gap-1">
           <div
             className={clx(
-              "h-1 rounded-full max-w-full duration-500 ease-in-out",
+              "h-1 rounded-full max-w-full",
               {
                 "bg-green-500": price.target_reached,
                 "bg-paper-accent": !price.target_reached,
+                "transition-[width] duration-500 ease-in-out":
+                  !shouldReduceMotion,
               }
             )}
             style={{ width: `${price.remaining_percentage}%` }}
@@ -204,6 +217,9 @@ function FreeShippingPopup({
   price: StoreFreeShippingPrice
 }) {
   const [isClosed, setIsClosed] = useState(false)
+  // Same width glide as the inline bar (issue #199), same reduced-motion
+  // guard: no transition classes when reduced motion is preferred.
+  const shouldReduceMotion = useReducedMotion()
 
   return (
     <div
@@ -259,9 +275,11 @@ function FreeShippingPopup({
             <div className="flex justify-between gap-1">
               <div
                 className={clx(
-                  "bg-gradient-to-r from-zinc-400 to-zinc-500 h-1.5 rounded-full max-w-full duration-500 ease-in-out",
+                  "bg-gradient-to-r from-zinc-400 to-zinc-500 h-1.5 rounded-full max-w-full",
                   {
                     "from-green-400 to-green-500": price.target_reached,
+                    "transition-[width] duration-500 ease-in-out":
+                      !shouldReduceMotion,
                   }
                 )}
                 style={{ width: `${price.remaining_percentage}%` }}
