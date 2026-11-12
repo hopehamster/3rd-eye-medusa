@@ -9,36 +9,54 @@ export type StorePolicies = {
 }
 
 const toNumber = (value: unknown) => {
-  const number =
-    typeof value === "string" && value.trim() === "" ? NaN : Number(value)
+  if (typeof value !== "string" && typeof value !== "number") return null
+  if (typeof value === "string" && value.trim() === "") return null
+  const number = Number(value)
   return Number.isFinite(number) && number >= 0 ? number : null
+}
+
+// Day counts must be whole days; shippingRate stays a float.
+const toInteger = (value: unknown) => {
+  const number = toNumber(value)
+  return number !== null && Number.isInteger(number) ? number : null
 }
 
 /**
  * Reads the store policy keys set on a region's metadata in Medusa Admin.
- * Returns null when any value is missing or invalid, so callers omit policy
- * data instead of publishing guesses.
+ * Returns null when any of the six numeric values is missing or invalid, so
+ * callers omit policy data instead of publishing guesses. A missing
+ * `free_returns` flag defaults to `false`.
  */
 export const getRegionPolicies = (
   region: Pick<HttpTypes.StoreRegion, "metadata"> | null | undefined
 ): StorePolicies | null => {
   const metadata = region?.metadata ?? {}
   const values = {
-    returnWindowDays: toNumber(metadata.return_window_days),
+    returnWindowDays: toInteger(metadata.return_window_days),
     shippingRate: toNumber(metadata.shipping_rate),
-    handlingMin: toNumber(metadata.handling_days_min),
-    handlingMax: toNumber(metadata.handling_days_max),
-    transitMin: toNumber(metadata.transit_days_min),
-    transitMax: toNumber(metadata.transit_days_max),
+    handlingMin: toInteger(metadata.handling_days_min),
+    handlingMax: toInteger(metadata.handling_days_max),
+    transitMin: toInteger(metadata.transit_days_min),
+    transitMax: toInteger(metadata.transit_days_max),
   }
   if (Object.values(values).some((value) => value === null)) {
+    return null
+  }
+  if (
+    values.handlingMin! > values.handlingMax! ||
+    values.transitMin! > values.transitMax! ||
+    values.returnWindowDays! < 1
+  ) {
     return null
   }
 
   return {
     returnWindowDays: values.returnWindowDays!,
     freeReturns:
-      metadata.free_returns === true || metadata.free_returns === "true",
+      metadata.free_returns === true ||
+      metadata.free_returns === 1 ||
+      (typeof metadata.free_returns === "string" &&
+        ["true", "1"].includes(metadata.free_returns.trim().toLowerCase())),
     shippingRate: values.shippingRate!,
     handlingDays: { min: values.handlingMin!, max: values.handlingMax! },
     transitDays: { min: values.transitMin!, max: values.transitMax! },
