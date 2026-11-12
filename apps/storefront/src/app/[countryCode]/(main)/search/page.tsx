@@ -40,22 +40,45 @@ export default async function SearchPage(props: Props) {
       })
     : { response: { products: [], count: 0 } }
 
+  // Issue #193: the backend matches the query across title and
+  // description, and descriptions reuse a template that mentions other
+  // products ("this bracelet" in the Healing Bear Tray's description),
+  // so a search can return products that are not what was asked for.
+  // Keep only products whose title contains the query, case-insensitive.
+  // This runs after fetching, so it covers the live path and the offline
+  // fallback path (filterFallbackProducts also matches on description).
+  const filteredProducts = query
+    ? response.products.filter((product) =>
+        product.title.toLowerCase().includes(query.toLowerCase())
+      )
+    : response.products
+
+  // The backend total counts every match, including description-only
+  // matches the filter drops, so it no longer describes what is shown.
+  // When the backend had more than we fetched, the true total of
+  // title-matching products is unknown — more may sit behind the fetch
+  // limit — so the count states only how many are shown, with no total.
+  // When we fetched everything the backend had, the filtered length is
+  // the exact total.
+  const hasMoreBehindLimit = response.count > response.products.length
+
   return (
     <div className="content-container py-6" data-testid="search-container">
       <h1 className="text-2xl-semi mb-6">
         {query ? `Search results for "${query}"` : "Search"}
       </h1>
       <SearchForm countryCode={countryCode} defaultValue={query} className="mb-8 max-w-xl" />
-      {query && response.count > response.products.length ? (
+      {query && hasMoreBehindLimit ? (
         <p className="text-small-regular text-ui-fg-subtle mb-6">
-          Showing {response.products.length} of {response.count} products
+          Showing {filteredProducts.length} products
         </p>
       ) : query ? (
         <p className="text-small-regular text-ui-fg-subtle mb-6">
-          {response.count} {response.count === 1 ? "product" : "products"} found
+          {filteredProducts.length}{" "}
+          {filteredProducts.length === 1 ? "product" : "products"} found
         </p>
       ) : null}
-      {query && response.products.length === 0 ? (
+      {query && filteredProducts.length === 0 ? (
         <p className="text-ui-fg-subtle">
           No products match your search. Try a different keyword.
         </p>
@@ -64,7 +87,7 @@ export default async function SearchPage(props: Props) {
           className="grid grid-cols-2 w-full small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8"
           data-testid="search-results"
         >
-          {response.products.map((product) => (
+          {filteredProducts.map((product) => (
             <li key={product.id}>
               <ProductPreview product={product} region={region} />
             </li>
