@@ -7,6 +7,7 @@ import { HttpTypes } from "@medusajs/types"
 import { Button } from "@modules/common/components/ui"
 import Divider from "@modules/common/components/divider"
 import OptionSelect from "@modules/products/components/product-actions/option-select"
+import QuantityStepper from "@modules/products/components/product-actions/quantity-stepper"
 import { isEqual } from "lodash"
 import { useParams, usePathname, useSearchParams } from "next/navigation"
 import { useEffect, useMemo, useRef, useState } from "react"
@@ -39,6 +40,7 @@ export default function ProductActions({
 
   const [options, setOptions] = useState<Record<string, string | undefined>>({})
   const [isAdding, setIsAdding] = useState(false)
+  const [quantity, setQuantity] = useState(1)
   const countryCode = useParams().countryCode as string
 
   // If there is only 1 variant, preselect the options
@@ -117,6 +119,33 @@ export default function ProductActions({
     return false
   }, [selectedVariant])
 
+  // Highest quantity the buyer may pick for the selected variant. Null
+  // means no cap: the variant does not manage inventory, or it allows
+  // backorders. The cap is the variant's real inventory quantity.
+  const maxQuantity = useMemo(() => {
+    if (!selectedVariant) {
+      return null
+    }
+
+    if (!selectedVariant.manage_inventory) {
+      return null
+    }
+
+    if (selectedVariant.allow_backorder) {
+      return null
+    }
+
+    return selectedVariant.inventory_quantity ?? null
+  }, [selectedVariant])
+
+  // Clamp the quantity when the selected variant changes to one with less
+  // stock than the quantity already picked. Quantity never drops below 1.
+  useEffect(() => {
+    if (maxQuantity !== null && quantity > maxQuantity) {
+      setQuantity(Math.max(1, maxQuantity))
+    }
+  }, [maxQuantity, quantity])
+
   const actionsRef = useRef<HTMLDivElement>(null)
 
   const inView = useIntersection(actionsRef, "0px")
@@ -129,7 +158,7 @@ export default function ProductActions({
 
     await addToCart({
       variantId: selectedVariant.id,
-      quantity: 1,
+      quantity,
       countryCode,
     })
 
@@ -137,7 +166,7 @@ export default function ProductActions({
       productId: product.id,
       variantId: selectedVariant.id,
       title: product.title,
-      quantity: 1,
+      quantity,
     })
 
     setIsAdding(false)
@@ -170,6 +199,15 @@ export default function ProductActions({
 
         <ProductPrice product={product} variant={selectedVariant} />
 
+        {selectedVariant && (
+          <QuantityStepper
+            quantity={quantity}
+            onChange={setQuantity}
+            maxQuantity={maxQuantity}
+            disabled={!!disabled || isAdding || !inStock}
+          />
+        )}
+
         <Button
           onClick={handleAddToCart}
           disabled={
@@ -200,6 +238,9 @@ export default function ProductActions({
           isAdding={isAdding}
           show={!inView}
           optionsDisabled={!!disabled || isAdding}
+          quantity={quantity}
+          onQuantityChange={setQuantity}
+          maxQuantity={maxQuantity}
         />
       </div>
     </>
