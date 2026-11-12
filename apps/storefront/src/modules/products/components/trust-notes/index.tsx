@@ -16,6 +16,12 @@
  *      transit times. A number here that the policy will not back is exactly the
  *      kind of promise this shop must not make.
  *
+ * Revised 2026-11-11 (#157): the Returns note now names the one returns
+ * fact the policy does state — the EU fourteen-day right of withdrawal —
+ * so this block and the buy-box trust block say the same thing about
+ * returns. The general return window is still [FILL] on the returns page,
+ * so no window is stated here.
+ *
  * COPY SLOT (Agent Voice, issue #26): final wording reviewed there.
  */
 const NOTES: { title: string; body: string }[] = [
@@ -29,7 +35,7 @@ const NOTES: { title: string; body: string }[] = [
   },
   {
     title: "Returns",
-    body: "If your piece arrives damaged or is not what you ordered, contact us and we will replace it or refund you.",
+    body: "If your piece arrives damaged or is not what you ordered, contact us within 72 hours of delivery with photographs and we will replace it or refund you. EU customers have fourteen days to withdraw, no reason needed.",
   },
 ]
 
