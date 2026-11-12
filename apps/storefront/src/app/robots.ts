@@ -13,7 +13,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
         "/*/checkout",
         "/*/account",
         "/*/order/",
-        "/buy/",
+        "/*/verify-account",
       ],
     },
     sitemap: `${origin}/sitemap.xml`,
