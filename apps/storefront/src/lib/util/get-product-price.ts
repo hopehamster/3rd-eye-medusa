@@ -14,7 +14,10 @@ type VariantWithPrice = HttpTypes.StoreProductVariant & {
 }
 
 export const getPricesForVariant = (variant: VariantWithPrice) => {
-  if (!variant?.calculated_price?.calculated_amount) {
+  // A calculated amount of 0 is a real price (a free item), so only a
+  // missing calculated price means "no price". The old `!amount` check
+  // treated 0 as missing.
+  if (!variant?.calculated_price || variant.calculated_price.calculated_amount == null) {
     return null
   }
 

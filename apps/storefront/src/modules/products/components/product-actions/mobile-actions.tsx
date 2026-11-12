@@ -8,6 +8,7 @@ import X from "@modules/common/icons/x"
 
 import { getProductPrice } from "@lib/util/get-product-price"
 import OptionSelect from "./option-select"
+import QuantityStepper from "./quantity-stepper"
 import { HttpTypes } from "@medusajs/types"
 import { isSimpleProduct } from "@lib/util/product"
 
@@ -21,6 +22,9 @@ type MobileActionsProps = {
   isAdding?: boolean
   show: boolean
   optionsDisabled: boolean
+  quantity: number
+  onQuantityChange: (quantity: number) => void
+  maxQuantity?: number | null
 }
 
 const MobileActions: React.FC<MobileActionsProps> = ({
@@ -33,6 +37,9 @@ const MobileActions: React.FC<MobileActionsProps> = ({
   isAdding,
   show,
   optionsDisabled,
+  quantity,
+  onQuantityChange,
+  maxQuantity,
 }) => {
   const { state, open, close } = useToggleState()
 
@@ -51,6 +58,14 @@ const MobileActions: React.FC<MobileActionsProps> = ({
   }, [price])
 
   const isSimple = isSimpleProduct(product)
+
+  // Same honesty rule as ProductPrice: a struck-through original shows
+  // only when the backend says sale AND the original is really above the
+  // sale price.
+  const isSale =
+    !!selectedPrice &&
+    selectedPrice.price_type === "sale" &&
+    selectedPrice.original_price_number > selectedPrice.calculated_price_number
 
   return (
     <>
@@ -84,7 +99,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
               <span>—</span>
               {selectedPrice ? (
                 <div className="flex items-end gap-x-2 text-paper-text">
-                  {selectedPrice.price_type === "sale" && (
+                  {isSale && (
                     <p>
                       <span className="line-through text-small-regular">
                         {selectedPrice.original_price}
@@ -94,7 +109,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                   <span
                     className={clx({
                       // Paper token: this bar sits on the paper surface.
-                      "text-paper-accent": selectedPrice.price_type === "sale",
+                      "text-paper-accent": isSale,
                     })}
                   >
                     {selectedPrice.calculated_price}
@@ -104,6 +119,16 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                 <div></div>
               )}
             </div>
+            {variant && (
+              <div className="flex w-full justify-start">
+                <QuantityStepper
+                  quantity={quantity}
+                  onChange={onQuantityChange}
+                  maxQuantity={maxQuantity}
+                  disabled={isAdding || !inStock}
+                />
+              </div>
+            )}
             <div className={clx("grid grid-cols-2 w-full gap-x-4", {
               "!grid-cols-1": isSimple
             })}>
