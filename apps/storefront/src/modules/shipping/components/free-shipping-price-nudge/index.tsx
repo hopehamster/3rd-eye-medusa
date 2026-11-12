@@ -37,9 +37,12 @@ const computeTarget = (
     return {
       current_amount: currentAmount,
       target_amount: targetAmount,
-      target_reached: currentAmount > targetAmount,
+      // A "greater than or equal" rule is met at exactly the threshold.
+      // The old check used a strict greater-than here, so a cart at
+      // exactly the threshold showed "Only $0 away" instead of unlocked.
+      target_reached: currentAmount >= targetAmount,
       target_remaining:
-        currentAmount > targetAmount ? 0 : targetAmount - currentAmount,
+        currentAmount >= targetAmount ? 0 : targetAmount - currentAmount,
       remaining_percentage: (currentAmount / targetAmount) * 100,
     }
   } else if (priceRule.operator === "lt") {
@@ -142,9 +145,12 @@ function FreeShippingInline({
   }
 }) {
   return (
-    <div className="bg-neutral-100 p-2 rounded-lg border">
+    <div
+      className="bg-paper-surface p-3 rounded-soft border border-paper-border"
+      data-testid="free-shipping-progress"
+    >
       <div className="space-y-1.5">
-        <div className="flex justify-between text-xs text-neutral-600">
+        <div className="flex justify-between text-xs text-paper-muted">
           <div>
             {price.target_reached ? (
               <div className="flex items-center gap-1.5">
@@ -163,7 +169,7 @@ function FreeShippingInline({
             })}
           >
             Only{" "}
-            <span className="text-cosmos-text">
+            <span className="text-paper-text font-medium">
               {convertToLocale({
                 amount: price.target_remaining,
                 currency_code: cart.currency_code,
@@ -175,14 +181,15 @@ function FreeShippingInline({
         <div className="flex justify-between gap-1">
           <div
             className={clx(
-              "bg-gradient-to-r from-zinc-400 to-zinc-500 h-1 rounded-full max-w-full duration-500 ease-in-out",
+              "h-1 rounded-full max-w-full duration-500 ease-in-out",
               {
-                "from-green-400 to-green-500": price.target_reached,
+                "bg-green-500": price.target_reached,
+                "bg-paper-accent": !price.target_reached,
               }
             )}
             style={{ width: `${price.remaining_percentage}%` }}
           ></div>
-          <div className="bg-neutral-300 h-1 rounded-full w-fit flex-grow"></div>
+          <div className="bg-paper-border h-1 rounded-full w-fit flex-grow"></div>
         </div>
       </div>
     </div>
