@@ -16,6 +16,7 @@ import LineItemPrice from "@modules/common/components/line-item-price"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Thumbnail from "@modules/products/components/thumbnail"
 import ShippingPriceNudge from "@modules/shipping/components/free-shipping-price-nudge"
+import { motion, useReducedMotion } from "framer-motion"
 import { usePathname } from "next/navigation"
 import { Fragment, useEffect, useRef, useState } from "react"
 
@@ -42,6 +43,11 @@ const CartDropdown = ({
 
   const subtotal = cartState?.subtotal ?? 0
   const itemRef = useRef<number>(totalItems || 0)
+
+  // Reduced motion: the count pops with a scale animation below, skipped
+  // entirely when the visitor prefers reduced motion — the number just
+  // changes, same as before.
+  const shouldReduceMotion = useReducedMotion()
 
   // Shipping options for the free-shipping progress bar. The dropdown
   // receives only the cart, so it loads the options itself; the nudge
@@ -119,7 +125,23 @@ const CartDropdown = ({
             className="hover:text-ui-fg-base"
             href="/cart"
             data-testid="nav-cart-link"
-          >{`Cart (${totalItems})`}</LocalizedClientLink>
+          >
+            Cart (
+            {shouldReduceMotion ? (
+              <span>{totalItems}</span>
+            ) : (
+              <motion.span
+                key={totalItems}
+                initial={{ scale: 1.3 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+                className="inline-block"
+              >
+                {totalItems}
+              </motion.span>
+            )}
+            )
+          </LocalizedClientLink>
         </PopoverButton>
         <Transition
           show={cartDropdownOpen}

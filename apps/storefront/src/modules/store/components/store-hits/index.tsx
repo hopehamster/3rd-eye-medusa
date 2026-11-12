@@ -1,6 +1,7 @@
 "use client"
 
 import type { Hit } from "instantsearch.js"
+import { motion, useReducedMotion } from "framer-motion"
 import { useEffect, useRef } from "react"
 import { useHits, useInstantSearch } from "react-instantsearch"
 
@@ -30,6 +31,7 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
   const { items } = useHits<ProductHit>()
   const { status, error, indexUiState } = useInstantSearch()
   const { isSearching, hasNoResultsYet } = useSearchSettled()
+  const prefersReducedMotion = useReducedMotion()
 
   const { page, ...refinements } = indexUiState
   const currentPage = page ?? 1
@@ -48,6 +50,14 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
     currentPage !== settled.current.page
 
   const showSkeleton = hasNoResultsYet || (isSearching && isPagingOnly)
+
+  // Result-set signature: changes only when the visible hits change — first
+  // load, a filter change, or a page change. The animated wrapper below is
+  // keyed on it, so a new set of tiles remounts and replays the entrance
+  // instead of snapping in. The Quick Add adapter stays outside that
+  // wrapper, so its mount — and the product it already fetched — survives
+  // a filter change.
+  const resultSignature = items.map((hit) => hit.objectID).join(",")
 
   if (status === "error") {
     return (
@@ -98,7 +108,7 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
           className="grid grid-cols-2 w-full small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8"
           data-testid="products-list"
         >
-          {items.map((hit) =>
+          {items.map((hit, index) =>
             hit.handle ? (
               <li key={hit.objectID}>
                 <LocalizedClientLink
@@ -106,16 +116,38 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
                   className="group"
                 >
                   <div data-testid="product-wrapper">
-                    <Thumbnail thumbnail={hit.thumbnail} size="full" />
-                    <div className="flex txt-compact-medium mt-4 justify-between">
-                      <Text
-                        className="text-base text-ui-fg-subtle"
-                        data-testid="product-title"
-                      >
-                        {hit.title}
-                      </Text>
-                      <HitPrice hit={hit} currencyCode={currencyCode} />
-                    </div>
+                    {/* Tiles fade in and rise a few pixels, staggered down
+                        the grid (issue #203). Same quiet pattern as Reveal:
+                        opacity + a small rise, easeOut, under half a
+                        second each; the stagger delay is capped so a full
+                        page never feels like waiting. With reduced motion
+                        preferred, no entrance at all: the tiles render
+                        immediately, no fade, no rise, no stagger delay. */}
+                    <motion.div
+                      key={resultSignature}
+                      initial={
+                        prefersReducedMotion ? false : { opacity: 0, y: 8 }
+                      }
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: 0.35,
+                        ease: "easeOut",
+                        delay: prefersReducedMotion
+                          ? 0
+                          : Math.min(index * 0.03, 0.3),
+                      }}
+                    >
+                      <Thumbnail thumbnail={hit.thumbnail} size="full" />
+                      <div className="flex txt-compact-medium mt-4 justify-between">
+                        <Text
+                          className="text-base text-ui-fg-subtle"
+                          data-testid="product-title"
+                        >
+                          {hit.title}
+                        </Text>
+                        <HitPrice hit={hit} currencyCode={currencyCode} />
+                      </div>
+                    </motion.div>
                     {/* Quick add (issue #187): the hit carries no variants,
                         so StoreHitQuickAdd fetches the product and renders
                         the shared QuickAdd. Inside the link, as in

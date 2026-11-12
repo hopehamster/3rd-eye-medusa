@@ -14,9 +14,10 @@ type RelatedProductsProps = {
  * Uses direct fetch against the Medusa store API — the same pattern as the
  * PDP page — because the SDK helpers (listProducts/getRegion) call cookies()
  * and throw DYNAMIC_SERVER_USAGE here, which is why this was disabled.
- * Matching: same collection first, then everything else (this catalog is
- * small — 20 published pieces). Cards are rendered in paper tokens rather
- * than reusing ProductPreview, which still belongs to the store grid.
+ * Matching: same collection first, then same tag (#170), then everything
+ * else (this catalog is small — 20 published pieces). Cards are rendered
+ * in paper tokens rather than reusing ProductPreview, which still belongs
+ * to the store grid.
  */
 async function fetchRelated(
   product: HttpTypes.StoreProduct,
@@ -47,7 +48,7 @@ async function fetchRelated(
     // "same collection" from the first 100 products silently dropped
     // collection mates that lived beyond that cap; the collection filter is
     // exact, so the priority set is now complete no matter how big the
-    // catalogue gets. The rail only ever shows 4, so it stays two bounded
+    // catalogue gets. The rail only ever shows 4, so it stays bounded
     // requests rather than a full pagination walk.
     const sameCollection: HttpTypes.StoreProduct[] = []
     if (product.collection_id) {
@@ -69,6 +70,45 @@ async function fetchRelated(
       return sameCollection.slice(0, 4)
     }
 
+    // Same-tag pieces next (#170): a piece sharing one of this product's
+    // tags is preferred over an arbitrary catalogue pick, even when it
+    // lives in another collection. The starter passes the tag ids as one
+    // listProducts call; here that is one direct fetch with a repeated
+    // tag_id param per tag, which the store API treats as a match on any
+    // of them. Skipped entirely when the product has no tags.
+    const tagIds = (product.tags ?? []).map((tag) => tag.id).filter(Boolean)
+    const sameTag: HttpTypes.StoreProduct[] = []
+    if (tagIds.length) {
+      try {
+        const tagParams = new URLSearchParams()
+        tagParams.set("limit", "10")
+        tagIds.forEach((tagId) => tagParams.append("tag_id", tagId))
+        tagParams.set("region_id", region.id)
+        tagParams.set("fields", fields)
+        const tagRes = await fetch(
+          `${backendUrl}/store/products?${tagParams.toString()}`,
+          { headers }
+        )
+        if (tagRes.ok) {
+          const tagData = await tagRes.json()
+          const picked = new Set(sameCollection.map((p) => p.id))
+          sameTag.push(
+            ...(tagData.products ?? []).filter(
+              (p: HttpTypes.StoreProduct) =>
+                p.id !== product.id && !picked.has(p.id)
+            )
+          )
+        }
+      } catch {
+        // A failed tag fetch degrades to the old behaviour: sameTag stays
+        // empty and the fill tops up from the collection tier alone.
+      }
+    }
+
+    if (sameCollection.length + sameTag.length >= 4) {
+      return [...sameCollection, ...sameTag].slice(0, 4)
+    }
+
     // Fill the remainder from the wider catalogue. Which 4 "other" pieces show
     // is deliberately arbitrary — there is no ranking signal — so one page is
     // enough here.
@@ -76,14 +116,17 @@ async function fetchRelated(
       `${backendUrl}/store/products?limit=100&region_id=${region.id}&fields=${fields}`,
       { headers }
     )
-    if (!res.ok) return sameCollection.slice(0, 4)
+    if (!res.ok) return [...sameCollection, ...sameTag].slice(0, 4)
     const data = await res.json()
-    const picked = new Set(sameCollection.map((p) => p.id))
+    const picked = new Set([
+      ...sameCollection.map((p) => p.id),
+      ...sameTag.map((p) => p.id),
+    ])
     const rest: HttpTypes.StoreProduct[] = (data.products ?? []).filter(
       (p: HttpTypes.StoreProduct) => p.id !== product.id && !picked.has(p.id)
     )
 
-    return [...sameCollection, ...rest].slice(0, 4)
+    return [...sameCollection, ...sameTag, ...rest].slice(0, 4)
   } catch {
     return []
   }
