@@ -1,6 +1,7 @@
 "use client"
 
 import { IconBadge, clx } from "@modules/common/components/ui"
+import { motion, useReducedMotion } from "framer-motion"
 import {
   SelectHTMLAttributes,
   forwardRef,
@@ -19,9 +20,27 @@ type NativeSelectProps = {
 } & Omit<SelectHTMLAttributes<HTMLSelectElement>, "size">
 
 const CartItemSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
-  ({ placeholder = "Select...", className, children, ...props }, ref) => {
+  (
+    { placeholder = "Select...", className, children, value, ...props },
+    ref
+  ) => {
     const innerRef = useRef<HTMLSelectElement>(null)
     const [isPlaceholder, setIsPlaceholder] = useState(false)
+    const shouldReduceMotion = useReducedMotion()
+
+    // The quantity is shown by a native <select>, so the pop animates the
+    // whole control (which displays the number) instead of the text inside
+    // it. popKey only advances when the value actually changes after mount,
+    // so the cart page loading does not pop every line item.
+    const prevValue = useRef(value)
+    const [popKey, setPopKey] = useState(0)
+
+    useEffect(() => {
+      if (prevValue.current !== value) {
+        prevValue.current = value
+        setPopKey((k) => k + 1)
+      }
+    }, [value])
 
     useImperativeHandle<HTMLSelectElement | null, HTMLSelectElement | null>(
       ref,
@@ -37,7 +56,12 @@ const CartItemSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
     }, [innerRef.current?.value])
 
     return (
-      <div>
+      <motion.div
+        key={popKey}
+        initial={{ scale: popKey === 0 || shouldReduceMotion ? 1 : 1.12 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 0.25, ease: "easeOut" }}
+      >
         <IconBadge
           onFocus={() => innerRef.current?.focus()}
           onBlur={() => innerRef.current?.blur()}
@@ -51,6 +75,7 @@ const CartItemSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
         >
           <select
             ref={innerRef}
+            value={value}
             {...props}
             className="appearance-none bg-transparent border-none px-4 transition-colors duration-150 focus:border-gray-700 outline-none w-16 h-16 items-center justify-center"
           >
@@ -63,7 +88,7 @@ const CartItemSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
             <ChevronDown />
           </span>
         </IconBadge>
-      </div>
+      </motion.div>
     )
   }
 )
