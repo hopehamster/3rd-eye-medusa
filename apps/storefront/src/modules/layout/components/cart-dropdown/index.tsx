@@ -6,6 +6,7 @@ import {
   PopoverPanel,
   Transition,
 } from "@headlessui/react"
+import { listCartOptions } from "@lib/data/cart"
 import { convertToLocale } from "@lib/util/money"
 import { HttpTypes } from "@medusajs/types"
 import { Button } from "@modules/common/components/ui"
@@ -14,6 +15,7 @@ import LineItemOptions from "@modules/common/components/line-item-options"
 import LineItemPrice from "@modules/common/components/line-item-price"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Thumbnail from "@modules/products/components/thumbnail"
+import ShippingPriceNudge from "@modules/shipping/components/free-shipping-price-nudge"
 import { usePathname } from "next/navigation"
 import { Fragment, useEffect, useRef, useState } from "react"
 
@@ -26,6 +28,9 @@ const CartDropdown = ({
     undefined
   )
   const [cartDropdownOpen, setCartDropdownOpen] = useState(false)
+  const [shippingOptions, setShippingOptions] = useState<
+    HttpTypes.StoreCartShippingOption[]
+  >([])
 
   const open = () => setCartDropdownOpen(true)
   const close = () => setCartDropdownOpen(false)
@@ -37,6 +42,35 @@ const CartDropdown = ({
 
   const subtotal = cartState?.subtotal ?? 0
   const itemRef = useRef<number>(totalItems || 0)
+
+  // Shipping options for the free-shipping progress bar. The dropdown
+  // receives only the cart, so it loads the options itself; the nudge
+  // renders nothing when no free-shipping rule exists, so a failed or
+  // empty load simply hides the bar.
+  useEffect(() => {
+    if (!cartState?.id || !totalItems) {
+      setShippingOptions([])
+      return
+    }
+
+    let cancelled = false
+
+    listCartOptions()
+      .then(({ shipping_options }) => {
+        if (!cancelled) {
+          setShippingOptions(shipping_options ?? [])
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setShippingOptions([])
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [cartState?.id, totalItems])
 
   const timedOpen = () => {
     open()
@@ -107,6 +141,13 @@ const CartDropdown = ({
             </div>
             {cartState && cartState.items?.length ? (
               <>
+                <div className="px-4">
+                  <ShippingPriceNudge
+                    variant="inline"
+                    cart={cartState}
+                    shippingOptions={shippingOptions}
+                  />
+                </div>
                 <div className="overflow-y-scroll max-h-[402px] px-4 grid grid-cols-1 gap-y-8 no-scrollbar p-px">
                   {cartState.items
                     .sort((a, b) => {
