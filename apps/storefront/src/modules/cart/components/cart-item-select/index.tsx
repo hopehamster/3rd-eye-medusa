@@ -1,7 +1,7 @@
 "use client"
 
 import { IconBadge, clx } from "@modules/common/components/ui"
-import { motion, useReducedMotion } from "framer-motion"
+import { motion, useAnimationControls, useReducedMotion } from "framer-motion"
 import {
   SelectHTMLAttributes,
   forwardRef,
@@ -30,17 +30,25 @@ const CartItemSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
 
     // The quantity is shown by a native <select>, so the pop animates the
     // whole control (which displays the number) instead of the text inside
-    // it. popKey only advances when the value actually changes after mount,
-    // so the cart page loading does not pop every line item.
+    // it. The pop is driven by animation controls, not a remount key, so
+    // the <select> node survives the quantity change and keeps keyboard
+    // focus. The pop only fires when the value actually changes after
+    // mount, so the cart page loading does not pop every line item.
+    // Reduced-motion visitors get neither the animation nor any DOM churn.
     const prevValue = useRef(value)
-    const [popKey, setPopKey] = useState(0)
+    const controls = useAnimationControls()
 
     useEffect(() => {
       if (prevValue.current !== value) {
         prevValue.current = value
-        setPopKey((k) => k + 1)
+        if (!shouldReduceMotion) {
+          controls.start({
+            scale: [1.12, 1],
+            transition: { duration: 0.25, ease: "easeOut" },
+          })
+        }
       }
-    }, [value])
+    }, [value, shouldReduceMotion, controls])
 
     useImperativeHandle<HTMLSelectElement | null, HTMLSelectElement | null>(
       ref,
@@ -56,12 +64,7 @@ const CartItemSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
     }, [innerRef.current?.value])
 
     return (
-      <motion.div
-        key={popKey}
-        initial={{ scale: popKey === 0 || shouldReduceMotion ? 1 : 1.12 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 0.25, ease: "easeOut" }}
-      >
+      <motion.div animate={controls}>
         <IconBadge
           onFocus={() => innerRef.current?.focus()}
           onBlur={() => innerRef.current?.blur()}
