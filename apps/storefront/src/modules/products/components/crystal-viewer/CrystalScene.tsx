@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useMemo } from "react"
-import { Canvas } from "@react-three/fiber"
+import { useEffect, useMemo, useRef, type ReactNode } from "react"
+import { Canvas, useFrame } from "@react-three/fiber"
 import {
   ContactShadows,
   Environment,
@@ -12,6 +12,7 @@ import {
   Sparkles,
 } from "@react-three/drei"
 import * as THREE from "three"
+import type { MotionValue } from "framer-motion"
 import { CLUSTER_TINTS, type StoneProfile } from "./stone-profile"
 
 /**
@@ -131,7 +132,46 @@ function CrystalMesh({ profile }: { profile: StoneProfile }) {
   return <PointCrystal profile={profile} />
 }
 
-export default function CrystalScene({ profile }: { profile: StoneProfile }) {
+/**
+ * Pointer tilt (issue #228): leans the stone a little toward the pointer.
+ * The sprung motion values are read once per frame and applied straight
+ * onto this group's rotation, on top of drei's Float — no re-renders,
+ * and OrbitControls (drag-to-rotate) keeps working untouched underneath.
+ */
+function TiltGroup({
+  tiltX,
+  tiltY,
+  children,
+}: {
+  tiltX: MotionValue<number>
+  tiltY: MotionValue<number>
+  children: ReactNode
+}) {
+  const ref = useRef<THREE.Group>(null)
+
+  useFrame(() => {
+    const group = ref.current
+    if (!group) return
+    group.rotation.x = tiltX.get()
+    group.rotation.y = tiltY.get()
+  })
+
+  return <group ref={ref}>{children}</group>
+}
+
+type CrystalSceneProps = {
+  profile: StoneProfile
+  tiltX: MotionValue<number>
+  tiltY: MotionValue<number>
+  onDragChange?: (dragging: boolean) => void
+}
+
+export default function CrystalScene({
+  profile,
+  tiltX,
+  tiltY,
+  onDragChange,
+}: CrystalSceneProps) {
   return (
     <Canvas
       dpr={[1, 2]}
@@ -142,9 +182,11 @@ export default function CrystalScene({ profile }: { profile: StoneProfile }) {
       <ambientLight intensity={0.25} />
       <directionalLight position={[4, 6, 4]} intensity={1.1} color="#fff4e0" />
       <directionalLight position={[-5, 3, -2]} intensity={0.35} color={profile.glow} />
-      <Float speed={1.4} rotationIntensity={0.3} floatIntensity={0.85}>
-        <CrystalMesh profile={profile} />
-      </Float>
+      <TiltGroup tiltX={tiltX} tiltY={tiltY}>
+        <Float speed={1.4} rotationIntensity={0.3} floatIntensity={0.85}>
+          <CrystalMesh profile={profile} />
+        </Float>
+      </TiltGroup>
       <Sparkles
         count={36}
         scale={[3.4, 2.6, 3.4]}
@@ -207,6 +249,8 @@ export default function CrystalScene({ profile }: { profile: StoneProfile }) {
         maxDistance={7.5}
         minPolarAngle={0.85}
         maxPolarAngle={1.8}
+        onStart={() => onDragChange?.(true)}
+        onEnd={() => onDragChange?.(false)}
       />
     </Canvas>
   )
