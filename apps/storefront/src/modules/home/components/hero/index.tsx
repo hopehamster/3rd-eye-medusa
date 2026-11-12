@@ -28,6 +28,12 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
  * Reduced motion: when the user prefers reduced motion, the entrance is
  * skipped entirely — the hero renders in its final state, no fade, no
  * rise, no stagger delays (same pattern as the store tiles, issue #203).
+ *
+ * Slow drift (issue #209): the photo breathes almost imperceptibly,
+ * growing from 100% to 103% and back over about 20 seconds. The scale
+ * runs on the photo wrapper inside the overflow-hidden card, so the
+ * edges crop slightly as it grows. No glow effects. With reduced
+ * motion the drift is off — the photo stays at 100%.
  */
 const Hero = ({ product }: { product: HttpTypes.StoreProduct | null }) => {
   const prefersReducedMotion = useReducedMotion()
@@ -101,7 +107,19 @@ const Hero = ({ product }: { product: HttpTypes.StoreProduct | null }) => {
               href={product?.handle ? `/products/${product.handle}` : "/store"}
               className="specimen-card block overflow-hidden"
             >
-              <div className="relative aspect-[4/3] w-full">
+              <motion.div
+                className="relative aspect-[4/3] w-full"
+                animate={
+                  prefersReducedMotion
+                    ? { scale: 1 }
+                    : { scale: [1, 1.03, 1] }
+                }
+                transition={
+                  prefersReducedMotion
+                    ? { duration: 0 }
+                    : { duration: 20, repeat: Infinity, ease: "easeInOut" }
+                }
+              >
                 <Image
                   src={picture}
                   alt={caption ? `${caption}, ${material}` : "A piece from the shop"}
@@ -110,7 +128,7 @@ const Hero = ({ product }: { product: HttpTypes.StoreProduct | null }) => {
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover"
                 />
-              </div>
+              </motion.div>
               <div className="specimen-label mx-5 my-4 flex items-baseline justify-between gap-4">
                 <span>{caption}</span>
                 <span className="font-humanist text-sm text-paper-muted">
