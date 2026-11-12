@@ -3,6 +3,7 @@
 import { addToCart } from "@lib/data/cart"
 import { trackAddToCart } from "@lib/analytics"
 import { useIntersection } from "@lib/hooks/use-in-view"
+import { CheckCircleMiniSolid } from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
 import { Button } from "@modules/common/components/ui"
 import Divider from "@modules/common/components/divider"
@@ -20,6 +21,10 @@ type ProductActionsProps = {
   region: HttpTypes.StoreRegion
   disabled?: boolean
 }
+
+// How long the button shows the green "Added" confirmation after a
+// successful add before settling back to "Add to cart".
+const ADDED_CONFIRM_MS = 1500
 
 const optionsAsKeymap = (
   variantOptions: HttpTypes.StoreProductVariant["options"]
@@ -40,6 +45,8 @@ export default function ProductActions({
 
   const [options, setOptions] = useState<Record<string, string | undefined>>({})
   const [isAdding, setIsAdding] = useState(false)
+  const [justAdded, setJustAdded] = useState(false)
+  const addedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [quantity, setQuantity] = useState(1)
   const countryCode = useParams().countryCode as string
 
@@ -170,7 +177,28 @@ export default function ProductActions({
     })
 
     setIsAdding(false)
+
+    // Confirmation: briefly show the green "Added" state, then settle
+    // back. Only reached when the add worked — a failed add shows no
+    // confirmation. Re-adding while it shows restarts the timer.
+    setJustAdded(true)
+    if (addedTimerRef.current) {
+      clearTimeout(addedTimerRef.current)
+    }
+    addedTimerRef.current = setTimeout(() => {
+      setJustAdded(false)
+      addedTimerRef.current = null
+    }, ADDED_CONFIRM_MS)
   }
+
+  // Clear the confirmation timer if the component unmounts while it shows.
+  useEffect(() => {
+    return () => {
+      if (addedTimerRef.current) {
+        clearTimeout(addedTimerRef.current)
+      }
+    }
+  }, [])
 
   return (
     <>
@@ -218,15 +246,26 @@ export default function ProductActions({
             !isValidVariant
           }
           variant="primary"
-          className="w-full h-10"
+          className={
+            justAdded
+              ? "w-full h-10 bg-green-600 hover:bg-green-600"
+              : "w-full h-10"
+          }
           isLoading={isAdding}
           data-testid="add-product-button"
         >
-          {!selectedVariant
-            ? "Select variant"
-            : !inStock || !isValidVariant
-            ? "Out of stock"
-            : "Add to cart"}
+          {justAdded ? (
+            <>
+              <CheckCircleMiniSolid className="w-4 h-4" />
+              Added
+            </>
+          ) : !selectedVariant ? (
+            "Select variant"
+          ) : !inStock || !isValidVariant ? (
+            "Out of stock"
+          ) : (
+            "Add to cart"
+          )}
         </Button>
         <MobileActions
           product={product}
