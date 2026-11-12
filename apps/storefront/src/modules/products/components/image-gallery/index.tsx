@@ -39,6 +39,12 @@ type GalleryTab = "photos" | "3d"
  * initial={false} and a 0s transition, so no exit fade and no opacity
  * animation — instead of the 300ms crossfade.
  *
+ * Main photo zoom on hover (issue #226): the first (main) photo scales
+ * to 1.04 over 300ms while hovered, inside its frame — the Container
+ * already clips with overflow-hidden, so the zoom never spills out.
+ * Only the main photo zooms; the rest stay static. Under reduced
+ * motion there is no zoom at all (whileHover is left off).
+ *
  * The switch is two plain toggle buttons with aria-pressed, not ARIA
  * tabs: the control only switches which view is shown, so it does not
  * claim the tabs pattern (no arrow-key contract, no roving tabindex,
@@ -105,18 +111,42 @@ const ImageGallery = ({ images, title, handle }: ImageGalleryProps) => {
                         className="relative aspect-[29/34] w-full overflow-hidden bg-paper-surface border border-paper-borderSoft rounded-specimen"
                         id={image.id}
                       >
-                        {!!image.url && (
-                          <Image
-                            src={image.url}
-                            priority={index === 0 ? true : false}
+                        {!!image.url && index === 0 ? (
+                          <motion.div
                             className="absolute inset-0"
-                            alt={`Product image ${index + 1}`}
-                            fill
-                            sizes="(max-width: 576px) 280px, (max-width: 768px) 360px, (max-width: 992px) 480px, 800px"
-                            style={{
-                              objectFit: "cover",
-                            }}
-                          />
+                            whileHover={
+                              prefersReducedMotion
+                                ? undefined
+                                : { scale: 1.04 }
+                            }
+                            transition={{ duration: 0.3, ease: "easeOut" }}
+                          >
+                            <Image
+                              src={image.url}
+                              priority={true}
+                              className="absolute inset-0"
+                              alt={`Product image ${index + 1}`}
+                              fill
+                              sizes="(max-width: 576px) 280px, (max-width: 768px) 360px, (max-width: 992px) 480px, 800px"
+                              style={{
+                                objectFit: "cover",
+                              }}
+                            />
+                          </motion.div>
+                        ) : (
+                          !!image.url && (
+                            <Image
+                              src={image.url}
+                              priority={false}
+                              className="absolute inset-0"
+                              alt={`Product image ${index + 1}`}
+                              fill
+                              sizes="(max-width: 576px) 280px, (max-width: 768px) 360px, (max-width: 992px) 480px, 800px"
+                              style={{
+                                objectFit: "cover",
+                              }}
+                            />
+                          )
                         )}
                       </Container>
                     )
