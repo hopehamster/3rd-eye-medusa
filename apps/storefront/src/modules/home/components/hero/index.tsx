@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { motion } from "framer-motion"
+import { motion, useReducedMotion } from "framer-motion"
 import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
@@ -24,8 +24,13 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
  * Entrance (issue #198): on arrival the headline rises a few pixels and
  * fades in, then the photo, then the buttons, one after another over about
  * a second. Quiet and short — each step is half a second. No glow effects.
+ *
+ * Reduced motion: when the user prefers reduced motion, the entrance is
+ * skipped entirely — the hero renders in its final state, no fade, no
+ * rise, no stagger delays (same pattern as the store tiles, issue #203).
  */
 const Hero = ({ product }: { product: HttpTypes.StoreProduct | null }) => {
+  const prefersReducedMotion = useReducedMotion()
   const picture = product?.thumbnail || product?.images?.[0]?.url || null
   const caption = product?.title?.trim() || null
   const material = product?.material?.trim() || "natural stone"
@@ -35,7 +40,9 @@ const Hero = ({ product }: { product: HttpTypes.StoreProduct | null }) => {
       <div className="content-container relative z-[2] grid grid-cols-1 items-center gap-10 py-16 small:grid-cols-2 small:gap-14 small:py-24">
         <div>
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
+            initial={
+              prefersReducedMotion ? false : { opacity: 0, y: 8 }
+            }
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
           >
@@ -52,9 +59,15 @@ const Hero = ({ product }: { product: HttpTypes.StoreProduct | null }) => {
             </p>
           </motion.div>
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
+            initial={
+              prefersReducedMotion ? false : { opacity: 0, y: 8 }
+            }
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: "easeOut", delay: 0.5 }}
+            transition={{
+              duration: 0.5,
+              ease: "easeOut",
+              delay: prefersReducedMotion ? 0 : 0.5,
+            }}
             className="mt-9 flex flex-col gap-3 xsmall:flex-row xsmall:items-center"
           >
             <LocalizedClientLink
@@ -74,9 +87,15 @@ const Hero = ({ product }: { product: HttpTypes.StoreProduct | null }) => {
 
         {picture && (
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
+            initial={
+              prefersReducedMotion ? false : { opacity: 0, y: 8 }
+            }
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: "easeOut", delay: 0.25 }}
+            transition={{
+              duration: 0.5,
+              ease: "easeOut",
+              delay: prefersReducedMotion ? 0 : 0.25,
+            }}
           >
             <LocalizedClientLink
               href={product?.handle ? `/products/${product.handle}` : "/store"}
