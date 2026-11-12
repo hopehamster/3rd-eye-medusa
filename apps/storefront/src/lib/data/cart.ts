@@ -30,36 +30,26 @@ export async function retrieveCart(cartId?: string, fields?: string) {
     return null
   }
 
-  const backendUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
-  const publishableKey = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
-
-  if (!backendUrl || !publishableKey) {
-    return null
+  const headers = {
+    ...(await getAuthHeaders()),
   }
 
-  try {
-    // Direct fetch instead of SDK (SDK has issues in server components)
-    const res = await fetch(
-      `${backendUrl}/store/carts/${id}?fields=${encodeURIComponent(fields)}`,
-      {
-        method: "GET",
-        headers: {
-          "x-publishable-api-key": publishableKey,
-          "Content-Type": "application/json",
-        },
-        cache: "no-store",
-      }
-    )
-
-    if (!res.ok) {
-      return null
-    }
-
-    const { cart } = await res.json()
-    return cart as HttpTypes.StoreCart
-  } catch {
-    return null
+  const next = {
+    ...(await getCacheOptions("carts")),
   }
+
+  return await sdk.client
+    .fetch<HttpTypes.StoreCartResponse>(`/store/carts/${id}`, {
+      method: "GET",
+      query: {
+        fields,
+      },
+      headers,
+      next,
+      cache: "force-cache",
+    })
+    .then(({ cart }: { cart: HttpTypes.StoreCart }) => cart)
+    .catch(() => null)
 }
 
 export async function getOrSetCart(countryCode: string) {
@@ -211,35 +201,20 @@ export async function deleteLineItem(lineId: string) {
     throw new Error("Missing cart ID when deleting line item")
   }
 
-  const backendUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
-  const publishableKey = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
-
-  if (!backendUrl || !publishableKey) {
-    throw new Error("Missing backend configuration")
+  const headers = {
+    ...(await getAuthHeaders()),
   }
 
-  // Direct fetch instead of SDK (SDK has issues with cookies in server actions)
-  const res = await fetch(
-    `${backendUrl}/store/carts/${cartId}/line-items/${lineId}`,
-    {
-      method: "DELETE",
-      headers: {
-        "x-publishable-api-key": publishableKey,
-        "Content-Type": "application/json",
-      },
-    }
-  )
+  await sdk.store.cart
+    .deleteLineItem(cartId, lineId, {}, headers)
+    .then(async () => {
+      const cartCacheTag = await getCacheTag("carts")
+      revalidateTag(cartCacheTag)
 
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}))
-    throw new Error(`Failed to delete line item: ${res.status} ${JSON.stringify(errorData)}`)
-  }
-
-  const cartCacheTag = await getCacheTag("carts")
-  revalidateTag(cartCacheTag)
-
-  const fulfillmentCacheTag = await getCacheTag("fulfillment")
-  revalidateTag(fulfillmentCacheTag)
+      const fulfillmentCacheTag = await getCacheTag("fulfillment")
+      revalidateTag(fulfillmentCacheTag)
+    })
+    .catch(medusaError)
 }
 
 export async function setShippingMethod({
