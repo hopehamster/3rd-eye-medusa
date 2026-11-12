@@ -1,3 +1,7 @@
+import { HttpTypes } from "@medusajs/types"
+
+import { getProductPrice } from "@lib/util/get-product-price"
+
 /**
  * Intention shelves.
  *
@@ -269,5 +273,228 @@ export const getShelfCardMedia = <T extends ShelfProductLike>(
     alt: material ? `${title}, ${material}` : title,
     title,
     material,
+  }
+}
+
+/**
+ * Shoppable shelves (issue #158). Shelves hold 3-5 pieces, so every control
+ * below earns its place or stays hidden: a pill, a sort option, or a price
+ * cutoff exists only when the shelf's own products give it something to do.
+ * Nothing here invents a category, a price, or a claim — every value comes
+ * from the products on the shelf.
+ */
+
+/** Sort orders for a shelf page, carried in `?sort=`. */
+export type ShelfSort = "curated" | "price_asc" | "price_desc" | "name_asc"
+
+export const SHELF_SORTS: { value: ShelfSort; label: string }[] = [
+  { value: "curated", label: "Curated order" },
+  { value: "price_asc", label: "Price: Low to High" },
+  { value: "price_desc", label: "Price: High to Low" },
+  { value: "name_asc", label: "Name: A to Z" },
+]
+
+/** Unknown or missing sort values fall back to the curated shelf order. */
+export const parseShelfSort = (
+  value: string | string[] | null | undefined
+): ShelfSort => {
+  const raw = Array.isArray(value) ? value[0] : value
+  if (raw && SHELF_SORTS.some((s) => s.value === raw)) {
+    return raw as ShelfSort
+  }
+  return "curated"
+}
+
+/**
+ * Form of a piece, read from the words in its own title — the only
+ * form signal the catalogue carries on the product itself. The first
+ * matching keyword in this order wins, so "pendant necklace" reads as a
+ * necklace and "mala beads bracelet" reads as a bracelet. A title that
+ * matches nothing has no form: it still shows under "All", it just gets
+ * no pill of its own.
+ */
+const FORM_KEYWORDS: { value: string; label: string; keyword: string }[] = [
+  { value: "bracelet", label: "Bracelets", keyword: "bracelet" },
+  { value: "necklace", label: "Necklaces", keyword: "necklace" },
+  { value: "pendant", label: "Pendants", keyword: "pendant" },
+  { value: "pyramid", label: "Pyramids", keyword: "pyramid" },
+  { value: "pendulum", label: "Pendulums", keyword: "pendulum" },
+  { value: "mala", label: "Malas", keyword: "mala" },
+  { value: "set", label: "Sets", keyword: "set" },
+]
+
+export type ShelfForm = {
+  value: string
+  label: string
+  count: number
+}
+
+export const getProductForm = (product: {
+  title?: string | null
+}): string | null => {
+  const title = (product.title ?? "").toLowerCase()
+  if (!title) return null
+  const match = FORM_KEYWORDS.find((f) => title.includes(f.keyword))
+  return match ? match.value : null
+}
+
+/**
+ * The forms actually present on this shelf, with counts, most common first.
+ * A pill exists only for a form at least one piece on the shelf has.
+ */
+export const getShelfForms = (
+  products: { title?: string | null }[]
+): ShelfForm[] => {
+  const counts = new Map<string, number>()
+  for (const product of products) {
+    const form = getProductForm(product)
+    if (form) counts.set(form, (counts.get(form) ?? 0) + 1)
+  }
+  return FORM_KEYWORDS.filter((f) => counts.has(f.value))
+    .map((f) => ({
+      value: f.value,
+      label: f.label,
+      count: counts.get(f.value) ?? 0,
+    }))
+    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label))
+}
+
+/** Keep only pieces of the given form; no form means no filtering. */
+export const filterShelfProductsByForm = (
+  products: HttpTypes.StoreProduct[],
+  form: string | undefined
+): HttpTypes.StoreProduct[] => {
+  if (!form) return products
+  return products.filter((p) => getProductForm(p) === form)
+}
+
+/** Cheapest variant price as a raw number, or null when unpriced. */
+const getCheapestPriceNumber = (
+  product: HttpTypes.StoreProduct
+): number | null => {
+  if (!product.id) return null
+  const cheapest = getProductPrice({ product }).cheapestPrice
+  return cheapest?.calculated_price_number ?? null
+}
+
+/** Cheapest variant price as the shop already formats it, e.g. "$50". */
+const getCheapestPriceLabel = (
+  product: HttpTypes.StoreProduct
+): string | null => {
+  if (!product.id) return null
+  const cheapest = getProductPrice({ product }).cheapestPrice
+  return cheapest?.calculated_price ?? null
+}
+
+export type ShelfPriceCutoff = {
+  /** Raw cheapest-price number, used as the `?maxPrice=` value */
+  value: number
+  /** "Up to $50" — the formatted price comes from the listing itself */
+  label: string
+  /** Pieces on the shelf priced at or under this cutoff */
+  count: number
+}
+
+/**
+ * Price cutoffs drawn from the shelf's own prices: one cutoff per distinct
+ * cheapest price, except the highest (a cutoff at the top price would match
+ * everything). Comparing raw numbers and labelling with the shop's own
+ * formatted price keeps this correct whatever currency unit the backend
+ * stores — no dollar threshold is invented here.
+ */
+export const getShelfPriceCutoffs = (
+  products: HttpTypes.StoreProduct[]
+): ShelfPriceCutoff[] => {
+  const byAmount = new Map<number, string>()
+  for (const product of products) {
+    const amount = getCheapestPriceNumber(product)
+    const label = getCheapestPriceLabel(product)
+    if (amount !== null && label && !byAmount.has(amount)) {
+      byAmount.set(amount, label)
+    }
+  }
+  const amounts = [...byAmount.keys()].sort((a, b) => a - b)
+  // Drop the highest price: it filters nothing out.
+  amounts.pop()
+  return amounts.map((amount) => ({
+    value: amount,
+    label: `Up to ${byAmount.get(amount)}`,
+    count: products.filter((p) => {
+      const price = getCheapestPriceNumber(p)
+      return price !== null && price <= amount
+    }).length,
+  }))
+}
+
+/**
+ * The price filter earns a place only on a shelf with at least 4 pieces and
+ * at least 2 usable cutoffs — on a 3-piece shelf with one price each, a
+ * price filter is clutter, not help.
+ */
+export const shouldShowShelfPriceFilter = (
+  products: HttpTypes.StoreProduct[]
+): boolean =>
+  products.length >= 4 && getShelfPriceCutoffs(products).length >= 2
+
+/** A positive raw price number, or null when the param is missing or junk. */
+export const parseShelfMaxPrice = (
+  value: string | string[] | null | undefined
+): number | null => {
+  const raw = Array.isArray(value) ? value[0] : value
+  if (!raw) return null
+  const parsed = Number(raw)
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : null
+}
+
+/**
+ * Keep only pieces priced at or under the cutoff. Unpriced pieces are left
+ * out while the filter is on — the shelf cannot say they are under the cap.
+ */
+export const filterShelfProductsByMaxPrice = (
+  products: HttpTypes.StoreProduct[],
+  maxPrice: number | null
+): HttpTypes.StoreProduct[] => {
+  if (maxPrice === null) return products
+  return products.filter((p) => {
+    const price = getCheapestPriceNumber(p)
+    return price !== null && price <= maxPrice
+  })
+}
+
+/**
+ * Sort a shelf's pieces. Curated order is the shelf order from
+ * filterShelfProducts, untouched. Unpriced pieces sort last on price sorts.
+ */
+export const sortShelfProducts = (
+  products: HttpTypes.StoreProduct[],
+  sort: ShelfSort
+): HttpTypes.StoreProduct[] => {
+  const sorted = [...products]
+  switch (sort) {
+    case "price_asc":
+      return sorted.sort((a, b) => {
+        const pa = getCheapestPriceNumber(a)
+        const pb = getCheapestPriceNumber(b)
+        if (pa === null && pb === null) return 0
+        if (pa === null) return 1
+        if (pb === null) return -1
+        return pa - pb
+      })
+    case "price_desc":
+      return sorted.sort((a, b) => {
+        const pa = getCheapestPriceNumber(a)
+        const pb = getCheapestPriceNumber(b)
+        if (pa === null && pb === null) return 0
+        if (pa === null) return 1
+        if (pb === null) return -1
+        return pb - pa
+      })
+    case "name_asc":
+      return sorted.sort((a, b) =>
+        (a.title ?? "").localeCompare(b.title ?? "")
+      )
+    case "curated":
+    default:
+      return sorted
   }
 }
