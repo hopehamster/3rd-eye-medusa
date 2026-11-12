@@ -3,7 +3,11 @@ import { HttpTypes } from "@medusajs/types"
 
 import { listAllProducts } from "@lib/data/products"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import { getShelfCardMedia, SHELVES } from "@modules/store/data/shelves"
+import {
+  filterShelfProducts,
+  getShelfCardMedia,
+  SHELVES,
+} from "@modules/store/data/shelves"
 
 /**
  * Intention shelf index: the editorial front door above the full catalog
@@ -12,6 +16,10 @@ import { getShelfCardMedia, SHELVES } from "@modules/store/data/shelves"
  * Pictures come from the same helper as the homepage cards and the shelf
  * pages (#150): each card shows that shelf's own first product. A shelf with
  * no product renders no image rather than stock scenery.
+ *
+ * Counts (issue #158): each card shows how many pieces are on that shelf,
+ * counted from the same shelf membership as the shelf page itself, so the
+ * number on the card and the number on the shelf page always agree.
  */
 export default async function ShelfIndex({
   region,
@@ -36,6 +44,7 @@ export default async function ShelfIndex({
         <div className="mt-9 grid grid-cols-2 gap-5 small:grid-cols-3">
           {SHELVES.map((shelf) => {
             const media = getShelfCardMedia(products, shelf)
+            const count = filterShelfProducts(products, shelf).length
 
             return (
               <LocalizedClientLink
@@ -67,6 +76,12 @@ export default async function ShelfIndex({
                       {shelf.label}
                     </p>
                     <p className="specimen-meta mt-1">{shelf.headline}</p>
+                    <p
+                      className="specimen-meta mt-1 font-semibold text-paper-text"
+                      data-testid="shelf-count"
+                    >
+                      {count} {count === 1 ? "piece" : "pieces"}
+                    </p>
                   </div>
                 </div>
               </LocalizedClientLink>
