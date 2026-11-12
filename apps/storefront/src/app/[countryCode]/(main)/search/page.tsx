@@ -74,7 +74,7 @@ export default async function SearchPage(props: Props) {
           Showing {filteredProducts.length}{" "}
           {filteredProducts.length === 1 ? "product" : "products"}
         </p>
-      ) : query ? (
+      ) : query && filteredProducts.length > 0 ? (
         <p className="text-small-regular text-ui-fg-subtle mb-6">
           {filteredProducts.length}{" "}
           {filteredProducts.length === 1 ? "product" : "products"} found
