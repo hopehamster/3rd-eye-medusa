@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
 import { HttpTypes } from "@medusajs/types"
 import { Container } from "@modules/common/components/ui"
 import Image from "next/image"
@@ -24,6 +25,20 @@ type GalleryTab = "photos" | "3d"
  * fallback are unchanged. Works with current supplier images; Agent
  * Daylight (#22) photos drop in without layout changes.
  *
+ * Switching tabs crossfades (issue #200): the two views fade through
+ * each other over 300ms with Framer Motion AnimatePresence, instead of
+ * swapping instantly. The panel is keyed by tab, so the outgoing view
+ * stays mounted only for its 300ms exit fade and then unmounts — the
+ * 3D viewer still mounts fresh on each switch to 3D, exactly as before,
+ * and its own motion (drei Float + auto-rotating OrbitControls) restarts
+ * on its own inside the Canvas. The panels share one grid cell so they
+ * overlap during the fade instead of stacking and doubling the height.
+ * initial={false} keeps the first paint instant: no fade on page load.
+ * Reduced motion is respected (DISCUSSION.md sitewide rule, issue #255):
+ * when the visitor prefers reduced motion, the switch is instant —
+ * initial={false} and a 0s transition, so no exit fade and no opacity
+ * animation — instead of the 300ms crossfade.
+ *
  * The switch is two plain toggle buttons with aria-pressed, not ARIA
  * tabs: the control only switches which view is shown, so it does not
  * claim the tabs pattern (no arrow-key contract, no roving tabindex,
@@ -32,6 +47,7 @@ type GalleryTab = "photos" | "3d"
  */
 const ImageGallery = ({ images, title, handle }: ImageGalleryProps) => {
   const [activeTab, setActiveTab] = useState<GalleryTab>("photos")
+  const prefersReducedMotion = useReducedMotion()
 
   return (
     <div
@@ -67,41 +83,57 @@ const ImageGallery = ({ images, title, handle }: ImageGalleryProps) => {
             View in 3D
           </button>
         </div>
-        {activeTab === "photos" ? (
-          <div className="flex flex-col gap-y-4">
-            {images.map((image, index) => {
-              return (
-                <Container
-                  key={image.id}
-                  className="relative aspect-[29/34] w-full overflow-hidden bg-paper-surface border border-paper-borderSoft rounded-specimen"
-                  id={image.id}
-                >
-                  {!!image.url && (
-                    <Image
-                      src={image.url}
-                      priority={index === 0 ? true : false}
-                      className="absolute inset-0"
-                      alt={`Product image ${index + 1}`}
-                      fill
-                      sizes="(max-width: 576px) 280px, (max-width: 768px) 360px, (max-width: 992px) 480px, 800px"
-                      style={{
-                        objectFit: "cover",
-                      }}
-                    />
-                  )}
-                </Container>
-              )
-            })}
-          </div>
-        ) : (
-          <div>
-            <CrystalViewer
-              title={title}
-              handle={handle}
-              fallbackImage={images[0]}
-            />
-          </div>
-        )}
+        <div className="grid">
+          <AnimatePresence initial={false}>
+            <motion.div
+              key={activeTab}
+              className="[grid-area:1/1]"
+              initial={prefersReducedMotion ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{
+                duration: prefersReducedMotion ? 0 : 0.3,
+                ease: "easeInOut",
+              }}
+            >
+              {activeTab === "photos" ? (
+                <div className="flex flex-col gap-y-4">
+                  {images.map((image, index) => {
+                    return (
+                      <Container
+                        key={image.id}
+                        className="relative aspect-[29/34] w-full overflow-hidden bg-paper-surface border border-paper-borderSoft rounded-specimen"
+                        id={image.id}
+                      >
+                        {!!image.url && (
+                          <Image
+                            src={image.url}
+                            priority={index === 0 ? true : false}
+                            className="absolute inset-0"
+                            alt={`Product image ${index + 1}`}
+                            fill
+                            sizes="(max-width: 576px) 280px, (max-width: 768px) 360px, (max-width: 992px) 480px, 800px"
+                            style={{
+                              objectFit: "cover",
+                            }}
+                          />
+                        )}
+                      </Container>
+                    )
+                  })}
+                </div>
+              ) : (
+                <div>
+                  <CrystalViewer
+                    title={title}
+                    handle={handle}
+                    fallbackImage={images[0]}
+                  />
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   )
