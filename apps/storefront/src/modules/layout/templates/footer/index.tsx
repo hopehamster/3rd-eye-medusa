@@ -1,45 +1,26 @@
 import { listCategories } from "@lib/data/categories"
 import { listCollections } from "@lib/data/collections"
 import { Text, clx } from "@modules/common/components/ui"
-import { MotionConfig, motion } from "framer-motion"
+import { MotionConfig } from "framer-motion"
 
-import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import FooterLiftLink from "./footer-lift-link"
 
 /**
  * Footer link lift (issue #240): every footer link rises 2px on hover,
  * on top of the colour change it already had. Quiet and short: 0.2s,
  * easeOut, well under the half-second house limit.
  *
- * Reduced motion: this file is an async server component (it fetches
- * collections and categories), so the useReducedMotion hook cannot run
- * here — it is a client hook. The guard is MotionConfig
- * reducedMotion="user" instead, framer-motion's own mechanism: with
- * "user", transform animations are disabled when the OS prefers reduced
- * motion, so the lift becomes a no-op and the link only changes colour,
- * as today. The wrapper span is inline-block so the transform applies.
+ * Reduced motion: the lift lives in FooterLiftLink
+ * (./footer-lift-link.tsx), a client component that reads the OS
+ * preference with useReducedMotion (the #203 pattern) and passes no
+ * whileHover target at all when reduced motion is preferred — a true
+ * no-op, so the link only changes colour, as before. MotionConfig
+ * reducedMotion="user" below is only a backstop for any other transform
+ * animation in the footer: on its own it would NOT make the lift a
+ * no-op, because framer-motion still applies the target value, just
+ * instantly. This file stays an async server component (it fetches
+ * collections and categories), so the hook cannot run here.
  */
-const FooterLiftLink = ({
-  href,
-  className,
-  children,
-  ...props
-}: {
-  href: string
-  className?: string
-  children: React.ReactNode
-  "data-testid"?: string
-}) => (
-  <motion.span
-    className="inline-block"
-    whileHover={{ y: -2 }}
-    transition={{ duration: 0.2, ease: "easeOut" }}
-  >
-    <LocalizedClientLink href={href} className={className} {...props}>
-      {children}
-    </LocalizedClientLink>
-  </motion.span>
-)
-
 export default async function Footer() {
   const { collections } = await listCollections({
     fields: "*products",
