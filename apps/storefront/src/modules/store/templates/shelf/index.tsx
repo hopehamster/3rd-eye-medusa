@@ -1,3 +1,4 @@
+import Form from "next/form"
 import Image from "next/image"
 import { HttpTypes } from "@medusajs/types"
 
@@ -178,10 +179,14 @@ export default function ShelfTemplate({
           </nav>
         )}
 
-        {/* Sort and price filter: a plain GET form, so it works with no
-            client script and the result is a shareable URL. */}
-        <form
-          method="get"
+        {/* Sort and price filter: next/form, so Apply navigates on the
+            client instead of reloading the page. A full reload would
+            remount the whole shelf and the cards could never glide —
+            with a soft navigation the cards keep their identity (see the
+            stable key on the grid below) and Framer Motion moves them
+            to their new spots (issue #201). Same GET form, same
+            shareable URL, same no-script fallback as a plain form. */}
+        <Form
           action={`/store/shelf/${shelf.intent}`}
           className="mt-6 flex flex-wrap items-end gap-4"
           data-testid="shelf-controls"
@@ -235,10 +240,15 @@ export default function ShelfTemplate({
               Clear filters
             </LocalizedClientLink>
           )}
-        </form>
+        </Form>
 
         {visible.length ? (
           <ul className="mt-8 grid w-full grid-cols-2 gap-x-6 gap-y-8 small:grid-cols-3 medium:grid-cols-4">
+            {/* Keyed by product id, never by position: the key is what
+                keeps each card's identity across a filter/sort change,
+                so the cards glide to their new spots instead of
+                remounting in place (issue #201). Do not change this
+                key to an index. */}
             {visible.map((product) => (
               <li key={product.id}>
                 <ShelfProductCard product={product} />
