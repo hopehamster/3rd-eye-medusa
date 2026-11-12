@@ -1,7 +1,7 @@
 "use client"
 
 import type { Hit } from "instantsearch.js"
-import { motion } from "framer-motion"
+import { motion, useReducedMotion } from "framer-motion"
 import { useEffect, useRef } from "react"
 import { useHits, useInstantSearch } from "react-instantsearch"
 
@@ -31,6 +31,7 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
   const { items } = useHits<ProductHit>()
   const { status, error, indexUiState } = useInstantSearch()
   const { isSearching, hasNoResultsYet } = useSearchSettled()
+  const prefersReducedMotion = useReducedMotion()
 
   const { page, ...refinements } = indexUiState
   const currentPage = page ?? 1
@@ -119,15 +120,21 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
                         the grid (issue #203). Same quiet pattern as Reveal:
                         opacity + a small rise, easeOut, under half a
                         second each; the stagger delay is capped so a full
-                        page never feels like waiting. */}
+                        page never feels like waiting. With reduced motion
+                        preferred, no entrance at all: the tiles render
+                        immediately, no fade, no rise, no stagger delay. */}
                     <motion.div
                       key={resultSignature}
-                      initial={{ opacity: 0, y: 8 }}
+                      initial={
+                        prefersReducedMotion ? false : { opacity: 0, y: 8 }
+                      }
                       animate={{ opacity: 1, y: 0 }}
                       transition={{
                         duration: 0.35,
                         ease: "easeOut",
-                        delay: Math.min(index * 0.03, 0.3),
+                        delay: prefersReducedMotion
+                          ? 0
+                          : Math.min(index * 0.03, 0.3),
                       }}
                     >
                       <Thumbnail thumbnail={hit.thumbnail} size="full" />
