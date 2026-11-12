@@ -21,7 +21,7 @@ export default async function ProductActionsWrapper({
 
   try {
     const res = await fetch(
-      `${backendUrl}/store/products/${id}?region_id=${region.id}&fields=id,handle,title,subtitle,description,thumbnail,images,*variants.calculated_price,*variants.images,*variants.options,*options`,
+      `${backendUrl}/store/products/${id}?region_id=${region.id}&fields=id,handle,title,subtitle,description,thumbnail,images,*variants.calculated_price,*variants.images,*variants.options,*options,*variants.manage_inventory,*variants.allow_backorder,*variants.inventory_quantity`,
       {
         headers: { "x-publishable-api-key": publishableKey },
       }
