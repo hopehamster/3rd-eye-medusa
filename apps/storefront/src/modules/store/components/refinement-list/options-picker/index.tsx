@@ -1,6 +1,7 @@
 "use client"
 
 import * as Accordion from "@radix-ui/react-accordion"
+import { motion, useReducedMotion } from "framer-motion"
 import { useEffect, useState } from "react"
 
 import { ChevronDownMini } from "@medusajs/icons"
@@ -19,6 +20,7 @@ const OptionsPicker = ({
 }: OptionsPickerProps) => {
   const [options, setOptions] = useState<HttpTypes.StoreProductOption[]>([])
   const [openItems, setOpenItems] = useState<string[]>([])
+  const prefersReducedMotion = useReducedMotion()
 
   useEffect(() => {
     const fetchOptions = async () => {
@@ -135,7 +137,7 @@ const OptionsPicker = ({
                         key={value.id}
                         onClick={() => toggleValue(value.id)}
                         className={clsx(
-                          "border-ui-border-base border text-small-regular h-10 rounded-rounded px-3 flex items-center transition-colors duration-150",
+                          "border-ui-border-base border text-small-regular h-10 rounded-rounded px-3 flex items-center relative overflow-hidden transition-colors duration-150",
                           {
                             "border-ui-border-interactive text-ui-fg-base":
                               isSelected,
@@ -145,7 +147,30 @@ const OptionsPicker = ({
                         )}
                         aria-pressed={isSelected}
                       >
-                        {value.label}
+                        {/*
+                         * Pill fill (issue #218): the selected pill's
+                         * background sweeps across from the left instead of
+                         * snapping its colour. A fill layer scales in from
+                         * scaleX 0 to 1 on select and back out on deselect,
+                         * 0.35s, quiet. Reduced motion: no sweep, the fill
+                         * appears instantly (duration 0, plus the
+                         * MotionConfig reducedMotion="user" guard in the
+                         * parent RefinementList).
+                         */}
+                        <motion.span
+                          aria-hidden="true"
+                          className="absolute inset-0 bg-ui-bg-base-hover"
+                          initial={false}
+                          animate={{ scaleX: isSelected ? 1 : 0 }}
+                          style={{ transformOrigin: "left center" }}
+                          transition={{
+                            duration: prefersReducedMotion ? 0 : 0.35,
+                            ease: "easeOut",
+                          }}
+                        />
+                        <span className="relative z-[1]">
+                          {value.label}
+                        </span>
                       </button>
                     )
                   })}
