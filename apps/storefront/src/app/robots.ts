@@ -1,12 +1,21 @@
-import { MetadataRoute } from "next"
+import { getSiteOrigin } from "@lib/util/site"
+import type { MetadataRoute } from "next"
 
-export default function robots(): MetadataRoute.Robots {
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const origin = await getSiteOrigin()
+
   return {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/cart", "/checkout", "/account"],
+      disallow: [
+        "/*/cart",
+        "/*/checkout",
+        "/*/account",
+        "/*/order/",
+        "/buy/",
+      ],
     },
-    sitemap: "https://3rdeyesupply.com/sitemap.xml",
+    sitemap: `${origin}/sitemap.xml`,
   }
 }
