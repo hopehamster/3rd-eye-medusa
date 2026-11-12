@@ -7,6 +7,7 @@ import Divider from "@modules/common/components/divider"
 import DiscountCode from "@modules/checkout/components/discount-code"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { listCartOptions } from "@lib/data/cart"
+import { MotionConfig } from "framer-motion"
 import ShippingPriceNudge from "@modules/shipping/components/free-shipping-price-nudge"
 import { trackBeginCheckout } from "@lib/analytics"
 import { HttpTypes } from "@medusajs/types"
@@ -78,7 +79,11 @@ const Summary = ({ cart }: SummaryProps) => {
       />
       <DiscountCode cart={cart} />
       <Divider />
-      <CartTotals totals={cart} />
+      {/* Reduced-motion context for the summary subtree (issue #223):
+          the cart-total tick honours the user's preference. */}
+      <MotionConfig reducedMotion="user">
+        <CartTotals totals={cart} />
+      </MotionConfig>
       <LocalizedClientLink
         href={"/checkout?step=" + step}
         data-testid="checkout-button"
