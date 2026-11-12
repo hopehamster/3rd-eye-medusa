@@ -4,6 +4,7 @@ import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Thumbnail from "../thumbnail"
 import PreviewPrice from "./price"
+import QuickAdd from "@modules/products/components/quick-add"
 
 export default async function ProductPreview({
   product,
@@ -39,6 +40,9 @@ export default async function ProductPreview({
             <div className="flex items-center gap-x-2">
               {cheapestPrice && <PreviewPrice price={cheapestPrice} />}
             </div>
+          </div>
+          <div className="px-1 pb-1">
+            <QuickAdd product={product} />
           </div>
         </div>
       </div>

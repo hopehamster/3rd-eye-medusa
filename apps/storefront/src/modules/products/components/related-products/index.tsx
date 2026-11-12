@@ -1,6 +1,7 @@
 import { HttpTypes } from "@medusajs/types"
 import { getProductPrice } from "@lib/util/get-product-price"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import QuickAdd from "@modules/products/components/quick-add"
 import Image from "next/image"
 
 type RelatedProductsProps = {
@@ -101,7 +102,7 @@ export default async function RelatedProducts({
   return (
     <div className="border-t border-paper-border pt-10 small:pt-14 font-humanist">
       <h2 className="font-display text-2xl text-paper-text font-normal tracking-tight mb-8">
-        More like this
+        Pair it with
       </h2>
       <ul className="grid grid-cols-2 medium:grid-cols-4 gap-5">
         {related.map((relatedProduct) => {
@@ -134,6 +135,11 @@ export default async function RelatedProducts({
                       {cheapestPrice.calculated_price}
                     </p>
                   )}
+                  <QuickAdd
+                    product={relatedProduct}
+                    testId="cross-sell-add"
+                    label="Add to cart"
+                  />
                 </div>
               </LocalizedClientLink>
             </li>
