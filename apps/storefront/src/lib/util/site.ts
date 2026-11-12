@@ -23,7 +23,7 @@ export const getSiteOrigin = async (): Promise<string> => {
     return configured
   }
   const requestHeaders = await headers()
-  return originFromHeaders((name) => requestHeaders.get(name)) || "http://localhost:8000"
+  return originFromHeaders((name) => requestHeaders.get(name)) || "https://localhost:8000"
 }
 
 export const listCountryCodes = (
