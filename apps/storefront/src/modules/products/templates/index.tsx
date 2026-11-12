@@ -1,6 +1,7 @@
 import React, { Suspense } from "react"
 
 import ImageGallery from "@modules/products/components/image-gallery"
+import BuyBoxTrust from "@modules/products/components/buy-box-trust"
 import ProductActions from "@modules/products/components/product-actions"
 import ProductTabs from "@modules/products/components/product-tabs"
 import ProductViewTracker from "@modules/products/components/product-view-tracker"
@@ -74,6 +75,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
             >
               <ProductActionsWrapper id={product.id} region={region} />
             </Suspense>
+            <BuyBoxTrust />
             <ProductInfo product={product} part="details" />
             <TrustNotes />
           </div>
