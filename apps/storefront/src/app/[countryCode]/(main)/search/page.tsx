@@ -57,7 +57,8 @@ export default async function SearchPage(props: Props) {
   // matches the filter drops, so it no longer describes what is shown.
   // When the backend had more than we fetched, the true total of
   // title-matching products is unknown — more may sit behind the fetch
-  // limit — so the count states only how many are shown, with no total.
+  // limit — so the count states only how many are shown, with no total,
+  // and is hidden when nothing is shown (the empty state carries it).
   // When we fetched everything the backend had, the filtered length is
   // the exact total.
   const hasMoreBehindLimit = response.count > response.products.length
@@ -68,9 +69,10 @@ export default async function SearchPage(props: Props) {
         {query ? `Search results for "${query}"` : "Search"}
       </h1>
       <SearchForm countryCode={countryCode} defaultValue={query} className="mb-8 max-w-xl" />
-      {query && hasMoreBehindLimit ? (
+      {query && hasMoreBehindLimit && filteredProducts.length > 0 ? (
         <p className="text-small-regular text-ui-fg-subtle mb-6">
-          Showing {filteredProducts.length} products
+          Showing {filteredProducts.length}{" "}
+          {filteredProducts.length === 1 ? "product" : "products"}
         </p>
       ) : query ? (
         <p className="text-small-regular text-ui-fg-subtle mb-6">
@@ -80,7 +82,9 @@ export default async function SearchPage(props: Props) {
       ) : null}
       {query && filteredProducts.length === 0 ? (
         <p className="text-ui-fg-subtle">
-          No products match your search. Try a different keyword.
+          {hasMoreBehindLimit
+            ? "No matching products in the results shown. Try a different keyword."
+            : "No products match your search. Try a different keyword."}
         </p>
       ) : (
         <ul
