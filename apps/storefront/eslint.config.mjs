@@ -8,10 +8,14 @@ export default defineConfig([
   {
     rules: {
       // The codebase predates the stricter eslint-config-next 16 /
-      // typescript-eslint v8 recommended sets: these fire on existing code
-      // (32 errors across 13 files at adoption). Report them as warnings
-      // so `eslint .` exits 0 while the violations stay visible; tighten
-      // back to error once the code is cleaned up (follow-up, not this PR).
+      // typescript-eslint v8 recommended sets: under their defaults
+      // these eight rules would fire 55 errors across 33 files. Six
+      // are newly downgraded to warn here (32 warnings across 13
+      // files); react-hooks/set-state-in-effect and react-hooks/refs
+      // were already warn in the old config (carried over, not new
+      // downgrades). Report as warnings so `eslint .` exits 0 while
+      // the violations stay visible; tighten back to error once the
+      // code is cleaned up (follow-up: #271).
       "react-hooks/set-state-in-effect": "warn",
       "react-hooks/refs": "warn",
       "react-hooks/error-boundaries": "warn",
