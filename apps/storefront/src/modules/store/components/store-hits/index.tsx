@@ -11,6 +11,7 @@ import Thumbnail from "@modules/products/components/thumbnail"
 import SkeletonProductGrid from "@modules/skeletons/templates/skeleton-product-grid"
 import SearchPagination from "./pagination"
 import HitPrice, { HitPricing } from "./price"
+import StoreHitQuickAdd from "./quick-add"
 
 type ProductHit = Hit<
   {
@@ -115,6 +116,12 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
                       </Text>
                       <HitPrice hit={hit} currencyCode={currencyCode} />
                     </div>
+                    {/* Quick add (issue #187): the hit carries no variants,
+                        so StoreHitQuickAdd fetches the product and renders
+                        the shared QuickAdd. Inside the link, as in
+                        ProductPreview — the button stops the click from
+                        navigating. */}
+                    <StoreHitQuickAdd handle={hit.handle} />
                   </div>
                 </LocalizedClientLink>
               </li>

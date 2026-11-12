@@ -2,6 +2,7 @@ import { HttpTypes } from "@medusajs/types"
 
 import { getProductPrice } from "@lib/util/get-product-price"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import QuickAdd from "@modules/products/components/quick-add"
 import Thumbnail from "@modules/products/components/thumbnail"
 
 /**
@@ -39,6 +40,14 @@ export default function ShelfProductCard({
         <p className="specimen-meta px-1 pt-2">
           {product.collection?.title ?? "Natural stone, as pictured"}
         </p>
+        {/* Quick add (issue #187): the shelf product already carries its
+            variants, so the shared QuickAdd runs on it directly. Inside
+            the link, as in ProductPreview — the button stops the click
+            from navigating. A product with no addable variant shows the
+            shared component's own out-of-stock state, or nothing. */}
+        <div className="px-1">
+          <QuickAdd product={product} />
+        </div>
       </div>
     </LocalizedClientLink>
   )
