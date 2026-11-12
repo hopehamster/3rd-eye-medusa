@@ -63,19 +63,19 @@ export default async function Home(props: {
           the same component the shelves already use. Hero, quiz greeter,
           and shelves are untouched: the hero stays still, the shelves
           already reveal card by card. */}
-      <Reveal>
+      <Reveal duration={0.5}>
         <BestSellers region={region} />
       </Reveal>
-      <Reveal>
+      <Reveal duration={0.5}>
         <TrustFaq />
       </Reveal>
-      <Reveal>
+      <Reveal duration={0.5}>
         <ReviewWall />
       </Reveal>
-      <Reveal>
+      <Reveal duration={0.5}>
         <OracleFrontDoor />
       </Reveal>
-      <Reveal>
+      <Reveal duration={0.5}>
         <HostVoice />
       </Reveal>
     </>
