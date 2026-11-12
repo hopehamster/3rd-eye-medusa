@@ -7,10 +7,18 @@ import ShelfTemplate from "@modules/store/templates/shelf"
 import {
   filterShelfProducts,
   getShelf,
+  getShelfForms,
+  parseShelfMaxPrice,
+  parseShelfSort,
 } from "@modules/store/data/shelves"
 
 type Props = {
   params: Promise<{ countryCode: string; intent: string }>
+  searchParams: Promise<{
+    sort?: string
+    form?: string
+    maxPrice?: string
+  }>
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
@@ -52,5 +60,26 @@ export default async function ShelfPage(props: Props) {
 
   const shelfProducts = filterShelfProducts(products, shelf)
 
-  return <ShelfTemplate shelf={shelf} products={shelfProducts} />
+  // Shoppable shelves (#158): sort, form pill and price filter all arrive
+  // as URL search params and are applied server-side. Unknown values are
+  // ignored rather than erroring: an unknown sort falls back to curated
+  // order, an unknown form is dropped, a junk maxPrice is dropped.
+  const searchParams = await props.searchParams
+  const sort = parseShelfSort(searchParams?.sort)
+  const maxPrice = parseShelfMaxPrice(searchParams?.maxPrice)
+  const formValues = new Set(getShelfForms(shelfProducts).map((f) => f.value))
+  const form =
+    searchParams?.form && formValues.has(searchParams.form)
+      ? searchParams.form
+      : undefined
+
+  return (
+    <ShelfTemplate
+      shelf={shelf}
+      products={shelfProducts}
+      sort={sort}
+      form={form}
+      maxPrice={maxPrice}
+    />
+  )
 }
