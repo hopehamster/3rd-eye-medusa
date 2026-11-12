@@ -413,7 +413,7 @@ export const getShelfPriceCutoffs = (
       byAmount.set(amount, label)
     }
   }
-  const amounts = [...byAmount.keys()].sort((a, b) => a - b)
+  const amounts = Array.from(byAmount.keys()).sort((a, b) => a - b)
   // Drop the highest price: it filters nothing out.
   amounts.pop()
   return amounts.map((amount) => ({
