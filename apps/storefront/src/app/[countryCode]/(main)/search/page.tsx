@@ -46,11 +46,15 @@ export default async function SearchPage(props: Props) {
         {query ? `Search results for "${query}"` : "Search"}
       </h1>
       <SearchForm countryCode={countryCode} defaultValue={query} className="mb-8 max-w-xl" />
-      {query && (
+      {query && response.count > response.products.length ? (
+        <p className="text-small-regular text-ui-fg-subtle mb-6">
+          Showing {response.products.length} of {response.count} products
+        </p>
+      ) : query ? (
         <p className="text-small-regular text-ui-fg-subtle mb-6">
           {response.count} {response.count === 1 ? "product" : "products"} found
         </p>
-      )}
+      ) : null}
       {query && response.products.length === 0 ? (
         <p className="text-ui-fg-subtle">
           No products match your search. Try a different keyword.
