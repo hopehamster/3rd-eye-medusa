@@ -1,4 +1,5 @@
 import { sdk } from "@lib/config"
+import { getCanonGuides } from "@lib/canon"
 import { listRegions } from "@lib/data/regions"
 import { SHELVES } from "@modules/store/data/shelves"
 import {
@@ -28,18 +29,8 @@ const STATIC_PATHS: {
   { path: "/contact", changeFrequency: "monthly", priority: 0.5 },
 ]
 
-// Guide articles (static list - 6 guides)
-const GUIDES = [
-  "what-is-ritual",
-  "crystal-care-guide",
-  "tarot-for-beginners",
-  "chakra-basics",
-  "moon-rituals",
-  "smudging-guide",
-]
-
-// Medusa caps a page at 100 (#147), so page through `count` in 100-item
-// pages — a 200-item page would silently skip everything past the cap.
+// Page through `count` in 100-item pages (#147: in our store a single
+// limit=100 request silently truncated past 100 items, so keep pages at 100).
 const PAGE_SIZE = 100
 const MAX_PAGES = 50
 
@@ -98,6 +89,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ).catch(() => [] as Entry[]),
   ])
 
+  // Guide articles, derived from the canon files — the same source
+  // guides/[slug]/page.tsx generateStaticParams reads, so the sitemap
+  // can never list a guide that 404s or miss a live one.
+  const guides = await getCanonGuides().catch(() => [])
+
   const toEntries = (
     base: string,
     prefix: string,
@@ -150,8 +146,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...toEntries(base, "products", products, "weekly", 0.6),
       ...toEntries(base, "categories", categories, "weekly", 0.6),
       ...toEntries(base, "collections", collections, "weekly", 0.6),
-      ...GUIDES.map((slug) => ({
-        url: `${base}/guides/${slug}`,
+      ...guides.map((guide) => ({
+        url: `${base}/guides/${guide.slug}`,
         lastModified: now,
         changeFrequency: "monthly" as ChangeFrequency,
         priority: 0.5,
