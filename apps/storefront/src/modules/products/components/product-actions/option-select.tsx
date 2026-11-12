@@ -19,7 +19,11 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
   "data-testid": dataTestId,
   disabled,
 }) => {
-  const filteredOptions = (option.values ?? []).map((v) => v.value)
+  // Dedupe values so a repeated option value renders one button, not two.
+  // Only values the product actually has are rendered; nothing is invented.
+  const filteredOptions = [
+    ...new Set((option.values ?? []).map((v) => v.value)),
+  ]
 
   return (
     <div className="flex flex-col gap-y-3">
@@ -31,6 +35,7 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
         {filteredOptions.map((v) => {
           return (
             <button
+              type="button"
               onClick={() => updateOption(option.id, v)}
               key={v}
               className={clx(
@@ -42,6 +47,7 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
                 }
               )}
               disabled={disabled}
+              aria-pressed={v === current}
               data-testid="option-button"
             >
               {v}
