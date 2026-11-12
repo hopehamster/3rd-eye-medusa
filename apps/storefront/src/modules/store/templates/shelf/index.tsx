@@ -185,9 +185,17 @@ export default function ShelfTemplate({
             with a soft navigation the cards keep their identity (see the
             stable key on the grid below) and Framer Motion moves them
             to their new spots (issue #201). Same GET form, same
-            shareable URL, same no-script fallback as a plain form. */}
+            shareable URL, same no-script fallback as a plain form.
+            The form is keyed by the URL-derived state below: the
+            selects use defaultValue, which React only applies on
+            mount, so without the key a soft navigation (Clear
+            filters, a sibling shelf, back/forward) would leave them
+            showing stale values while the grid has reset. The form
+            is a sibling of the grid, so remounting it does not
+            remount the cards or break the glide. */}
         <Form
           action={`/store/shelf/${shelf.intent}`}
+          key={`${form ?? ""}|${sort}|${maxPrice ?? ""}`}
           className="mt-6 flex flex-wrap items-end gap-4"
           data-testid="shelf-controls"
         >
