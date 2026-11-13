@@ -56,7 +56,11 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
       <div className="content-container py-6 small:py-10" data-testid="product-container">
         <div className="flex flex-col small:flex-row items-start gap-10 small:gap-14">
           <div className="order-2 w-full min-w-0 small:order-1 small:flex-1">
+            {/* Keyed by handle so a soft navigation to another product
+                remounts the gallery fresh instead of carrying the old
+                thumbnail selection over (issue #227). */}
             <ImageGallery
+              key={product.handle}
               images={images}
               title={product.title}
               handle={product.handle ?? ""}
