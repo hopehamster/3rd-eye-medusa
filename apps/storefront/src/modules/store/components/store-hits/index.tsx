@@ -68,10 +68,19 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
       {showSkeleton ? (
         <SkeletonProductGrid numberOfProducts={hitsPerPage} />
       ) : !items.length ? (
-        <div
+        <motion.div
           className="py-16 text-center text-ui-fg-subtle"
           data-testid="no-products"
+          initial={prefersReducedMotion ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
         >
+          {/* The no-matching-products message fades in gently (issue
+              #252) instead of snapping in. Quiet and short: one 0.4s
+              fade, easeOut, inside the house limit. With reduced motion
+              preferred, no entrance at all: initial={false} renders it
+              immediately (the #240 pattern) — a true no-op, not an
+              instant fade. */}
           {/* Two very different situations used to look identical here: a
               filter that matched nothing, and a search index that was never
               built (no VOYAGE_API_KEY => /store renders empty while the
@@ -94,7 +103,7 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
               </Text>
             </>
           )}
-        </div>
+        </motion.div>
       ) : (
         <ul
           className="grid grid-cols-2 w-full small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8"
