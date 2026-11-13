@@ -1,6 +1,6 @@
 "use client"
 
-import { MotionConfig, motion } from "framer-motion"
+import { motion, useReducedMotion } from "framer-motion"
 import { useEffect, useState } from "react"
 
 import { sdk } from "@lib/config"
@@ -34,6 +34,7 @@ const SemanticFallback = ({
   onNavigate: () => void
 }) => {
   const [hits, setHits] = useState<ProductHit[] | null>(null)
+  const prefersReducedMotion = useReducedMotion()
 
   useEffect(() => {
     const q = query.trim()
@@ -92,24 +93,33 @@ const SemanticFallback = ({
   }
 
   if (hits.length === 0) {
+    // No-results state (#245): fades in gently instead of snapping in.
+    // Opacity only, 300ms, under the half-second house rule. Reduced
+    // motion (the #240 / Reveal pattern): the Text renders with no
+    // motion wrapper at all, so reduced-motion visitors see it
+    // instantly and statically. MotionConfig reducedMotion="user"
+    // alone would NOT do that — it preserves opacity animations.
+    const noResults = (
+      <Text
+        className="px-4 py-6 text-center text-ui-fg-subtle"
+        data-testid="search-no-results"
+      >
+        No products found for &quot;{query}&quot;
+      </Text>
+    )
+
+    if (prefersReducedMotion) {
+      return noResults
+    }
+
     return (
-      <MotionConfig reducedMotion="user">
-        {/* No-results state (#245): fades in gently instead of snapping in.
-            Opacity only, 300ms, under the half-second house rule; reduced-
-            motion visitors get it instantly via MotionConfig. */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3, ease: "easeOut" }}
-        >
-          <Text
-            className="px-4 py-6 text-center text-ui-fg-subtle"
-            data-testid="search-no-results"
-          >
-            No products found for &quot;{query}&quot;
-          </Text>
-        </motion.div>
-      </MotionConfig>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+      >
+        {noResults}
+      </motion.div>
     )
   }
 
