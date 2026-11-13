@@ -3,6 +3,7 @@ import Image from "next/image"
 import { HttpTypes } from "@medusajs/types"
 
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import ShelfCount from "@modules/store/components/shelf-count"
 import ShelfProductCard from "@modules/store/components/shelf-product-card"
 import {
   filterShelfProductsByForm,
@@ -122,18 +123,15 @@ export default function ShelfTemplate({
           <h2 className="font-display text-3xl font-light">
             The {shelf.label.toLowerCase()} shelf
           </h2>
-          <span
-            className="font-humanist text-sm text-paper-muted"
-            data-testid="shelf-count"
-          >
-            {isFiltering
-              ? `${visible.length} of ${products.length} ${
-                  products.length === 1 ? "piece" : "pieces"
-                }`
-              : `${products.length} ${
-                  products.length === 1 ? "piece" : "pieces"
-                }`}
-          </span>
+          {/* Piece count (issue #217): a client component so the number
+              counts up or down to its new value when a filter changes
+              it, instead of swapping instantly. The template stays a
+              server component. */}
+          <ShelfCount
+            visible={visible.length}
+            total={products.length}
+            isFiltering={isFiltering}
+          />
         </div>
         <div className="paper-hairline" />
 
