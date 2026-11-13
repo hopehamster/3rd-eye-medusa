@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { motion, useReducedMotion } from "framer-motion"
 import { sdk, MEDUSA_BACKEND_URL } from "@lib/config"
 import { addToCart } from "@lib/data/cart"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
@@ -223,6 +224,38 @@ function ThinkingDots() {
   )
 }
 
+/**
+ * The guide's name mark above each Oracle message. While the typing dots
+ * run it softly pulses (issue #247), so the wait feels alive; the moment
+ * the answer arrives the mark goes still. Opacity only, 0.5s per pulse,
+ * same quiet rule as the other animations. With reduced motion preferred
+ * the mark is always the plain static span: no motion at all.
+ */
+function OracleMark({
+  label,
+  thinking,
+  prefersReducedMotion,
+}: {
+  label: string
+  thinking: boolean
+  prefersReducedMotion: boolean | null
+}) {
+  if (!thinking || prefersReducedMotion) {
+    return (
+      <span className="font-display text-base text-paper-text">{label}</span>
+    )
+  }
+  return (
+    <motion.span
+      className="font-display text-base text-paper-text"
+      animate={{ opacity: [1, 0.55, 1] }}
+      transition={{ duration: 0.5, repeat: Infinity, ease: "easeInOut" }}
+    >
+      {label}
+    </motion.span>
+  )
+}
+
 export default function OracleChat({
   countryCode,
   initialQuestion,
@@ -237,6 +270,7 @@ export default function OracleChat({
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
   const [knowledgeOnly, setKnowledgeOnly] = useState(false)
+  const prefersReducedMotion = useReducedMotion()
   const initialSent = useRef(false)
   const sessionId = useRef(
     (globalThis.crypto?.randomUUID?.() ?? `oracle-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`)
@@ -559,9 +593,11 @@ export default function OracleChat({
             msg.role === "oracle" ? (
               <article key={i} className="max-w-[92%]">
                 <div className="mb-2 flex items-baseline gap-3">
-                  <span className="font-display text-base text-paper-text">
-                    {activeExpert.label}
-                  </span>
+                  <OracleMark
+                    label={activeExpert.label}
+                    thinking={msg.text === ""}
+                    prefersReducedMotion={prefersReducedMotion}
+                  />
                   <span className="paper-hairline flex-1" aria-hidden="true" />
                 </div>
                 <div className="font-humanist text-[15px] text-paper-text">
@@ -625,9 +661,11 @@ export default function OracleChat({
           {loading && messages[messages.length - 1]?.role !== "oracle" && (
             <div className="max-w-[92%]">
               <div className="mb-2 flex items-baseline gap-3">
-                <span className="font-display text-base text-paper-text">
-                  {activeExpert.label}
-                </span>
+                <OracleMark
+                  label={activeExpert.label}
+                  thinking
+                  prefersReducedMotion={prefersReducedMotion}
+                />
                 <span className="paper-hairline flex-1" aria-hidden="true" />
               </div>
               <ThinkingDots />
