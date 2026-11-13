@@ -4,7 +4,10 @@ import { sdk } from "@lib/config"
 import medusaError from "@lib/util/medusa-error"
 import { HttpTypes } from "@medusajs/types"
 import { FetchError } from "@medusajs/js-sdk"
-import { revalidateTag } from "next/cache"
+// Next 15 has no revalidateTag(tag, { expire: 0 }) (that is a Next 16 API).
+// unstable_expireTag is this version's "expire the tag immediately" call.
+// On a Next 16 upgrade, convert these to revalidateTag(tag, { expire: 0 }).
+import { unstable_expireTag } from "next/cache"
 import { redirect } from "next/navigation"
 import {
   getAuthHeaders,
@@ -122,7 +125,7 @@ export const updateCustomer = async (body: HttpTypes.StoreUpdateCustomer) => {
     .catch(medusaError)
 
   const cacheTag = await getCacheTag("customers")
-  revalidateTag(cacheTag)
+  unstable_expireTag(cacheTag)
 
   return updateRes
 }
@@ -264,7 +267,7 @@ async function completeLogin(
   await setAuthToken(token)
 
   const customerCacheTag = await getCacheTag("customers")
-  revalidateTag(customerCacheTag)
+  unstable_expireTag(customerCacheTag)
 
   try {
     await transferCart()
@@ -296,12 +299,12 @@ export async function signout(countryCode: string) {
   await removeAuthToken()
 
   const customerCacheTag = await getCacheTag("customers")
-  revalidateTag(customerCacheTag)
+  unstable_expireTag(customerCacheTag)
 
   await removeCartId()
 
   const cartCacheTag = await getCacheTag("carts")
-  revalidateTag(cartCacheTag)
+  unstable_expireTag(cartCacheTag)
 
   redirect(`/${countryCode}/account`)
 }
@@ -318,7 +321,7 @@ export async function transferCart() {
   await sdk.store.cart.transferCart(cartId, {}, headers)
 
   const cartCacheTag = await getCacheTag("carts")
-  revalidateTag(cartCacheTag)
+  unstable_expireTag(cartCacheTag)
 }
 
 export const addCustomerAddress = async (
@@ -351,7 +354,7 @@ export const addCustomerAddress = async (
     .createAddress(address, {}, headers)
     .then(async () => {
       const customerCacheTag = await getCacheTag("customers")
-      revalidateTag(customerCacheTag)
+      unstable_expireTag(customerCacheTag)
       return { success: true, error: null }
     })
     .catch((err) => {
@@ -370,7 +373,7 @@ export const deleteCustomerAddress = async (
     .deleteAddress(addressId, headers)
     .then(async () => {
       const customerCacheTag = await getCacheTag("customers")
-      revalidateTag(customerCacheTag)
+      unstable_expireTag(customerCacheTag)
       return { success: true, error: null }
     })
     .catch((err) => {
@@ -415,7 +418,7 @@ export const updateCustomerAddress = async (
     .updateAddress(addressId, address, {}, headers)
     .then(async () => {
       const customerCacheTag = await getCacheTag("customers")
-      revalidateTag(customerCacheTag)
+      unstable_expireTag(customerCacheTag)
       return { success: true, error: null }
     })
     .catch((err) => {

@@ -6,6 +6,7 @@ import { convertToLocale } from "@lib/util/money"
 import { CheckCircleSolid, Loader } from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
 import ErrorMessage from "@modules/checkout/components/error-message"
+import CheckoutStepSlide from "@modules/checkout/components/checkout-step-slide"
 import Divider from "@modules/common/components/divider"
 import MedusaRadio from "@modules/common/components/radio"
 import { Button, clx, Heading, Text } from "@modules/common/components/ui"
@@ -184,7 +185,7 @@ const Shipping: React.FC<ShippingProps> = ({
             </Text>
           )}
       </div>
-      {isOpen ? (
+      <CheckoutStepSlide isOpen={isOpen}>
         <>
           <div className="grid">
             <div className="flex flex-col">
@@ -383,7 +384,8 @@ const Shipping: React.FC<ShippingProps> = ({
             </Button>
           </div>
         </>
-      ) : (
+      </CheckoutStepSlide>
+      {!isOpen && (
         <div>
           <div className="text-small-regular">
             {cart && (cart.shipping_methods?.length ?? 0) > 0 && (

@@ -3,6 +3,7 @@
 import { isManual, isStripeLike } from "@lib/constants"
 import { placeOrder } from "@lib/data/cart"
 import { CheckCircleMiniSolid } from "@medusajs/icons"
+import { getPaymentErrorMessage } from "@lib/util/payment-error"
 import { HttpTypes } from "@medusajs/types"
 import { Button } from "@modules/common/components/ui"
 import { useElements, useStripe } from "@stripe/react-stripe-js"
@@ -172,7 +173,7 @@ const StripePaymentButton = ({
             return
           }
 
-          setErrorMessage(error.message || null)
+          setErrorMessage(getPaymentErrorMessage(error))
           setSubmitting(false)
           return
         }
@@ -185,6 +186,10 @@ const StripePaymentButton = ({
           return
         }
 
+        setSubmitting(false)
+      })
+      .catch((error) => {
+        setErrorMessage(getPaymentErrorMessage(error))
         setSubmitting(false)
       })
   }

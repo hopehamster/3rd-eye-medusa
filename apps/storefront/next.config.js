@@ -24,6 +24,45 @@ const nextConfig = {
       fullUrl: true,
     },
   },
+  // Product Markdown (#180): `[handle].md` and `Accept: text/markdown`
+  // requests serve the Markdown route at /products/[handle]/markdown.
+  // The country-prefixed sources cover the real product URLs
+  // (/{countryCode}/products/[handle]); the top-level sources cover the
+  // route's own path shape. Rewrites only — no headers are added here.
+  async rewrites() {
+    return [
+      {
+        source: "/products/:handle.md",
+        destination: "/products/:handle/markdown",
+      },
+      {
+        source: "/:countryCode/products/:handle.md",
+        destination: "/products/:handle/markdown",
+      },
+      {
+        source: "/products/:handle",
+        has: [
+          {
+            type: "header",
+            key: "accept",
+            value: "(?<accept>.*text/markdown.*)",
+          },
+        ],
+        destination: "/products/:handle/markdown",
+      },
+      {
+        source: "/:countryCode/products/:handle",
+        has: [
+          {
+            type: "header",
+            key: "accept",
+            value: "(?<accept>.*text/markdown.*)",
+          },
+        ],
+        destination: "/products/:handle/markdown",
+      },
+    ]
+  },
   // Type errors FAIL the build. This gate was previously off, which meant
   // "the build passed" said nothing about whether the code was type-correct.
   typescript: {

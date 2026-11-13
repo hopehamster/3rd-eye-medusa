@@ -1,5 +1,6 @@
 "use client"
 
+import { MotionConfig } from "framer-motion"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useMemo } from "react"
 
@@ -70,12 +71,20 @@ const RefinementList = ({
         setQueryParams={setQueryParams}
         data-testid={dataTestId}
       />
-      {!hideOptionsPicker && (
-        <OptionsPicker
-          selectedValueIds={selectedOptionValueIds}
-          setOptionValueIds={setOptionValueIds}
-        />
-      )}
+      {/*
+       * Reduced-motion guard for the filter pills (issue #218): any
+       * motion inside the refinement list honours the user's OS
+       * reduced-motion setting. The pill fill itself also guards
+       * directly in OptionsPicker.
+       */}
+      <MotionConfig reducedMotion="user">
+        {!hideOptionsPicker && (
+          <OptionsPicker
+            selectedValueIds={selectedOptionValueIds}
+            setOptionValueIds={setOptionValueIds}
+          />
+        )}
+      </MotionConfig>
     </div>
   )
 }

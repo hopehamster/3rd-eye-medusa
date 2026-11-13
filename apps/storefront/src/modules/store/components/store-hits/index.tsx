@@ -2,7 +2,6 @@
 
 import type { Hit } from "instantsearch.js"
 import { motion, useReducedMotion } from "framer-motion"
-import { useEffect, useRef } from "react"
 import { useHits, useInstantSearch } from "react-instantsearch"
 
 import useSearchSettled from "@lib/hooks/use-search-settled"
@@ -34,22 +33,15 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
   const prefersReducedMotion = useReducedMotion()
 
   const { page, ...refinements } = indexUiState
-  const currentPage = page ?? 1
   const refinementKey = JSON.stringify(refinements)
 
-  const settled = useRef({ page: currentPage, refinementKey })
-
-  useEffect(() => {
-    if (!isSearching) {
-      settled.current = { page: currentPage, refinementKey }
-    }
-  }, [isSearching, currentPage, refinementKey])
-
-  const isPagingOnly =
-    refinementKey === settled.current.refinementKey &&
-    currentPage !== settled.current.page
-
-  const showSkeleton = hasNoResultsYet || (isSearching && isPagingOnly)
+  // While a search or filter is in flight, show the shimmering placeholder
+  // tiles (issue #212) instead of the previous result set — stale products
+  // for a moment, then a snap. The first load is covered by
+  // hasNoResultsYet; every later search, filter change, or page turn is
+  // covered by isSearching. When the results land, the tiles below animate
+  // in on their result signature.
+  const showSkeleton = hasNoResultsYet || isSearching
 
   // Result-set signature: changes only when the visible hits change — first
   // load, a filter change, or a page change. The animated wrapper below is

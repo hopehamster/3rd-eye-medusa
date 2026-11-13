@@ -1,6 +1,7 @@
 "use client"
 
 import { IconBadge, clx } from "@modules/common/components/ui"
+import { motion, useAnimationControls, useReducedMotion } from "framer-motion"
 import {
   SelectHTMLAttributes,
   forwardRef,
@@ -19,9 +20,35 @@ type NativeSelectProps = {
 } & Omit<SelectHTMLAttributes<HTMLSelectElement>, "size">
 
 const CartItemSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
-  ({ placeholder = "Select...", className, children, ...props }, ref) => {
+  (
+    { placeholder = "Select...", className, children, value, ...props },
+    ref
+  ) => {
     const innerRef = useRef<HTMLSelectElement>(null)
     const [isPlaceholder, setIsPlaceholder] = useState(false)
+    const shouldReduceMotion = useReducedMotion()
+
+    // The quantity is shown by a native <select>, so the pop animates the
+    // whole control (which displays the number) instead of the text inside
+    // it. The pop is driven by animation controls, not a remount key, so
+    // the <select> node survives the quantity change and keeps keyboard
+    // focus. The pop only fires when the value actually changes after
+    // mount, so the cart page loading does not pop every line item.
+    // Reduced-motion visitors get neither the animation nor any DOM churn.
+    const prevValue = useRef(value)
+    const controls = useAnimationControls()
+
+    useEffect(() => {
+      if (prevValue.current !== value) {
+        prevValue.current = value
+        if (!shouldReduceMotion) {
+          controls.start({
+            scale: [1.12, 1],
+            transition: { duration: 0.25, ease: "easeOut" },
+          })
+        }
+      }
+    }, [value, shouldReduceMotion, controls])
 
     useImperativeHandle<HTMLSelectElement | null, HTMLSelectElement | null>(
       ref,
@@ -37,7 +64,7 @@ const CartItemSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
     }, [innerRef.current?.value])
 
     return (
-      <div>
+      <motion.div animate={controls}>
         <IconBadge
           onFocus={() => innerRef.current?.focus()}
           onBlur={() => innerRef.current?.blur()}
@@ -51,6 +78,7 @@ const CartItemSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
         >
           <select
             ref={innerRef}
+            value={value}
             {...props}
             className="appearance-none bg-transparent border-none px-4 transition-colors duration-150 focus:border-gray-700 outline-none w-16 h-16 items-center justify-center"
           >
@@ -63,7 +91,7 @@ const CartItemSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
             <ChevronDown />
           </span>
         </IconBadge>
-      </div>
+      </motion.div>
     )
   }
 )

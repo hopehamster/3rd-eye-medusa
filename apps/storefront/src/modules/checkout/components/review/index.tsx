@@ -3,6 +3,7 @@
 import { Heading, Text, clx } from "@modules/common/components/ui"
 
 import PaymentButton from "../payment-button"
+import CheckoutStepSlide from "../checkout-step-slide"
 import { useSearchParams } from "next/navigation"
 import { HttpTypes } from "@medusajs/types"
 
@@ -35,7 +36,7 @@ const Review = ({ cart }: { cart: HttpTypes.StoreCart }) => {
           Review
         </Heading>
       </div>
-      {isOpen && previousStepsCompleted && (
+      <CheckoutStepSlide isOpen={isOpen && !!previousStepsCompleted}>
         <>
           <div className="flex items-start gap-x-1 w-full mb-6">
             <div className="w-full">
@@ -49,7 +50,7 @@ const Review = ({ cart }: { cart: HttpTypes.StoreCart }) => {
           </div>
           <PaymentButton cart={cart} data-testid="submit-order-button" />
         </>
-      )}
+      </CheckoutStepSlide>
     </div>
   )
 }

@@ -10,6 +10,7 @@ import Spinner from "@modules/common/icons/spinner"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useActionState } from "react"
 import BillingAddress from "../billing_address"
+import CheckoutStepSlide from "../checkout-step-slide"
 import ErrorMessage from "../error-message"
 import ShippingAddress from "../shipping-address"
 import { SubmitButton } from "../submit-button"
@@ -61,7 +62,7 @@ const Addresses = ({
           </Text>
         )}
       </div>
-      {isOpen ? (
+      <CheckoutStepSlide isOpen={isOpen}>
         <form action={formAction}>
           <div className="pb-8">
             <ShippingAddress
@@ -89,7 +90,8 @@ const Addresses = ({
             <ErrorMessage error={message} data-testid="address-error-message" />
           </div>
         </form>
-      ) : (
+      </CheckoutStepSlide>
+      {!isOpen && (
         <div>
           <div className="text-small-regular">
             {cart && cart.shipping_address ? (
