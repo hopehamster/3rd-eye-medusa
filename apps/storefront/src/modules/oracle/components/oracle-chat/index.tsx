@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { motion, useReducedMotion } from "framer-motion"
 import { sdk, MEDUSA_BACKEND_URL } from "@lib/config"
 import { addToCart } from "@lib/data/cart"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
@@ -85,11 +86,29 @@ const OPENERS = [
 ]
 
 /** Minimal markdown-lite: paragraphs + **bold**. */
-function renderMarkdown(text: string) {
+function renderMarkdown(text: string, prefersReducedMotion: boolean | null) {
   return text.split(/\n\n+/).map((para, i) => {
     const parts = para.split(/(\*\*[^*]+\*\*)/g)
     return (
-      <p key={i} className="mb-3 last:mb-0 leading-7">
+      // Each paragraph fades in as it arrives (issue #246): a paragraph
+      // mounts when its first tokens arrive while streaming, or with the
+      // whole answer on the non-streaming fallback, and fades in on its
+      // own. Same quiet pattern as the store tiles (#203): opacity only,
+      // easeOut, 0.35s each, stagger capped so a long answer never feels
+      // like waiting. With reduced motion preferred, no fade at all: the
+      // lines render immediately. Paragraphs already on screen keep their
+      // key, so streaming tokens never re-trigger their fade.
+      <motion.p
+        key={i}
+        className="mb-3 last:mb-0 leading-7"
+        initial={prefersReducedMotion ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{
+          duration: 0.35,
+          ease: "easeOut",
+          delay: prefersReducedMotion ? 0 : Math.min(i * 0.05, 0.25),
+        }}
+      >
         {parts.map((part, j) =>
           part.startsWith("**") && part.endsWith("**") ? (
             <strong key={j} className="text-paper-accent font-semibold">
@@ -99,7 +118,7 @@ function renderMarkdown(text: string) {
             <span key={j}>{part}</span>
           )
         )}
-      </p>
+      </motion.p>
     )
   })
 }
@@ -237,6 +256,7 @@ export default function OracleChat({
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
   const [knowledgeOnly, setKnowledgeOnly] = useState(false)
+  const prefersReducedMotion = useReducedMotion()
   const initialSent = useRef(false)
   const sessionId = useRef(
     (globalThis.crypto?.randomUUID?.() ?? `oracle-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`)
@@ -568,7 +588,7 @@ export default function OracleChat({
                   {msg.text === "" ? (
                     <ThinkingDots />
                   ) : (
-                    renderMarkdown(msg.text)
+                    renderMarkdown(msg.text, prefersReducedMotion)
                   )}
                   {msg.signIn && (
                     <LocalizedClientLink
