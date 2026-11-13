@@ -256,10 +256,12 @@ export default function ShelfTemplate({
                 keeps each card's identity across a filter/sort change,
                 so the cards glide to their new spots instead of
                 remounting in place (issue #201). Do not change this
-                key to an index. */}
-            {visible.map((product) => (
+                key to an index. The map index is passed through as
+                a prop only — it sets the card's staggered entrance
+                delay (issue #216). */}
+            {visible.map((product, index) => (
               <li key={product.id}>
-                <ShelfProductCard product={product} />
+                <ShelfProductCard product={product} index={index} />
               </li>
             ))}
           </ul>

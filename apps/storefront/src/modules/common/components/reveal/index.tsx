@@ -7,8 +7,10 @@ import { motion, useReducedMotion } from "framer-motion"
  * The hero is the signature moment; everything else stays nearly still.
  * The stillness makes the hero land.
  *
- * Duration is overridable per use (default 0.7s); quiet sections pass a
- * shorter one so no single fade runs over about half a second.
+ * Duration is overridable per use (default 0.7s — the shelves'
+ * established fade); quiet sections pass a shorter one (new home-section
+ * wraps pass 0.5s) so no single fade runs over about half a second
+ * (house rule #230).
  *
  * Reduced motion: when the user prefers reduced motion, there is no fade
  * at all — the content renders in its final state, instantly (same

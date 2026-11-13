@@ -124,6 +124,14 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
+  // Product Markdown route (/products/[handle]/markdown, #180) has no file
+  // extension, so the dot-bypass above does not save it; without this the
+  // country redirect below would send it to /us/products/[handle]/markdown,
+  // which matches no route and 404s. Bypass only this route.
+  if (/^\/products\/[^/]+\/markdown\/?$/.test(request.nextUrl.pathname)) {
+    return NextResponse.next()
+  }
+
   const cacheIdCookie = request.cookies.get("_medusa_cache_id")
   const cacheId = cacheIdCookie?.value || crypto.randomUUID()
 

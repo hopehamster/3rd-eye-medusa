@@ -1,7 +1,8 @@
 "use client"
 
+import { animate, useReducedMotion } from "framer-motion"
 import { convertToLocale } from "@lib/util/money"
-import React from "react"
+import React, { useEffect, useRef, useState } from "react"
 
 type CartTotalsProps = {
   totals: {
@@ -13,6 +14,54 @@ type CartTotalsProps = {
     shipping_subtotal?: number | null
     discount_subtotal?: number | null
   }
+}
+
+/**
+ * Cart total tick (issue #223): when the total changes — e.g. a quantity
+ * change — the displayed amount counts up or down to the new value over
+ * 0.4s instead of swapping instantly. Counts in minor units so each frame
+ * formats exactly via convertToLocale. No tick on mount (the displayed
+ * value starts at the total), and when reduced motion is preferred the
+ * value swaps instantly. The data-value on the wrapping span always
+ * carries the true total, never an intermediate frame.
+ */
+function AnimatedTotal({
+  amount,
+  currency_code,
+}: {
+  amount: number
+  currency_code: string
+}) {
+  const shouldReduceMotion = useReducedMotion()
+  const [displayAmount, setDisplayAmount] = useState(amount)
+  const displayedRef = useRef(amount)
+
+  useEffect(() => {
+    const from = displayedRef.current
+    if (from === amount || shouldReduceMotion) {
+      displayedRef.current = amount
+      setDisplayAmount(amount)
+      return
+    }
+
+    const controls = animate(from, amount, {
+      duration: 0.4,
+      ease: "easeOut",
+      onUpdate: (value) => {
+        displayedRef.current = Math.round(value)
+        setDisplayAmount(displayedRef.current)
+      },
+      onComplete: () => {
+        displayedRef.current = amount
+        setDisplayAmount(amount)
+      },
+    })
+    return () => controls.stop()
+  }, [amount, shouldReduceMotion])
+
+  return (
+    <>{convertToLocale({ amount: displayAmount, currency_code })}</>
+  )
 }
 
 const CartTotals: React.FC<CartTotalsProps> = ({ totals }) => {
@@ -71,7 +120,10 @@ const CartTotals: React.FC<CartTotalsProps> = ({ totals }) => {
           data-testid="cart-total"
           data-value={total || 0}
         >
-          {convertToLocale({ amount: total ?? 0, currency_code })}
+          <AnimatedTotal
+            amount={total ?? 0}
+            currency_code={currency_code}
+          />
         </span>
       </div>
       <div className="h-px w-full border-b border-gray-200 mt-4" />

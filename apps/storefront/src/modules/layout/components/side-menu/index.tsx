@@ -7,6 +7,7 @@ import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { Text, clx } from "@modules/common/components/ui"
 import { Fragment } from "react"
+import { motion, useReducedMotion } from "framer-motion"
 import CountrySelect from "../country-select"
 import LanguageSelect from "../language-select"
 import { Locale } from "@lib/data/locales"
@@ -28,6 +29,7 @@ type SideMenuProps = {
 const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
   const countryToggleState = useToggleState()
   const languageToggleState = useToggleState()
+  const prefersReducedMotion = useReducedMotion()
 
   return (
     <div className="h-full">
@@ -73,9 +75,29 @@ const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
                       </button>
                     </div>
                     <ul className="flex flex-col gap-6 items-start justify-start">
-                      {Object.entries(SideMenuItems).map(([name, href]) => {
+                      {Object.entries(SideMenuItems).map(([name, href], i) => {
                         return (
-                          <li key={name}>
+                          // Menu links fade in one after another when the
+                          // menu opens (issue #238): opacity only plus a
+                          // few-pixel rise, 0.3s each, 0.06s apart, so the
+                          // last link lands by ~0.5s. Same quiet pattern as
+                          // the hero entrance (#198) and the oracle lines
+                          // (#246). With reduced motion preferred, no fade
+                          // at all: the links render immediately.
+                          <motion.li
+                            key={name}
+                            initial={
+                              prefersReducedMotion
+                                ? false
+                                : { opacity: 0, y: 6 }
+                            }
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{
+                              duration: 0.3,
+                              ease: "easeOut",
+                              delay: prefersReducedMotion ? 0 : i * 0.06,
+                            }}
+                          >
                             <LocalizedClientLink
                               href={href}
                               className="text-3xl leading-10 hover:text-ui-fg-disabled"
@@ -84,7 +106,7 @@ const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
                             >
                               {name}
                             </LocalizedClientLink>
-                          </li>
+                          </motion.li>
                         )
                       })}
                     </ul>

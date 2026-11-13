@@ -1,8 +1,7 @@
-import Image from "next/image"
 import { HttpTypes } from "@medusajs/types"
 import { listProducts } from "@lib/data/products"
-import { getProductPrice } from "@lib/util/get-product-price"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import BestSellerCard from "./best-seller-card"
 
 /**
  * Featured row (issue #21) — live products in specimen cards.
@@ -14,6 +13,11 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
  * coordinator / Agent Voice.
  * Product photography: Agent Daylight (issue #22) replaces thumbnails
  * catalog-wide; this row inherits the new shots automatically.
+ *
+ * Photo zoom on hover (issue #215): each card is a BestSellerCard —
+ * hovering it grows its photo to about 105% inside its frame, same
+ * zoom as the store tiles. See best-seller-card.tsx for the motion
+ * and reduced-motion handling.
  */
 export default async function BestSellers({
   region,
@@ -50,45 +54,11 @@ export default async function BestSellers({
         </div>
 
         <ul className="grid grid-cols-2 gap-5 small:grid-cols-4">
-          {products.map((product) => {
-            const { cheapestPrice } = getProductPrice({ product })
-            const image = product.thumbnail || product.images?.[0]?.url
-            return (
-              <li key={product.id}>
-                <LocalizedClientLink
-                  href={`/products/${product.handle}`}
-                  className="group block"
-                >
-                  <article className="specimen-card overflow-hidden transition-colors duration-200 group-hover:border-paper-accent">
-                    <div className="relative aspect-square w-full overflow-hidden">
-                      {image && (
-                        <Image
-                          src={image}
-                          alt={product.title}
-                          fill
-                          loading="lazy"
-                          sizes="(max-width: 1024px) 50vw, 25vw"
-                          className="object-cover"
-                        />
-                      )}
-                    </div>
-                    <div className="px-4 pb-4 pt-3">
-                      <div className="specimen-label !py-2 text-base">
-                        {product.title}
-                      </div>
-                      <div className="mt-2 flex items-baseline justify-end">
-                        {cheapestPrice && (
-                          <span className="font-humanist text-sm font-semibold text-paper-text">
-                            {cheapestPrice.calculated_price}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </article>
-                </LocalizedClientLink>
-              </li>
-            )
-          })}
+          {products.map((product) => (
+            <li key={product.id}>
+              <BestSellerCard product={product} />
+            </li>
+          ))}
         </ul>
       </div>
     </section>

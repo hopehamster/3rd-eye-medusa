@@ -39,8 +39,13 @@ const StoreSearchBox = () => {
     refine("")
   }
 
+  /* Search glow (issue #244): clicking in warms the hairline to the
+     botanical accent and fades in a soft ring; both fade out on blur.
+     Pure CSS focus-within — a two-property state change needs no JS.
+     300ms, under the half-second house rule; reduced-motion visitors
+     get the same state instantly via motion-reduce. */
   return (
-    <div className="mb-6 flex items-center gap-x-3 border-b border-ui-border-base">
+    <div className="mb-6 flex items-center gap-x-3 border-b border-ui-border-base transition-[border-color,box-shadow] duration-300 ease-out focus-within:border-paper-accent focus-within:ring focus-within:ring-paper-accent/15 motion-reduce:transition-none">
       <MagnifyingGlass className="shrink-0 text-ui-fg-muted" />
       <input
         type="search"

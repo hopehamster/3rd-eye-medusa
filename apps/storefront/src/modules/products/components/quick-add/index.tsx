@@ -4,8 +4,10 @@ import { addToCart } from "@lib/data/cart"
 import { trackAddToCart } from "@lib/analytics"
 import { HttpTypes } from "@medusajs/types"
 import { Button } from "@modules/common/components/ui"
+import { useReducedMotion } from "framer-motion"
 import { useParams } from "next/navigation"
 import { useEffect, useMemo, useRef, useState } from "react"
+import type { ReactNode } from "react"
 
 type QuickAddProps = {
   product: HttpTypes.StoreProduct
@@ -52,6 +54,17 @@ function firstAddableVariant(product: HttpTypes.StoreProduct) {
  * Adds the default (first addable) variant, quantity 1, and shows an
  * adding state, then a short added confirmation. The cart dropdown opens
  * on its own when the cart count changes, so the added state is brief.
+ *
+ * Slide up on hover (issue #214): the button sits in a reserved slot at
+ * the bottom of the tile and slides up from below it while the tile is
+ * hovered, sliding back down on mouse-out. Every tile link carries
+ * `group`, so group-hover drives the slide from inside this shared
+ * component — no tile changes needed, and the store tile, shelf card,
+ * product preview and cross-sell tile all get it. The slot keeps its
+ * height while the button is hidden, so tiles never shift. Quiet and
+ * short: 0.3s easeOut. Touch pointers have no hover, so the button stays
+ * visible there; keyboard focus reveals it too (focus-within). Reduced
+ * motion: no hiding, no motion — the button sits there always.
  */
 export default function QuickAdd({
   product,
@@ -65,6 +78,7 @@ export default function QuickAdd({
   const addedTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined
   )
+  const prefersReducedMotion = useReducedMotion()
 
   useEffect(() => {
     return () => {
@@ -76,6 +90,22 @@ export default function QuickAdd({
 
   const variant = useMemo(() => firstAddableVariant(product), [product])
 
+  // Slide-up reveal (issue #214): the button starts translated down by
+  // its own height, clipped by the slot, and rises into place on tile
+  // hover. The slot is overflow-hidden, so the button is fully hidden at
+  // rest and never paints over the tile below; its height is the button's
+  // own height, so the clip holds whatever height the button renders at.
+  const reveal = (button: ReactNode) =>
+    prefersReducedMotion ? (
+      button
+    ) : (
+      <div className="overflow-hidden">
+        <div className="translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0 focus-within:translate-y-0 [@media(hover:none)]:translate-y-0">
+          {button}
+        </div>
+      </div>
+    )
+
   // A product with no variants at all cannot be quick-added; render nothing
   // rather than a button that can never work.
   if (!product.variants?.length) {
@@ -83,7 +113,7 @@ export default function QuickAdd({
   }
 
   if (!variant) {
-    return (
+    return reveal(
       <Button
         type="button"
         disabled
@@ -130,7 +160,7 @@ export default function QuickAdd({
     }
   }
 
-  return (
+  return reveal(
     <Button
       type="button"
       onClick={handleClick}
