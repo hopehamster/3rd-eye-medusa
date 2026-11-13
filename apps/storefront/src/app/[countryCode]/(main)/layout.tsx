@@ -5,6 +5,7 @@ import { retrieveCustomer } from "@lib/data/customer"
 import { getBaseURL } from "@lib/util/env"
 import { StoreCartShippingOption } from "@medusajs/types"
 import CartMismatchBanner from "@modules/layout/components/cart-mismatch-banner"
+import PageFade from "@modules/layout/components/page-fade"
 import Footer from "@modules/layout/templates/footer"
 import Nav from "@modules/layout/templates/nav"
 import FreeShippingPriceNudge from "@modules/shipping/components/free-shipping-price-nudge"
@@ -38,7 +39,8 @@ export default async function PageLayout(props: { children: React.ReactNode }) {
           shippingOptions={shippingOptions}
         />
       )}
-      {props.children}
+      {/* Page content fades in once on landing (~400ms, quiet). */}
+      <PageFade>{props.children}</PageFade>
       <Footer />
     </>
   )
