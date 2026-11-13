@@ -140,9 +140,8 @@ const Payment = ({
         )}
       </div>
       <div>
-        {isOpen && (
-          <CheckoutStepSlide isOpen={isOpen}>
-            <div>
+        <CheckoutStepSlide isOpen={isOpen} keepMounted>
+          <div className={isOpen ? "block" : "hidden"}>
           {!paidByGiftcard && availablePaymentMethods?.length && (
             <>
               <RadioGroup
@@ -206,9 +205,8 @@ const Payment = ({
               ? "Enter payment details"
               : "Continue to review"}
           </Button>
-            </div>
-          </CheckoutStepSlide>
-        )}
+          </div>
+        </CheckoutStepSlide>
 
         {!isOpen && (
           <div>
