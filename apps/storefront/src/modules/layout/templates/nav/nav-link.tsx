@@ -12,10 +12,13 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
  * scaleX. Quiet and short: 0.3s easeOut, well under the half-second
  * house limit. Navigating away shrinks it back out at the same speed.
  *
- * Active matching is by path prefix, so /store stays active on a product
- * or category page under /store, and /guides stays active on a guide
- * article. The pathname carries the country code first (e.g. /us/store),
- * so that segment is stripped before comparing.
+ * Active matching is by path prefix, so /guides stays active on a guide
+ * article and /store stays active on /store/shelf/[intent]. Product,
+ * category, and collection pages are NOT under /store — they are
+ * top-level routes (/products/*, /categories/*, /collections/*) — but
+ * they are shopping pages, so /store stays active there too, via
+ * EXTRA_ACTIVE_PREFIXES below. The pathname carries the country code
+ * first (e.g. /us/store), so that segment is stripped before comparing.
  *
  * Reduced motion: no draw-in at all — the underline is simply present
  * under the active link and absent elsewhere, so the active state is
@@ -26,6 +29,17 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
  * Component: usePathname cannot run in nav/index.tsx (the production
  * build rejects hooks there). Nav renders this component.
  */
+
+// Pages that live outside a link's own subtree but still count as that
+// link's page: product, category, and collection pages are top-level
+// routes, not under /store, yet they are shopping pages, so /store stays
+// active on them. Each extra prefix uses the same segment guard as the
+// main match (exact, or prefix + "/"), so lookalikes such as /storefront
+// still do not match /store.
+const EXTRA_ACTIVE_PREFIXES: Record<string, string[]> = {
+  "/store": ["/products", "/categories", "/collections"],
+}
+
 const NavLink = ({
   href,
   className,
@@ -41,7 +55,13 @@ const NavLink = ({
   const prefersReducedMotion = useReducedMotion()
 
   const path = pathname?.replace(/^\/[^/]+/, "") || "/"
-  const active = path === href || path.startsWith(`${href}/`)
+  const extraPrefixes = EXTRA_ACTIVE_PREFIXES[href] ?? []
+  const active =
+    path === href ||
+    path.startsWith(`${href}/`) ||
+    extraPrefixes.some(
+      (prefix) => path === prefix || path.startsWith(`${prefix}/`)
+    )
 
   return (
     <LocalizedClientLink
