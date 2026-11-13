@@ -8,6 +8,7 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
 import CartButton from "@modules/layout/components/cart-button"
 import Search from "@modules/layout/components/search"
 import SideMenu from "@modules/layout/components/side-menu"
+import NavLink from "./nav-link"
 import ShrinkingHeader from "./shrinking-header"
 
 export default async function Nav() {
@@ -30,34 +31,34 @@ export default async function Nav() {
               />
             </div>
             <div className="hidden small:flex items-center gap-x-6 h-full ml-2">
-              <LocalizedClientLink
+              <NavLink
                 className="hover:text-cosmos-text transition-colors text-[13px] tracking-wide"
                 href="/store"
                 data-testid="nav-shop-link"
               >
                 <span className="text-cosmos-faint mr-1">I.</span> Stones
-              </LocalizedClientLink>
-              <LocalizedClientLink
+              </NavLink>
+              <NavLink
                 className="hover:text-cosmos-text transition-colors text-[13px] tracking-wide"
                 href="/oracle"
                 data-testid="nav-oracle-link"
               >
                 <span className="text-cosmos-faint mr-1">II.</span> Oracle
-              </LocalizedClientLink>
-              <LocalizedClientLink
+              </NavLink>
+              <NavLink
                 className="hover:text-cosmos-text transition-colors text-[13px] tracking-wide"
                 href="/guides"
                 data-testid="nav-guides-link"
               >
                 <span className="text-cosmos-faint mr-1">III.</span> Canon
-              </LocalizedClientLink>
-              <LocalizedClientLink
+              </NavLink>
+              <NavLink
                 className="hover:text-cosmos-text transition-colors text-[13px] tracking-wide"
                 href="/ritual-builder"
                 data-testid="nav-ritual-link"
               >
                 <span className="text-cosmos-faint mr-1">IV.</span> Rituals
-              </LocalizedClientLink>
+              </NavLink>
             </div>
           </div>
 
@@ -73,13 +74,13 @@ export default async function Nav() {
 
           <div className="flex items-center gap-x-6 h-full flex-1 basis-0 justify-end">
             <div className="hidden small:flex items-center gap-x-6 h-full">
-              <LocalizedClientLink
+              <NavLink
                 className="hover:text-cosmos-text transition-colors text-[13px] tracking-wide"
                 href="/account"
                 data-testid="nav-account-link"
               >
                 Account
-              </LocalizedClientLink>
+              </NavLink>
             </div>
             <Suspense
               fallback={
