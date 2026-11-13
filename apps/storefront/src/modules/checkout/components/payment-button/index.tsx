@@ -198,7 +198,9 @@ const StripePaymentButton = ({
         isLoading={submitting && !confirmed}
         data-testid={dataTestId}
         className={
-          confirmed ? "bg-green-600 hover:bg-green-600" : undefined
+          confirmed
+            ? "bg-green-700 hover:bg-green-700 disabled:!opacity-100"
+            : undefined
         }
         style={
           confirmed && prefersReducedMotion
@@ -269,7 +271,9 @@ const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => {
         size="large"
         data-testid="submit-order-button"
         className={
-          confirmed ? "bg-green-600 hover:bg-green-600" : undefined
+          confirmed
+            ? "bg-green-700 hover:bg-green-700 disabled:!opacity-100"
+            : undefined
         }
         style={
           confirmed && prefersReducedMotion
