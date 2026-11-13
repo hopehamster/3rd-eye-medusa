@@ -3,6 +3,7 @@ import { listCollections } from "@lib/data/collections"
 import { Text, clx } from "@modules/common/components/ui"
 
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import BackToTop from "@modules/layout/templates/footer/back-to-top"
 
 export default async function Footer() {
   const { collections } = await listCollections({
@@ -203,6 +204,7 @@ export default async function Footer() {
           </Text>
         </div>
       </div>
+      <BackToTop />
     </footer>
   )
 }
