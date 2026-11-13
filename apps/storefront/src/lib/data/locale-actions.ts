@@ -1,7 +1,10 @@
 "use server"
 
 import { sdk } from "@lib/config"
-import { revalidateTag } from "next/cache"
+// Next 15 has no revalidateTag(tag, { expire: 0 }) (that is a Next 16 API).
+// unstable_expireTag is this version's "expire the tag immediately" call.
+// On a Next 16 upgrade, convert these to revalidateTag(tag, { expire: 0 }).
+import { unstable_expireTag } from "next/cache"
 import { cookies as nextCookies } from "next/headers"
 import { getAuthHeaders, getCacheTag, getCartId } from "./cookies"
 
@@ -50,24 +53,24 @@ export const updateLocale = async (localeCode: string): Promise<string> => {
 
     const cartCacheTag = await getCacheTag("carts")
     if (cartCacheTag) {
-      revalidateTag(cartCacheTag)
+      unstable_expireTag(cartCacheTag)
     }
   }
 
   // Revalidate relevant caches to refresh content
   const productsCacheTag = await getCacheTag("products")
   if (productsCacheTag) {
-    revalidateTag(productsCacheTag)
+    unstable_expireTag(productsCacheTag)
   }
 
   const categoriesCacheTag = await getCacheTag("categories")
   if (categoriesCacheTag) {
-    revalidateTag(categoriesCacheTag)
+    unstable_expireTag(categoriesCacheTag)
   }
 
   const collectionsCacheTag = await getCacheTag("collections")
   if (collectionsCacheTag) {
-    revalidateTag(collectionsCacheTag)
+    unstable_expireTag(collectionsCacheTag)
   }
 
   return localeCode
