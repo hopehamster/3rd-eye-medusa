@@ -92,8 +92,13 @@ const SearchPanel = ({ onNavigate }: { onNavigate: () => void }) => {
           </Text>
         ) : hasResults ? (
           <ul className="py-2" data-testid="search-results">
-            {items.map((hit) => (
-              <SearchHit key={hit.objectID} hit={hit} onNavigate={onNavigate} />
+            {items.map((hit, index) => (
+              <SearchHit
+                key={hit.objectID}
+                hit={hit}
+                index={index}
+                onNavigate={onNavigate}
+              />
             ))}
           </ul>
         ) : isPending || !query.trim() ? (
