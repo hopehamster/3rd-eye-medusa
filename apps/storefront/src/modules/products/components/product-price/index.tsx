@@ -1,6 +1,7 @@
 import { clx } from "@modules/common/components/ui"
 
 import { getProductPrice } from "@lib/util/get-product-price"
+import SkeletonShimmer from "@modules/skeletons/components/skeleton-shimmer"
 import { HttpTypes } from "@medusajs/types"
 
 /**
@@ -32,7 +33,7 @@ export default function ProductPrice({
   const selectedPrice = variantPrice || cheapestPrice
 
   if (!selectedPrice) {
-    return <div className="block w-32 h-9 bg-paper-surface animate-pulse" />
+    return <SkeletonShimmer className="block w-32 h-9 bg-paper-surface" />
   }
 
   const isSale =
