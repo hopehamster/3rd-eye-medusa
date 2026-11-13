@@ -3,6 +3,7 @@ import { listCollections } from "@lib/data/collections"
 import { Text, clx } from "@modules/common/components/ui"
 import { MotionConfig } from "framer-motion"
 
+import BackToTop from "@modules/layout/templates/footer/back-to-top"
 import FooterLiftLink from "./footer-lift-link"
 
 /**
@@ -221,6 +222,7 @@ export default async function Footer() {
             </Text>
           </div>
         </div>
+        <BackToTop />
       </footer>
     </MotionConfig>
   )
