@@ -159,10 +159,29 @@ function TiltGroup({
   return <group ref={ref}>{children}</group>
 }
 
+/**
+ * Idle turntable (issue #229): the slow-turn speed lives in a motion value
+ * owned by the viewer shell. It is read once per frame and written straight
+ * onto the controls, so the release ease-back never re-renders the scene.
+ * The static autoRotateSpeed prop below is only the starting value; this
+ * frame loop owns the speed from the first frame on.
+ */
+function TurntableSpeed({ speed }: { speed: MotionValue<number> }) {
+  useFrame((state) => {
+    const controls = state.controls as unknown as {
+      autoRotateSpeed: number
+    } | null
+    if (controls) controls.autoRotateSpeed = speed.get()
+  })
+
+  return null
+}
+
 type CrystalSceneProps = {
   profile: StoneProfile
   tiltX: MotionValue<number>
   tiltY: MotionValue<number>
+  rotateSpeed: MotionValue<number>
   onDragChange?: (dragging: boolean) => void
 }
 
@@ -170,6 +189,7 @@ export default function CrystalScene({
   profile,
   tiltX,
   tiltY,
+  rotateSpeed,
   onDragChange,
 }: CrystalSceneProps) {
   return (
@@ -237,6 +257,7 @@ export default function CrystalScene({
           />
         </group>
       </Environment>
+      <TurntableSpeed speed={rotateSpeed} />
       <OrbitControls
         makeDefault
         target={[0, 0.45, 0]}
