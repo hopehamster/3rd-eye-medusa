@@ -1,7 +1,23 @@
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
+import { MotionConfig } from "framer-motion"
 import { getCanonGuide, getCanonGuides } from "@lib/canon"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import Reveal from "@modules/common/components/reveal"
+
+/**
+ * Split a rendered guide into its sections: the intro (everything before
+ * the first h2) plus one section per h2, each running to the next h2.
+ * The canon renderer only emits top-level <h2>/<h3>/<ul>/<p> blocks, so a
+ * lookahead split on <h2> is enough. A guide with no h2 is one section.
+ */
+function splitGuideSections(html: string): string[] {
+  const sections = html
+    .split(/(?=<h2[\s>])/)
+    .map((s) => s.trim())
+    .filter(Boolean)
+  return sections.length > 0 ? sections : [html]
+}
 
 export async function generateStaticParams() {
   const guides = await getCanonGuides()
@@ -79,10 +95,26 @@ export default async function GuidePage({
       {guide.topics.length > 0 && (
         <p className="text-sm text-gray-400 mb-8">{guide.topics.join(" · ")}</p>
       )}
-      <article
-        className="prose prose-invert max-w-none space-y-4 [&>h2]:text-xl [&>h2]:font-semibold [&>h2]:mt-8 [&>h3]:text-lg [&>h3]:font-medium [&>ul]:list-disc [&>ul]:pl-6 [&>ul]:space-y-1"
-        dangerouslySetInnerHTML={{ __html: guide.html }}
-      />
+      {/*
+        Guide text fades in section by section as you scroll (#249): the
+        body is split at each h2 and every section gets the shared Reveal
+        (opacity only, once, as it enters view). The prose child selectors
+        move onto each section's wrapper, since the headings are no longer
+        direct children of the article. MotionConfig reducedMotion="user"
+        honours the OS reduced-motion setting; Reveal itself moves nothing.
+      */}
+      <MotionConfig reducedMotion="user">
+        <article className="prose prose-invert max-w-none">
+          {splitGuideSections(guide.html).map((sectionHtml, i) => (
+            <Reveal key={i}>
+              <div
+                className="space-y-4 [&>h2]:text-xl [&>h2]:font-semibold [&>h2]:mt-8 [&>h3]:text-lg [&>h3]:font-medium [&>ul]:list-disc [&>ul]:pl-6 [&>ul]:space-y-1"
+                dangerouslySetInnerHTML={{ __html: sectionHtml }}
+              />
+            </Reveal>
+          ))}
+        </article>
+      </MotionConfig>
       {guide.sources.length > 0 && (
         <div className="mt-10 border-t border-white/10 pt-6">
           <p className="text-xs uppercase tracking-widest text-gray-500 mb-2">
