@@ -1,5 +1,6 @@
 "use client"
 
+import { MotionConfig, motion } from "framer-motion"
 import { useEffect, useState } from "react"
 
 import { sdk } from "@lib/config"
@@ -92,12 +93,23 @@ const SemanticFallback = ({
 
   if (hits.length === 0) {
     return (
-      <Text
-        className="px-4 py-6 text-center text-ui-fg-subtle"
-        data-testid="search-no-results"
-      >
-        No products found for &quot;{query}&quot;
-      </Text>
+      <MotionConfig reducedMotion="user">
+        {/* No-results state (#245): fades in gently instead of snapping in.
+            Opacity only, 300ms, under the half-second house rule; reduced-
+            motion visitors get it instantly via MotionConfig. */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+        >
+          <Text
+            className="px-4 py-6 text-center text-ui-fg-subtle"
+            data-testid="search-no-results"
+          >
+            No products found for &quot;{query}&quot;
+          </Text>
+        </motion.div>
+      </MotionConfig>
     )
   }
 
