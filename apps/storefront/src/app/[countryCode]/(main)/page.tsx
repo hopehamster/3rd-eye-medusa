@@ -8,6 +8,7 @@ import OracleFrontDoor from "@modules/home/components/oracle-front-door"
 import QuizGreeter from "@modules/home/components/quiz-greeter"
 import ReviewWall from "@modules/home/components/review-wall"
 import TrustFaq from "@modules/home/components/trust-faq"
+import Reveal from "@modules/common/components/reveal"
 import { FEATURED_HERO_HANDLES } from "@modules/home/data/featured"
 import { getProductByHandle } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
@@ -58,11 +59,25 @@ export default async function Home(props: {
       <Hero product={featured} />
       <QuizGreeter />
       <IntentionShelves region={region} />
-      <BestSellers region={region} />
-      <TrustFaq />
-      <ReviewWall />
-      <OracleFrontDoor />
-      <HostVoice />
+      {/* Home sections fade in on scroll (#230) — one Reveal per section,
+          the same component the shelves already use. Hero, quiz greeter,
+          and shelves are untouched: the hero stays still, the shelves
+          already reveal card by card. */}
+      <Reveal duration={0.5}>
+        <BestSellers region={region} />
+      </Reveal>
+      <Reveal duration={0.5}>
+        <TrustFaq />
+      </Reveal>
+      <Reveal duration={0.5}>
+        <ReviewWall />
+      </Reveal>
+      <Reveal duration={0.5}>
+        <OracleFrontDoor />
+      </Reveal>
+      <Reveal duration={0.5}>
+        <HostVoice />
+      </Reveal>
     </>
   )
 }

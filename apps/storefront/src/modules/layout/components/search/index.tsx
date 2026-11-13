@@ -50,7 +50,12 @@ const SearchPanel = ({ onNavigate }: { onNavigate: () => void }) => {
 
   return (
     <>
-      <div className="flex items-center gap-x-3 border-b border-ui-border-base px-4">
+      {/* Search glow (issue #244): clicking in warms the hairline to the
+          botanical accent and fades in a soft ring; both fade out on blur.
+          Pure CSS focus-within — a two-property state change needs no JS.
+          300ms, under the half-second house rule; reduced-motion visitors
+          get the same state instantly via motion-reduce. */}
+      <div className="flex items-center gap-x-3 border-b border-ui-border-base px-4 transition-[border-color,box-shadow] duration-300 ease-out focus-within:border-paper-accent focus-within:ring focus-within:ring-paper-accent/15 motion-reduce:transition-none">
         <MagnifyingGlass className="shrink-0 text-ui-fg-muted" />
         <input
           type="search"
@@ -92,8 +97,13 @@ const SearchPanel = ({ onNavigate }: { onNavigate: () => void }) => {
           </Text>
         ) : hasResults ? (
           <ul className="py-2" data-testid="search-results">
-            {items.map((hit) => (
-              <SearchHit key={hit.objectID} hit={hit} onNavigate={onNavigate} />
+            {items.map((hit, index) => (
+              <SearchHit
+                key={hit.objectID}
+                hit={hit}
+                index={index}
+                onNavigate={onNavigate}
+              />
             ))}
           </ul>
         ) : isPending || !query.trim() ? (
