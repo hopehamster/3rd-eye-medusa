@@ -4,6 +4,7 @@ import { isStripeLike, paymentInfoMap } from "@lib/constants"
 import { initiatePaymentSession } from "@lib/data/cart"
 import { CheckCircleSolid, CreditCard } from "@medusajs/icons"
 import ErrorMessage from "@modules/checkout/components/error-message"
+import CheckoutStepSlide from "@modules/checkout/components/checkout-step-slide"
 import PaymentContainer, {
   StripePaymentContainer,
 } from "@modules/checkout/components/payment-container"
@@ -139,7 +140,8 @@ const Payment = ({
         )}
       </div>
       <div>
-        <div className={isOpen ? "block" : "hidden"}>
+        <CheckoutStepSlide isOpen={isOpen} keepMounted>
+          <div className={isOpen ? "block" : "hidden"}>
           {!paidByGiftcard && availablePaymentMethods?.length && (
             <>
               <RadioGroup
@@ -203,9 +205,11 @@ const Payment = ({
               ? "Enter payment details"
               : "Continue to review"}
           </Button>
-        </div>
+          </div>
+        </CheckoutStepSlide>
 
-        <div className={isOpen ? "hidden" : "block"}>
+        {!isOpen && (
+          <div>
           {cart && paymentReady && activeSession ? (
             <div className="flex items-start gap-x-1 w-full">
               <div className="flex flex-col w-1/3">
@@ -250,7 +254,8 @@ const Payment = ({
               </Text>
             </div>
           ) : null}
-        </div>
+          </div>
+        )}
       </div>
       <Divider className="mt-8" />
     </div>
