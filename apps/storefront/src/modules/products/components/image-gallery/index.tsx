@@ -39,11 +39,23 @@ type GalleryTab = "photos" | "3d"
  * initial={false} and a 0s transition, so no exit fade and no opacity
  * animation — instead of the 300ms crossfade.
  *
- * Main photo zoom on hover (issue #226): the first (main) photo scales
+ * Main photo zoom on hover (issue #226): the main photo scales
  * to 1.04 over 300ms while hovered, inside its frame — the Container
  * already clips with overflow-hidden, so the zoom never spills out.
- * Only the main photo zooms; the rest stay static. Under reduced
- * motion there is no zoom at all (whileHover is left off).
+ * Under reduced motion there is no zoom at all (whileHover is left off).
+ *
+ * Thumbnail fade (issue #227): the photos view shows one main photo
+ * plus a thumbnail row (built here — the gallery had no thumbnail
+ * selector before, just the stacked plates). Tapping a thumbnail swaps
+ * the main photo through a 300ms Framer Motion crossfade, same pattern
+ * as the tab switch: the main panel is keyed by image id inside
+ * AnimatePresence, the two photos share one grid cell so they overlap
+ * during the fade instead of stacking. initial={false} keeps the
+ * first paint instant. Under reduced motion the swap is instant
+ * (0s transition, no opacity animation). The row only renders when
+ * there is more than one photo. Thumbnails are plain buttons with
+ * aria-pressed and aria-label; the active one carries the darker
+ * border so the current photo is visible at a glance.
  *
  * The switch is two plain toggle buttons with aria-pressed, not ARIA
  * tabs: the control only switches which view is shown, so it does not
@@ -53,7 +65,10 @@ type GalleryTab = "photos" | "3d"
  */
 const ImageGallery = ({ images, title, handle }: ImageGalleryProps) => {
   const [activeTab, setActiveTab] = useState<GalleryTab>("photos")
+  const [activeIndex, setActiveIndex] = useState(0)
   const prefersReducedMotion = useReducedMotion()
+  const activeImage =
+    images[Math.min(activeIndex, Math.max(images.length - 1, 0))]
 
   return (
     <div
@@ -104,53 +119,93 @@ const ImageGallery = ({ images, title, handle }: ImageGalleryProps) => {
             >
               {activeTab === "photos" ? (
                 <div className="flex flex-col gap-y-4">
-                  {images.map((image, index) => {
-                    return (
-                      <Container
-                        key={image.id}
-                        className="relative aspect-[29/34] w-full overflow-hidden bg-paper-surface border border-paper-borderSoft rounded-specimen"
-                        id={image.id}
-                      >
-                        {!!image.url && index === 0 ? (
-                          <motion.div
-                            className="absolute inset-0"
-                            whileHover={
-                              prefersReducedMotion
-                                ? undefined
-                                : { scale: 1.04 }
-                            }
-                            transition={{ duration: 0.3, ease: "easeOut" }}
+                  <div className="grid">
+                    <AnimatePresence initial={false}>
+                      {activeImage && (
+                        <motion.div
+                          key={activeImage.id}
+                          className="[grid-area:1/1]"
+                          initial={
+                            prefersReducedMotion ? false : { opacity: 0 }
+                          }
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{
+                            duration: prefersReducedMotion ? 0 : 0.3,
+                            ease: "easeInOut",
+                          }}
+                        >
+                          <Container
+                            className="relative aspect-[29/34] w-full overflow-hidden bg-paper-surface border border-paper-borderSoft rounded-specimen"
+                            id={activeImage.id}
                           >
-                            <Image
-                              src={image.url}
-                              priority={true}
-                              className="absolute inset-0"
-                              alt={`Product image ${index + 1}`}
-                              fill
-                              sizes="(max-width: 576px) 280px, (max-width: 768px) 360px, (max-width: 992px) 480px, 800px"
-                              style={{
-                                objectFit: "cover",
-                              }}
-                            />
-                          </motion.div>
-                        ) : (
-                          !!image.url && (
+                            {!!activeImage.url && (
+                              <motion.div
+                                className="absolute inset-0"
+                                whileHover={
+                                  prefersReducedMotion
+                                    ? undefined
+                                    : { scale: 1.04 }
+                                }
+                                transition={{
+                                  duration: 0.3,
+                                  ease: "easeOut",
+                                }}
+                              >
+                                <Image
+                                  src={activeImage.url}
+                                  priority={true}
+                                  className="absolute inset-0"
+                                  alt={`Product image ${activeIndex + 1}`}
+                                  fill
+                                  sizes="(max-width: 576px) 280px, (max-width: 768px) 360px, (max-width: 992px) 480px, 800px"
+                                  style={{
+                                    objectFit: "cover",
+                                  }}
+                                />
+                              </motion.div>
+                            )}
+                          </Container>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                  {images.length > 1 && (
+                    <div
+                      className="flex gap-x-2"
+                      data-testid="gallery-thumbnails"
+                    >
+                      {images.map((image, index) => (
+                        <button
+                          key={image.id}
+                          type="button"
+                          data-testid={`gallery-thumbnail-${index}`}
+                          aria-pressed={index === activeIndex}
+                          aria-label={`View product image ${index + 1}`}
+                          onClick={() => setActiveIndex(index)}
+                          className={
+                            index === activeIndex
+                              ? "relative aspect-[29/34] w-16 overflow-hidden rounded-specimen border border-paper-text bg-paper-surface"
+                              : "relative aspect-[29/34] w-16 overflow-hidden rounded-specimen border border-paper-borderSoft bg-paper-surface"
+                          }
+                        >
+                          {!!image.url && (
                             <Image
                               src={image.url}
                               priority={false}
                               className="absolute inset-0"
-                              alt={`Product image ${index + 1}`}
+                              alt=""
                               fill
-                              sizes="(max-width: 576px) 280px, (max-width: 768px) 360px, (max-width: 992px) 480px, 800px"
+                              sizes="64px"
                               style={{
                                 objectFit: "cover",
                               }}
                             />
-                          )
-                        )}
-                      </Container>
-                    )
-                  })}
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div>
