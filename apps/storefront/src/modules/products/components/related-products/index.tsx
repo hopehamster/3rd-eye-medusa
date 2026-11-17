@@ -132,6 +132,73 @@ async function fetchRelated(
   }
 }
 
+const POCKET_PRICE_CENTS = 1000 // $10
+const SPECIMEN_PRICE_CENTS = 2500 // $25
+
+function cheapestAmount(product: HttpTypes.StoreProduct): number | null {
+  const { cheapestPrice } = getProductPrice({ product })
+  return cheapestPrice ? cheapestPrice.calculated_price_number : null
+}
+
+function RelatedCard({
+  relatedProduct,
+}: {
+  relatedProduct: HttpTypes.StoreProduct
+}) {
+  const { cheapestPrice } = getProductPrice({
+    product: relatedProduct,
+  })
+  return (
+    <li>
+      <LocalizedClientLink
+        href={`/products/${relatedProduct.handle}`}
+        className="group block"
+      >
+        <div className="specimen-card p-3 transition-colors group-hover:border-paper-accent">
+          <div className="relative aspect-[4/5] w-full overflow-hidden bg-paper-surface rounded-soft">
+            {relatedProduct.thumbnail && (
+              <Image
+                src={relatedProduct.thumbnail}
+                alt={relatedProduct.title ?? ""}
+                fill
+                sizes="(max-width: 768px) 50vw, 25vw"
+                style={{ objectFit: "cover" }}
+              />
+            )}
+          </div>
+          <p className="mt-3 font-display text-[15px] leading-snug text-paper-text group-hover:text-paper-accent transition-colors">
+            {relatedProduct.title}
+          </p>
+          {cheapestPrice && (
+            <p className="mt-1 text-sm text-paper-muted">
+              {cheapestPrice.calculated_price}
+            </p>
+          )}
+          <QuickAdd
+            product={relatedProduct}
+            testId="cross-sell-add"
+            label="Add to cart"
+          />
+        </div>
+      </LocalizedClientLink>
+    </li>
+  )
+}
+
+function RelatedGrid({
+  products,
+}: {
+  products: HttpTypes.StoreProduct[]
+}) {
+  return (
+    <ul className="grid grid-cols-2 medium:grid-cols-4 gap-5">
+      {products.map((relatedProduct) => (
+        <RelatedCard key={relatedProduct.id} relatedProduct={relatedProduct} />
+      ))}
+    </ul>
+  )
+}
+
 export default async function RelatedProducts({
   product,
   countryCode,
@@ -142,53 +209,63 @@ export default async function RelatedProducts({
     return null
   }
 
+  // Price tiers (issue #314, Fix 7): a pairing from a far-apart price
+  // tier is not presented as a peer in the same unlabelled row. The
+  // selection itself (fetchRelated above) is unchanged and no item
+  // is dropped — the disparate tier is grouped under its own visible
+  // subheading inside the module. Prices are the cheapest variant's
+  // calculated amount, in cents, which both this fetch and the PDP
+  // page query already carry (*variants.calculated_price).
+  // - Main product $25 or more: pairings under $10 render under
+  //   "Small Additions".
+  // - Main product under $10 (mirror case): pairings at $25 or more
+  //   render under "Specimen Pieces", not as casual add-ons.
+  // - Otherwise (main product $10-$24.99, or no price data): every
+  //   pairing renders as a peer, exactly as before. A pairing with
+  //   no price data always stays a peer — it cannot be shown to be
+  //   from a disparate tier.
+  const mainAmount = cheapestAmount(product)
+
+  let peers = related
+  let separate: HttpTypes.StoreProduct[] = []
+  let separateHeading: string | null = null
+
+  if (mainAmount != null && mainAmount >= SPECIMEN_PRICE_CENTS) {
+    peers = related.filter((p) => {
+      const amount = cheapestAmount(p)
+      return amount == null || amount >= POCKET_PRICE_CENTS
+    })
+    separate = related.filter((p) => {
+      const amount = cheapestAmount(p)
+      return amount != null && amount < POCKET_PRICE_CENTS
+    })
+    separateHeading = "Small Additions"
+  } else if (mainAmount != null && mainAmount < POCKET_PRICE_CENTS) {
+    peers = related.filter((p) => {
+      const amount = cheapestAmount(p)
+      return amount == null || amount < SPECIMEN_PRICE_CENTS
+    })
+    separate = related.filter((p) => {
+      const amount = cheapestAmount(p)
+      return amount != null && amount >= SPECIMEN_PRICE_CENTS
+    })
+    separateHeading = "Specimen Pieces"
+  }
+
   return (
     <div className="border-t border-paper-border pt-10 small:pt-14 font-humanist">
       <h2 className="font-display text-2xl text-paper-text font-normal tracking-tight mb-8">
         Pair it with
       </h2>
-      <ul className="grid grid-cols-2 medium:grid-cols-4 gap-5">
-        {related.map((relatedProduct) => {
-          const { cheapestPrice } = getProductPrice({
-            product: relatedProduct,
-          })
-          return (
-            <li key={relatedProduct.id}>
-              <LocalizedClientLink
-                href={`/products/${relatedProduct.handle}`}
-                className="group block"
-              >
-                <div className="specimen-card p-3 transition-colors group-hover:border-paper-accent">
-                  <div className="relative aspect-[4/5] w-full overflow-hidden bg-paper-surface rounded-soft">
-                    {relatedProduct.thumbnail && (
-                      <Image
-                        src={relatedProduct.thumbnail}
-                        alt={relatedProduct.title ?? ""}
-                        fill
-                        sizes="(max-width: 768px) 50vw, 25vw"
-                        style={{ objectFit: "cover" }}
-                      />
-                    )}
-                  </div>
-                  <p className="mt-3 font-display text-[15px] leading-snug text-paper-text group-hover:text-paper-accent transition-colors">
-                    {relatedProduct.title}
-                  </p>
-                  {cheapestPrice && (
-                    <p className="mt-1 text-sm text-paper-muted">
-                      {cheapestPrice.calculated_price}
-                    </p>
-                  )}
-                  <QuickAdd
-                    product={relatedProduct}
-                    testId="cross-sell-add"
-                    label="Add to cart"
-                  />
-                </div>
-              </LocalizedClientLink>
-            </li>
-          )
-        })}
-      </ul>
+      {peers.length > 0 && <RelatedGrid products={peers} />}
+      {separate.length > 0 && separateHeading && (
+        <>
+          <h3 className="font-display text-xl text-paper-text font-normal tracking-tight mt-10 mb-6">
+            {separateHeading}
+          </h3>
+          <RelatedGrid products={separate} />
+        </>
+      )}
     </div>
   )
 }
