@@ -248,8 +248,8 @@ export default function ProductActions({
           variant="primary"
           className={
             justAdded
-              ? "w-full h-10 bg-green-700 hover:bg-green-700"
-              : "w-full h-10"
+              ? "w-full h-11 bg-paper-accent hover:bg-paper-accent"
+              : "w-full h-11"
           }
           isLoading={isAdding}
           data-testid="add-product-button"

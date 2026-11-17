@@ -69,22 +69,25 @@ export default function ShelfProductCard({
         href={`/products/${product.handle}`}
         className="group block"
       >
-        <div className="specimen-card p-3 transition-all duration-300 group-hover:-translate-y-1 group-hover:border-paper-accent/50">
+        <div className="specimen-card p-3.5 transition-all duration-200 ease-out group-hover:-translate-y-[2px] group-hover:border-paper-accent group-hover:shadow-[0_4px_12px_rgba(35,32,27,0.06)]">
           <Thumbnail
             thumbnail={product.thumbnail}
             images={product.images}
             size="full"
-            className="!bg-paper-surface !shadow-none !rounded-none overflow-hidden"
+            className="!bg-paper-surface !shadow-none rounded-soft overflow-hidden border border-paper-borderSoft"
+            imageClassName="object-contain p-4"
           />
-          <div className="specimen-label mt-3 flex items-baseline justify-between gap-3 px-1">
-            <span>{product.title}</span>
+          <div className="mt-3 flex items-baseline justify-between gap-3 px-1">
+            <span className="font-display text-[16px] leading-snug text-paper-text">
+              {product.title}
+            </span>
             {cheapestPrice && (
-              <span className="shrink-0 font-humanist text-[15px] font-semibold">
+              <span className="shrink-0 text-[14px] font-semibold text-paper-accent">
                 {cheapestPrice.calculated_price}
               </span>
             )}
           </div>
-          <p className="specimen-meta px-1 pt-2">
+          <p className="px-1 border-t border-paper-borderSoft pt-2 mt-2 font-humanist text-[12px] text-paper-muted">
             {product.collection?.title ?? "Natural stone, as pictured"}
           </p>
           {/* Quick add (issue #187): the shelf product already carries its

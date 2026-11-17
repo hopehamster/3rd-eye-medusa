@@ -196,7 +196,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                   <div className="w-full flex justify-end pr-6">
                     <button
                       onClick={close}
-                      className="bg-paper-raised w-12 h-12 rounded-full text-paper-text flex justify-center items-center"
+                      className="bg-paper-raised w-12 h-12 rounded-specimen text-paper-text flex justify-center items-center"
                       data-testid="close-modal-button"
                     >
                       <X />

@@ -50,26 +50,26 @@ const SearchHit = ({ hit, index = 0, onNavigate }: SearchHitProps) => {
       <LocalizedClientLink
         href={`/products/${hit.handle}`}
         onClick={onNavigate}
-        className="flex items-center gap-x-4 px-4 py-3 hover:bg-ui-bg-base-hover"
+        className="group flex items-center gap-x-4 px-4 py-3 hover:bg-paper-surface transition-colors"
         data-testid="search-hit-link"
       >
-        <div className="relative h-16 w-14 shrink-0 overflow-hidden rounded-rounded bg-ui-bg-subtle">
+        <div className="relative h-16 w-14 shrink-0 overflow-hidden rounded-soft border border-paper-borderSoft bg-paper-surface">
           {hit.thumbnail ? (
             <Image
               src={hit.thumbnail}
               alt=""
               fill
               sizes="56px"
-              className="object-cover object-center"
+className="object-contain object-center p-1 transition-transform duration-300 group-hover:scale-[1.02]"
               draggable={false}
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center text-ui-fg-muted">
+            <div className="flex h-full w-full items-center justify-center text-paper-muted">
               <PlaceholderImage size={20} />
             </div>
           )}
         </div>
-        <Text className="txt-medium text-ui-fg-base line-clamp-2">
+        <Text className="font-display text-[16px] leading-snug text-paper-text line-clamp-2">
           {hit.title}
         </Text>
       </LocalizedClientLink>

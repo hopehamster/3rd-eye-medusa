@@ -66,7 +66,7 @@ export default function StoreHitQuickAdd({ handle }: { handle: string }) {
   }, [handle, countryCode])
 
   if (!loaded) {
-    return <div className="w-full h-9 mt-3" aria-hidden="true" />
+    return <div className="w-full h-11 mt-3" aria-hidden="true" />
   }
 
   if (!product) {

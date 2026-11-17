@@ -15,7 +15,7 @@ import BestSellerCard from "./best-seller-card"
  * catalog-wide; this row inherits the new shots automatically.
  *
  * Photo zoom on hover (issue #215): each card is a BestSellerCard —
- * hovering it grows its photo to about 105% inside its frame, same
+ * hovering it grows its photo slightly inside its frame, same
  * zoom as the store tiles. See best-seller-card.tsx for the motion
  * and reduced-motion handling.
  */

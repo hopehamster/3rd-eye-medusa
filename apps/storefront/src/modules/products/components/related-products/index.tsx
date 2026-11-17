@@ -158,23 +158,24 @@ export default async function RelatedProducts({
                 href={`/products/${relatedProduct.handle}`}
                 className="group block"
               >
-                <div className="specimen-card p-3 transition-colors group-hover:border-paper-accent">
-                  <div className="relative aspect-[4/5] w-full overflow-hidden bg-paper-surface rounded-soft">
+                <div className="specimen-card p-3.5 transition-all duration-200 ease-out group-hover:-translate-y-[2px] group-hover:border-paper-accent group-hover:shadow-[0_4px_12px_rgba(35,32,27,0.06)]">
+                  <div className="relative aspect-[4/5] w-full overflow-hidden bg-paper-surface border border-paper-borderSoft rounded-soft">
                     {relatedProduct.thumbnail && (
                       <Image
                         src={relatedProduct.thumbnail}
                         alt={relatedProduct.title ?? ""}
                         fill
                         sizes="(max-width: 768px) 50vw, 25vw"
-                        style={{ objectFit: "cover" }}
+                        style={{ objectFit: "contain" }}
+                        className="p-4 transition-transform duration-300 group-hover:scale-[1.02]"
                       />
                     )}
                   </div>
-                  <p className="mt-3 font-display text-[15px] leading-snug text-paper-text group-hover:text-paper-accent transition-colors">
+                  <p className="mt-3 font-display text-[16px] leading-snug text-paper-text">
                     {relatedProduct.title}
                   </p>
                   {cheapestPrice && (
-                    <p className="mt-1 text-sm text-paper-muted">
+                    <p className="mt-1.5 text-[14px] font-semibold text-paper-accent">
                       {cheapestPrice.calculated_price}
                     </p>
                   )}

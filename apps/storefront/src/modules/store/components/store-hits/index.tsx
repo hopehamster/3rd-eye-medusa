@@ -107,7 +107,10 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
                   href={`/products/${hit.handle}`}
                   className="group"
                 >
-                  <div data-testid="product-wrapper">
+                  <div
+                    data-testid="product-wrapper"
+                    className="bg-paper-raised border border-paper-border rounded-specimen p-3.5 transition-all duration-200 ease-out group-hover:border-paper-accent group-hover:-translate-y-[2px] group-hover:shadow-[0_4px_12px_rgba(35,32,27,0.06)]"
+                  >
                     {/* Tiles fade in and rise a few pixels, staggered down
                         the grid (issue #203). Same quiet pattern as Reveal:
                         opacity + a small rise, easeOut, under half a
@@ -129,10 +132,15 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
                           : Math.min(index * 0.03, 0.3),
                       }}
                     >
-                      <Thumbnail thumbnail={hit.thumbnail} size="full" />
-                      <div className="flex txt-compact-medium mt-4 justify-between">
+                      <Thumbnail
+                        thumbnail={hit.thumbnail}
+                        size="full"
+                        className="!bg-paper-surface !shadow-none rounded-soft overflow-hidden border border-paper-borderSoft"
+                        imageClassName="object-contain p-4"
+                      />
+                      <div className="flex mt-3 justify-between items-baseline gap-3">
                         <Text
-                          className="text-base text-ui-fg-subtle"
+                          className="font-display text-[16px] leading-snug text-paper-text"
                           data-testid="product-title"
                         >
                           {hit.title}

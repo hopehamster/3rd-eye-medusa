@@ -29,15 +29,15 @@ const QuantityStepper: React.FC<QuantityStepperProps> = ({
     quantity >= maxQuantity
 
   const buttonClass = clx(
-    "w-10 h-10 flex items-center justify-center text-large-regular text-paper-text",
+    "w-10 h-full flex items-center justify-center text-paper-muted",
     "disabled:text-paper-faint disabled:cursor-not-allowed",
-    "hover:bg-paper-surface transition-colors"
+    "hover:text-paper-text hover:bg-paper-surface transition-colors"
   )
 
   return (
     <div className="flex items-center gap-x-3" data-testid="quantity-stepper">
-      <span className="text-sm text-paper-text">Quantity</span>
-      <div className="flex items-center border border-paper-border bg-paper-raised rounded-rounded overflow-hidden">
+      <span className="font-humanist text-[12px] font-medium text-paper-muted">Quantity</span>
+      <div className="inline-flex items-center border border-paper-border bg-paper-raised rounded-specimen h-11 overflow-hidden">
         <button
           type="button"
           aria-label="Decrease quantity"
@@ -51,7 +51,7 @@ const QuantityStepper: React.FC<QuantityStepperProps> = ({
         <span
           data-testid="quantity-value"
           aria-live="polite"
-          className="w-10 text-center text-small-regular text-paper-text"
+          className="w-12 self-stretch flex items-center justify-center text-center font-humanist font-semibold text-[14px] text-paper-text border-x border-paper-border"
         >
           {quantity}
         </span>
