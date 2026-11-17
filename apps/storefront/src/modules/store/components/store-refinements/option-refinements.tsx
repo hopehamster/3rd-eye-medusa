@@ -6,7 +6,7 @@ import clsx from "clsx"
 import { useState } from "react"
 import { useRefinementList } from "react-instantsearch"
 
-import { OPTION_VALUES_ATTRIBUTE } from "./attributes"
+import { OPTION_VALUES_ATTRIBUTE, facetDisplayName } from "./attributes"
 
 const FACET_LIMIT = 200
 
@@ -26,6 +26,12 @@ function groupItems(
   const groups = new Map<string, OptionGroup>()
 
   for (const item of items) {
+    // Zero-count facet values match nothing in the current result set and
+    // do not render; a group left with no values drops out below.
+    if (item.count <= 0) {
+      continue
+    }
+
     const separator = item.label.indexOf(":")
 
     if (separator < 1) {
@@ -97,7 +103,7 @@ const OptionRefinements = () => {
               <Accordion.Trigger className="flex w-full items-center justify-between py-3 text-left">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium text-ui-fg-base">
-                    {group.title}
+                    {facetDisplayName(group.title)}
                   </span>
                   <span className="text-sm text-ui-fg-muted">
                     ({selectedCount})
@@ -131,7 +137,7 @@ const OptionRefinements = () => {
                     )}
                     data-testid="option-refinement"
                   >
-                    {value.label}
+                    {facetDisplayName(value.label)}
                     <span className="text-ui-fg-muted">({value.count})</span>
                   </button>
                 ))}

@@ -9,6 +9,7 @@ import {
   CATEGORY_ATTRIBUTE,
   LABELS_ATTRIBUTE,
   OPTION_VALUES_ATTRIBUTE,
+  facetDisplayName,
 } from "./attributes"
 
 type Refinement = ReturnType<
@@ -27,10 +28,10 @@ function refinementLabel(refinement: Refinement, currencyCode: string) {
     const separator = String(value).indexOf(":")
 
     return separator < 1
-      ? label
-      : `${String(value).slice(0, separator)}: ${String(value).slice(
-          separator + 1
-        )}`
+      ? facetDisplayName(label)
+      : `${facetDisplayName(
+          String(value).slice(0, separator)
+        )}: ${facetDisplayName(String(value).slice(separator + 1))}`
   }
 
   if (attribute === priceAttribute("on_sale", currencyCode)) {
@@ -50,14 +51,14 @@ function refinementLabel(refinement: Refinement, currencyCode: string) {
   }
 
   if (attribute === CATEGORY_ATTRIBUTE) {
-    return `Category: ${label}`
+    return `Category: ${facetDisplayName(label)}`
   }
 
   if (attribute === LABELS_ATTRIBUTE) {
-    return `Label: ${label}`
+    return `Label: ${facetDisplayName(label)}`
   }
 
-  return label
+  return facetDisplayName(label)
 }
 
 /**
