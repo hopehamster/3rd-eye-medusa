@@ -14,7 +14,7 @@ const GuidesPreview = async () => {
   }
 
   return (
-    <div className="content-container py-16">
+    <div className="content-container py-16 small:py-24">
       <div className="text-center mb-10">
         <p className="text-xs uppercase tracking-widest text-cosmos-gold mb-2">
           From the canon
