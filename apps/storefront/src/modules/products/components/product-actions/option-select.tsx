@@ -25,6 +25,17 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
     new Set((option.values ?? []).map((v) => v.value))
   )
 
+  // Fix 6 (issue #312): a lone "Default" value is Medusa's placeholder
+  // for a product with no real variants — suppress the selector
+  // entirely instead of rendering it as a pill. A "Default" value
+  // alongside real values, and any real value on its own, still renders.
+  if (
+    filteredOptions.length === 1 &&
+    filteredOptions[0].toLowerCase() === "default"
+  ) {
+    return null
+  }
+
   return (
     <div className="flex flex-col gap-y-3">
       <span className="text-sm">Select {title}</span>
@@ -39,9 +50,9 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
               onClick={() => updateOption(option.id, v)}
               key={v}
               className={clx(
-                "border-ui-border-base bg-ui-bg-subtle border text-small-regular h-10 rounded-rounded p-2 flex-1 ",
+                "bg-[#FFFDF7] border border-[#D9CFBB] text-[#23201B] text-small-regular h-10 rounded-[3px] p-2 flex-1",
                 {
-                  "border-ui-border-interactive": v === current,
+                  "shadow-[inset_0_0_0_1px_#23201B]": v === current,
                   "hover:shadow-elevation-card-rest transition-shadow ease-in-out duration-150":
                     v !== current,
                 }

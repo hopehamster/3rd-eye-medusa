@@ -11,6 +11,15 @@ type ImageGalleryProps = {
   images: HttpTypes.StoreProductImage[]
   title: string
   handle: string
+  /**
+   * Whether the product has a real 3D model asset, decided by the
+   * caller from the product data (see hasReal3DModel in
+   * crystal-viewer/stone-profile.ts). Defaults to false: with no real
+   * model there is no "View in 3D" toggle at all (Fix 5, issue #312) —
+   * the photos render directly and the crystal-viewer code stays
+   * intact for a product that genuinely gains a model.
+   */
+  has3DModel?: boolean
 }
 
 type GalleryTab = "photos" | "3d"
@@ -51,9 +60,17 @@ type GalleryTab = "photos" | "3d"
  * no aria-controls pointing at an unmounted panel). Native button
  * keyboard behaviour (Tab, Enter/Space) is the whole contract.
  */
-const ImageGallery = ({ images, title, handle }: ImageGalleryProps) => {
+const ImageGallery = ({
+  images,
+  title,
+  handle,
+  has3DModel = false,
+}: ImageGalleryProps) => {
   const [activeTab, setActiveTab] = useState<GalleryTab>("photos")
   const prefersReducedMotion = useReducedMotion()
+  // With no real 3D model the 3D view can never be shown, whatever
+  // the tab state says — the photos are the only view.
+  const show3D = has3DModel && activeTab === "3d"
 
   return (
     <div
@@ -61,6 +78,7 @@ const ImageGallery = ({ images, title, handle }: ImageGalleryProps) => {
       data-testid="product-gallery"
     >
       <div className="flex flex-col flex-1 gap-y-4">
+        {has3DModel && (
         <div className="flex gap-x-2 border-b border-paper-borderSoft pb-3">
           <button
             type="button"
@@ -89,10 +107,11 @@ const ImageGallery = ({ images, title, handle }: ImageGalleryProps) => {
             View in 3D
           </button>
         </div>
+        )}
         <div className="grid">
           <AnimatePresence initial={false}>
             <motion.div
-              key={activeTab}
+              key={show3D ? "3d" : "photos"}
               className="[grid-area:1/1]"
               initial={prefersReducedMotion ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -102,7 +121,7 @@ const ImageGallery = ({ images, title, handle }: ImageGalleryProps) => {
                 ease: "easeInOut",
               }}
             >
-              {activeTab === "photos" ? (
+              {!show3D ? (
                 <div className="flex flex-col gap-y-4">
                   {images.map((image, index) => {
                     return (

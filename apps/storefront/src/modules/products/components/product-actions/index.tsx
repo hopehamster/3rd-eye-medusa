@@ -200,11 +200,21 @@ export default function ProductActions({
     }
   }, [])
 
+  // Fix 6 (issue #312): a single variant titled "Default" is Medusa's
+  // placeholder, not a real choice — never render a selector for it.
+  // (The > 1 check below already excludes single-variant products;
+  // this names the brief's condition explicitly, and OptionSelect
+  // suppresses a lone "Default" option value at component level too.)
+  const isSingleDefaultVariant =
+    product.variants?.length === 1 &&
+    (product.variants[0].title ?? "").toLowerCase() === "default"
+
   return (
     <>
       <div className="flex flex-col gap-y-2" ref={actionsRef}>
         <div>
-          {(product.variants?.length ?? 0) > 1 && (
+          {!isSingleDefaultVariant &&
+            (product.variants?.length ?? 0) > 1 && (
             <div className="flex flex-col gap-y-4">
               {(product.options || []).map((option) => {
                 return (

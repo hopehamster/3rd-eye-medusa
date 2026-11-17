@@ -1,6 +1,7 @@
 import React, { Suspense } from "react"
 
 import ImageGallery from "@modules/products/components/image-gallery"
+import { hasReal3DModel } from "@modules/products/components/crystal-viewer/stone-profile"
 import BuyBoxTrust from "@modules/products/components/buy-box-trust"
 import ProductActions from "@modules/products/components/product-actions"
 import ProductTabs from "@modules/products/components/product-tabs"
@@ -60,6 +61,12 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
               images={images}
               title={product.title}
               handle={product.handle ?? ""}
+              has3DModel={hasReal3DModel(
+                (product.metadata ?? null) as Record<
+                  string,
+                  unknown
+                > | null
+              )}
             />
           </div>
           <div className="order-1 w-full small:order-2 small:w-[380px] medium:w-[420px] shrink-0 small:sticky small:top-28 flex flex-col gap-y-8">
