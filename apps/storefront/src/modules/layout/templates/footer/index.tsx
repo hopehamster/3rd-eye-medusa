@@ -153,7 +153,7 @@ export default async function Footer() {
                       href="/guides"
                       className="hover:text-cosmos-goldBright transition-colors"
                     >
-                      Guides
+                      Canon
                     </FooterLiftLink>
                   </li>
                 </ul>
