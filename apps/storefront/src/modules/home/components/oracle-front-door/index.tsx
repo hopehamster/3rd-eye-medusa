@@ -39,18 +39,25 @@ const OracleFrontDoor = () => {
             </LocalizedClientLink>
           </div>
 
-          <div>
-            <p className="font-humanist text-sm font-semibold uppercase tracking-wide text-paper-raised/70">
+          {/* Fix 8 (issue #315): the sample prompts read as a numbered
+              index on a raised cream card — a printed catalog index, not
+              chatbot chips. Presentation only: same prompts, same order,
+              same /oracle links. */}
+          <div className="rounded-specimen border border-paper-border bg-paper-raised p-6 text-paper-text small:p-8">
+            <p className="font-humanist text-sm font-semibold uppercase tracking-wide text-paper-muted">
               People actually ask
             </p>
-            <ul className="mt-4 divide-y divide-paper-raised/20 border-y border-paper-raised/20">
-              {SAMPLE_QUESTIONS.map((q) => (
+            <ul className="mt-2 divide-y divide-paper-borderSoft">
+              {SAMPLE_QUESTIONS.map((q, i) => (
                 <li key={q}>
                   <LocalizedClientLink
                     href="/oracle"
-                    className="block py-4 font-display text-lg leading-snug text-paper-raised transition-colors duration-200 hover:text-paper-accentSoft"
+                    className="flex items-baseline gap-4 py-4 font-display text-lg leading-snug text-paper-text transition-colors duration-200 hover:text-paper-accent"
                   >
-                    {q}
+                    <span className="font-humanist text-xs font-semibold uppercase tracking-wider text-paper-faint">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span>{q}</span>
                   </LocalizedClientLink>
                 </li>
               ))}
