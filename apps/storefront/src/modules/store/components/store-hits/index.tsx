@@ -109,7 +109,7 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
                 >
                   <div
                     data-testid="product-wrapper"
-                    className="bg-paper-raised border border-paper-border rounded-specimen p-3.5 transition-all duration-200 ease-out group-hover:border-paper-accent group-hover:-translate-y-[2px] group-hover:shadow-[0_4px_12px_rgba(35,32,27,0.06)]"
+                    className="bg-paper-raised border border-paper-border rounded-specimen p-3.5 transition-colors duration-150 group-hover:border-paper-accent"
                   >
                     {/* Tiles fade in and rise a few pixels, staggered down
                         the grid (issue #203). Same quiet pattern as Reveal:

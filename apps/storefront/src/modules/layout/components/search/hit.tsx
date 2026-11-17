@@ -60,7 +60,7 @@ const SearchHit = ({ hit, index = 0, onNavigate }: SearchHitProps) => {
               alt=""
               fill
               sizes="56px"
-className="object-contain object-center p-1 transition-transform duration-300 group-hover:scale-[1.02]"
+className="object-contain object-center p-1"
               draggable={false}
             />
           ) : (

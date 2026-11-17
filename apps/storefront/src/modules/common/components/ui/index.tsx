@@ -159,7 +159,7 @@ export const IconBadge = forwardRef<HTMLSpanElement, IconBadgeProps>(
       <span
         ref={ref}
         className={clsx(
-          "inline-flex items-center justify-center rounded-full bg-gray-100 p-1",
+          "inline-flex items-center justify-center rounded-specimen bg-paper-surface p-1",
           className
         )}
         {...props}
@@ -416,7 +416,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           type="checkbox"
           id={id}
           className={clsx(
-            "h-4 w-4 rounded-soft border-paper-border text-paper-accent focus:ring-paper-accent",
+            "h-4 w-4 rounded-specimen border-paper-border text-paper-accent focus:ring-paper-accent",
             className
           )}
           {...props}

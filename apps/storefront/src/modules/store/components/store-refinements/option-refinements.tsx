@@ -121,10 +121,11 @@ const OptionRefinements = () => {
                     onClick={() => refine(value.value)}
                     aria-pressed={value.isRefined}
                     className={clsx(
-                      "bg-paper-raised border-paper-border text-paper-muted border text-[12px] font-medium px-3 py-1.5 rounded-specimen flex items-center gap-x-1.5 transition-colors hover:border-paper-text",
+                      "bg-paper-raised border-paper-border text-paper-muted border text-[12px] font-medium px-3 py-1.5 rounded-specimen flex items-center gap-x-1.5 transition-colors",
                       {
                         "bg-paper-accentSoft border-paper-accent text-paper-accent font-semibold hover:border-paper-accent":
                           value.isRefined,
+                        "hover:border-paper-text": !value.isRefined,
                       }
                     )}
                     data-testid="option-refinement"

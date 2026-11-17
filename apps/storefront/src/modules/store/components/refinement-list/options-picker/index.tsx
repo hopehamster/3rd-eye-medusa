@@ -137,10 +137,11 @@ const OptionsPicker = ({
                         key={value.id}
                         onClick={() => toggleValue(value.id)}
                         className={clsx(
-                          "bg-paper-raised border-paper-border text-paper-muted border text-[12px] font-medium px-3 py-1.5 rounded-specimen flex items-center gap-x-1.5 transition-colors hover:border-paper-text relative overflow-hidden",
+                          "bg-paper-raised border-paper-border text-paper-muted border text-[12px] font-medium px-3 py-1.5 rounded-specimen flex items-center gap-x-1.5 transition-colors relative overflow-hidden",
                           {
                             "bg-paper-accentSoft border-paper-accent text-paper-accent font-semibold hover:border-paper-accent":
                               isSelected,
+                            "hover:border-paper-text": !isSelected,
                           }
                         )}
                         aria-pressed={isSelected}

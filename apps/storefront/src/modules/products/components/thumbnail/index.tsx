@@ -62,7 +62,9 @@ const ImageOrPlaceholder = ({
       src={image}
       alt="Thumbnail"
       className={clx(
-        "absolute inset-0 object-cover object-center",
+        imageClassName
+          ? "absolute inset-0 object-center"
+          : "absolute inset-0 object-cover object-center",
         imageClassName
       )}
       draggable={false}
