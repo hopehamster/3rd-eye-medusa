@@ -1,8 +1,6 @@
 "use client"
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
-import { clx } from "@modules/common/components/ui"
-
 import { getProductPrice } from "@lib/util/get-product-price"
 import SkeletonShimmer from "@modules/skeletons/components/skeleton-shimmer"
 import { HttpTypes } from "@medusajs/types"
@@ -63,12 +61,8 @@ export default function ProductPrice({
     selectedPrice.original_price_number > selectedPrice.calculated_price_number
 
   return (
-    <div className="flex flex-col text-paper-text">
-      <span
-        className={clx("text-xl-semi", {
-          "text-paper-accent": isSale,
-        })}
-      >
+    <div className="flex flex-col text-paper-text border-b border-paper-borderSoft pb-5">
+      <span className="text-[22px] font-semibold text-paper-accent">
         {!variant && "From "}
         <AnimatePresence initial={false} mode="popLayout">
           <motion.span

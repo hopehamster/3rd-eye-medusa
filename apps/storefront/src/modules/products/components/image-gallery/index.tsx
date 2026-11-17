@@ -61,7 +61,7 @@ const ImageGallery = ({ images, title, handle }: ImageGalleryProps) => {
       data-testid="product-gallery"
     >
       <div className="flex flex-col flex-1 gap-y-4">
-        <div className="flex gap-x-2 border-b border-paper-borderSoft pb-3">
+        <div className="inline-flex self-start border border-paper-border rounded-specimen p-0.5 bg-paper-surface">
           <button
             type="button"
             data-testid="gallery-tab-photos"
@@ -69,8 +69,8 @@ const ImageGallery = ({ images, title, handle }: ImageGalleryProps) => {
             onClick={() => setActiveTab("photos")}
             className={
               activeTab === "photos"
-                ? "rounded-full border border-paper-borderSoft bg-paper-surface px-4 py-1.5 font-humanist text-sm text-paper-text"
-                : "rounded-full border border-transparent px-4 py-1.5 font-humanist text-sm text-paper-muted"
+                ? "rounded-soft bg-paper-raised text-paper-text font-semibold text-[11px] px-3 py-1"
+                : "rounded-soft text-paper-muted text-[11px] px-3 py-1"
             }
           >
             Photos
@@ -82,8 +82,8 @@ const ImageGallery = ({ images, title, handle }: ImageGalleryProps) => {
             onClick={() => setActiveTab("3d")}
             className={
               activeTab === "3d"
-                ? "rounded-full border border-paper-borderSoft bg-paper-surface px-4 py-1.5 font-humanist text-sm text-paper-text"
-                : "rounded-full border border-transparent px-4 py-1.5 font-humanist text-sm text-paper-muted"
+                ? "rounded-soft bg-paper-raised text-paper-text font-semibold text-[11px] px-3 py-1"
+                : "rounded-soft text-paper-muted text-[11px] px-3 py-1"
             }
           >
             View in 3D
@@ -108,12 +108,12 @@ const ImageGallery = ({ images, title, handle }: ImageGalleryProps) => {
                     return (
                       <Container
                         key={image.id}
-                        className="relative aspect-[29/34] w-full overflow-hidden bg-paper-surface border border-paper-borderSoft rounded-specimen"
+                        className="relative aspect-[4/5] w-full overflow-hidden bg-paper-surface border border-paper-border rounded-specimen"
                         id={image.id}
                       >
                         {!!image.url && index === 0 ? (
                           <motion.div
-                            className="absolute inset-0"
+                            className="absolute inset-8"
                             whileHover={
                               prefersReducedMotion
                                 ? undefined
@@ -135,17 +135,19 @@ const ImageGallery = ({ images, title, handle }: ImageGalleryProps) => {
                           </motion.div>
                         ) : (
                           !!image.url && (
-                            <Image
-                              src={image.url}
-                              priority={false}
-                              className="absolute inset-0"
-                              alt={`Product image ${index + 1}`}
-                              fill
-                              sizes="(max-width: 576px) 280px, (max-width: 768px) 360px, (max-width: 992px) 480px, 800px"
-                              style={{
-                                objectFit: "cover",
-                              }}
-                            />
+                            <div className="absolute inset-8">
+                              <Image
+                                src={image.url}
+                                priority={false}
+                                className="absolute inset-0"
+                                alt={`Product image ${index + 1}`}
+                                fill
+                                sizes="(max-width: 576px) 280px, (max-width: 768px) 360px, (max-width: 992px) 480px, 800px"
+                                style={{
+                                  objectFit: "cover",
+                                }}
+                              />
+                            </div>
                           )
                         )}
                       </Container>

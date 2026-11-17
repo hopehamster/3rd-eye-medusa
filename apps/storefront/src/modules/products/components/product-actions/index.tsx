@@ -227,46 +227,48 @@ export default function ProductActions({
 
         <ProductPrice product={product} variant={selectedVariant} />
 
-        {selectedVariant && (
-          <QuantityStepper
-            quantity={quantity}
-            onChange={setQuantity}
-            maxQuantity={maxQuantity}
-            disabled={!!disabled || isAdding || !inStock}
-          />
-        )}
-
-        <Button
-          onClick={handleAddToCart}
-          disabled={
-            !inStock ||
-            !selectedVariant ||
-            !!disabled ||
-            isAdding ||
-            !isValidVariant
-          }
-          variant="primary"
-          className={
-            justAdded
-              ? "w-full h-10 bg-green-700 hover:bg-green-700"
-              : "w-full h-10"
-          }
-          isLoading={isAdding}
-          data-testid="add-product-button"
-        >
-          {justAdded ? (
-            <>
-              <CheckCircleMiniSolid className="w-4 h-4" />
-              Added
-            </>
-          ) : !selectedVariant ? (
-            "Select variant"
-          ) : !inStock || !isValidVariant ? (
-            "Out of stock"
-          ) : (
-            "Add to cart"
+        <div className="flex gap-3 items-center">
+          {selectedVariant && (
+            <QuantityStepper
+              quantity={quantity}
+              onChange={setQuantity}
+              maxQuantity={maxQuantity}
+              disabled={!!disabled || isAdding || !inStock}
+            />
           )}
-        </Button>
+
+          <Button
+            onClick={handleAddToCart}
+            disabled={
+              !inStock ||
+              !selectedVariant ||
+              !!disabled ||
+              isAdding ||
+              !isValidVariant
+            }
+            variant="primary"
+            className={
+              justAdded
+                ? "flex-1 h-10 bg-green-700 hover:bg-green-700"
+                : "flex-1 h-10"
+            }
+            isLoading={isAdding}
+            data-testid="add-product-button"
+          >
+            {justAdded ? (
+              <>
+                <CheckCircleMiniSolid className="w-4 h-4" />
+                Added
+              </>
+            ) : !selectedVariant ? (
+              "Select variant"
+            ) : !inStock || !isValidVariant ? (
+              "Out of stock"
+            ) : (
+              "Add to cart"
+            )}
+          </Button>
+        </div>
         <MobileActions
           product={product}
           variant={selectedVariant}

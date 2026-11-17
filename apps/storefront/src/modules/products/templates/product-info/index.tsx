@@ -89,7 +89,7 @@ const ProductInfo = ({ product, part = "all" }: ProductInfoProps) => {
       {product.collection && (
         <LocalizedClientLink
           href={`/collections/${product.collection.handle}`}
-          className="text-sm text-paper-muted underline decoration-paper-border underline-offset-4 hover:text-paper-accent transition-colors"
+          className="inline-block self-start font-humanist text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.18em] text-paper-accent bg-paper-raised border border-paper-border px-2 py-0.5 rounded-soft hover:text-paper-accentBright transition-colors"
         >
           {product.collection.title}
         </LocalizedClientLink>
@@ -98,7 +98,7 @@ const ProductInfo = ({ product, part = "all" }: ProductInfoProps) => {
       <div>
         <Heading
           level="h1"
-          className="font-display text-4xl small:text-[2.75rem] leading-[1.1] text-paper-text font-normal tracking-tight"
+          className="font-display text-[28px] sm:text-[32px] leading-tight text-paper-text font-normal"
           data-testid="product-title"
         >
           {product.title}
