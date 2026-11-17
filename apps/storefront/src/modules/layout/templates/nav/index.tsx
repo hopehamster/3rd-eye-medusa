@@ -18,9 +18,9 @@ export default async function Nav() {
   ])
 
   return (
-    <div className="sticky top-0 inset-x-0 z-50 group">
+    <div className="sticky top-0 inset-x-0 z-40 group">
       <ShrinkingHeader>
-        <nav className="content-container txt-xsmall-plus text-cosmos-muted flex items-center justify-between w-full h-full text-small-regular">
+        <nav className="content-container txt-xsmall-plus font-humanist text-paper-muted flex items-center justify-between w-full h-full text-small-regular">
           <div className="flex-1 basis-0 h-full flex items-center">
             <div className="h-full">
               <SideMenu
@@ -31,32 +31,44 @@ export default async function Nav() {
             </div>
             <div className="hidden small:flex items-center gap-x-6 h-full ml-2">
               <LocalizedClientLink
-                className="hover:text-cosmos-text transition-colors text-[13px] tracking-wide"
+                className="font-humanist text-[12px] font-semibold uppercase tracking-[0.14em] text-paper-muted hover:text-paper-accent px-3 py-2 transition-colors"
                 href="/store"
                 data-testid="nav-shop-link"
               >
-                <span className="text-cosmos-faint mr-1">I.</span> Stones
+                <span className="inline-block font-humanist text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.18em] text-paper-accent bg-paper-raised border border-paper-border px-2 py-0.5 rounded-soft mr-1.5">
+                  I.
+                </span>{" "}
+                Stones
               </LocalizedClientLink>
               <LocalizedClientLink
-                className="hover:text-cosmos-text transition-colors text-[13px] tracking-wide"
+                className="font-humanist text-[12px] font-semibold uppercase tracking-[0.14em] text-paper-muted hover:text-paper-accent px-3 py-2 transition-colors"
                 href="/oracle"
                 data-testid="nav-oracle-link"
               >
-                <span className="text-cosmos-faint mr-1">II.</span> Oracle
+                <span className="inline-block font-humanist text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.18em] text-paper-accent bg-paper-raised border border-paper-border px-2 py-0.5 rounded-soft mr-1.5">
+                  II.
+                </span>{" "}
+                Oracle
               </LocalizedClientLink>
               <LocalizedClientLink
-                className="hover:text-cosmos-text transition-colors text-[13px] tracking-wide"
+                className="font-humanist text-[12px] font-semibold uppercase tracking-[0.14em] text-paper-muted hover:text-paper-accent px-3 py-2 transition-colors"
                 href="/guides"
                 data-testid="nav-guides-link"
               >
-                <span className="text-cosmos-faint mr-1">III.</span> Canon
+                <span className="inline-block font-humanist text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.18em] text-paper-accent bg-paper-raised border border-paper-border px-2 py-0.5 rounded-soft mr-1.5">
+                  III.
+                </span>{" "}
+                Canon
               </LocalizedClientLink>
               <LocalizedClientLink
-                className="hover:text-cosmos-text transition-colors text-[13px] tracking-wide"
+                className="font-humanist text-[12px] font-semibold uppercase tracking-[0.14em] text-paper-muted hover:text-paper-accent px-3 py-2 transition-colors"
                 href="/ritual-builder"
                 data-testid="nav-ritual-link"
               >
-                <span className="text-cosmos-faint mr-1">IV.</span> Rituals
+                <span className="inline-block font-humanist text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.18em] text-paper-accent bg-paper-raised border border-paper-border px-2 py-0.5 rounded-soft mr-1.5">
+                  IV.
+                </span>{" "}
+                Rituals
               </LocalizedClientLink>
             </div>
           </div>
@@ -64,17 +76,17 @@ export default async function Nav() {
           <div className="flex items-center h-full">
             <LocalizedClientLink
               href="/"
-              className="font-display text-xl tracking-[0.18em] text-cosmos-text hover:text-cosmos-goldBright transition-colors"
+              className="font-display text-[20px] tracking-tight font-medium text-paper-text hover:text-paper-accent transition-colors"
               data-testid="nav-store-link"
             >
-              3RD EYE <span className="text-cosmos-gold">SUPPLY</span>
+              3RD EYE <span className="text-paper-accent">SUPPLY</span>
             </LocalizedClientLink>
           </div>
 
           <div className="flex items-center gap-x-6 h-full flex-1 basis-0 justify-end">
             <div className="hidden small:flex items-center gap-x-6 h-full">
               <LocalizedClientLink
-                className="hover:text-cosmos-text transition-colors text-[13px] tracking-wide"
+                className="font-humanist text-[12px] font-semibold uppercase tracking-[0.14em] text-paper-muted hover:text-paper-accent px-3 py-2 transition-colors"
                 href="/account"
                 data-testid="nav-account-link"
               >
@@ -84,7 +96,7 @@ export default async function Nav() {
             <Suspense
               fallback={
                 <LocalizedClientLink
-                  className="hover:text-cosmos-text transition-colors flex gap-2 text-[13px] tracking-wide"
+                  className="border border-paper-border bg-paper-raised rounded-specimen px-2.5 py-1 text-[11px] font-semibold text-paper-text hover:border-paper-accent transition-colors flex gap-2"
                   href="/cart"
                   data-testid="nav-cart-link"
                 >
