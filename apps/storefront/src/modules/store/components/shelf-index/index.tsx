@@ -33,15 +33,17 @@ export default async function ShelfIndex({
   return (
     <section className="paper-grain bg-paper-bg text-paper-text">
       <div className="content-container relative z-[2] pb-10 pt-12">
-        <h2 className="font-display text-4xl font-light tracking-tight small:text-5xl">
-          What are you shopping for?
-        </h2>
-        <p className="mt-3 max-w-xl font-humanist text-[16px] leading-relaxed text-paper-muted">
-          Every piece in the shop lives on a shelf. Start with the one that
-          sounds like your week, or skip straight to the full catalog below.
-        </p>
+        <div className="bg-paper-surface border border-paper-border rounded-specimen px-6 py-5 mb-8">
+          <h2 className="font-display text-4xl font-light tracking-tight small:text-5xl">
+            What are you shopping for?
+          </h2>
+          <p className="mt-3 max-w-xl font-humanist text-[16px] leading-relaxed text-paper-muted">
+            Every piece in the shop lives on a shelf. Start with the one that
+            sounds like your week, or skip straight to the full catalog below.
+          </p>
+        </div>
 
-        <div className="mt-9 grid grid-cols-2 gap-5 small:grid-cols-3">
+        <div className="grid grid-cols-2 gap-5 small:grid-cols-3">
           {SHELVES.map((shelf) => {
             const media = getShelfCardMedia(products, shelf)
             const count = filterShelfProducts(products, shelf).length
@@ -67,17 +69,19 @@ export default async function ShelfIndex({
                   )}
                   <div className="p-4">
                     {media && (
-                      <p className="specimen-meta mb-1">
+                      <p className="inline-block font-humanist text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.18em] text-paper-accent bg-paper-raised border border-paper-border px-2 py-0.5 rounded-soft mb-1">
                         {media.title}
                         {media.material ? ` — ${media.material}` : ""}
                       </p>
                     )}
-                    <p className="font-display text-[22px] leading-tight group-hover:text-paper-accent">
+                    <p className="font-display text-[24px] sm:text-[28px] font-normal text-paper-text leading-tight group-hover:text-paper-accent inline-block mr-3">
                       {shelf.label}
                     </p>
-                    <p className="specimen-meta mt-1">{shelf.headline}</p>
+                    <p className="font-display italic text-[14px] text-paper-muted mt-1 block">
+                      {shelf.headline}
+                    </p>
                     <p
-                      className="specimen-meta mt-1 font-semibold text-paper-text"
+                      className="inline-block font-humanist text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.18em] text-paper-accent bg-paper-raised border border-paper-border px-2 py-0.5 rounded-soft mt-2"
                       data-testid="shelf-count"
                     >
                       {count} {count === 1 ? "piece" : "pieces"}

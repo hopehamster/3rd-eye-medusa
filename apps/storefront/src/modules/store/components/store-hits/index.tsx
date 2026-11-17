@@ -69,7 +69,7 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
         <SkeletonProductGrid numberOfProducts={hitsPerPage} />
       ) : !items.length ? (
         <div
-          className="py-16 text-center text-ui-fg-subtle"
+          className="border border-paper-border bg-paper-surface rounded-specimen p-12 text-center text-paper-muted max-w-lg mx-auto my-12"
           data-testid="no-products"
         >
           {/* Two very different situations used to look identical here: a
@@ -97,7 +97,7 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
         </div>
       ) : (
         <ul
-          className="grid grid-cols-2 w-full small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8"
+          className="grid grid-cols-2 w-full min-h-[420px] small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8"
           data-testid="products-list"
         >
           {items.map((hit, index) =>

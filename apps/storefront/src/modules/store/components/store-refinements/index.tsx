@@ -32,7 +32,7 @@ const SortProducts = ({ currencyCode }: { currencyCode: string }) => {
 
 const StoreRefinements = ({ currencyCode }: { currencyCode: string }) => {
   return (
-    <div className="flex flex-col gap-12 py-4 mb-8 small:px-0 pl-6 small:w-[250px] small:shrink-0 small:ml-[1.675rem]">
+    <div className="flex flex-col gap-12 bg-paper-raised border border-paper-border rounded-specimen px-4 py-3 mb-8 small:w-[250px] small:shrink-0 small:ml-[1.675rem]">
       <SortProducts currencyCode={currencyCode} />
       <CurrentRefinements currencyCode={currencyCode} />
       <OptionRefinements />

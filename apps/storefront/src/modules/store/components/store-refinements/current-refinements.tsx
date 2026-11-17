@@ -105,11 +105,11 @@ const CurrentRefinements = ({ currencyCode }: { currencyCode: string }) => {
               <button
                 onClick={() => refine(refinement)}
                 aria-label={`Remove filter ${label}`}
-                className="border-ui-border-interactive text-ui-fg-base border text-sm h-8 rounded-rounded px-3 flex items-center gap-x-1.5 transition-colors duration-150 hover:bg-ui-bg-base-hover"
+                className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-paper-accentSoft border border-paper-accent text-paper-accent text-[11px] font-medium font-humanist rounded-specimen transition-colors duration-150 hover:border-paper-accent"
                 data-testid="remove-refinement"
               >
                 {label}
-                <XMarkMini className="text-ui-fg-muted" />
+                <XMarkMini className="text-paper-accent" />
               </button>
             </li>
           )
