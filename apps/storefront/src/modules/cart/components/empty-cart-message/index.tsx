@@ -8,15 +8,18 @@ import InteractiveLink from "@modules/common/components/interactive-link"
 
 /**
  * Empty cart illustration (issue #224): a faint line drawing of a
- * stone fades in above the text, so the empty cart is not bare text.
- * Quiet and short: one 0.4s fade, easeOut, inside the house limit.
+ * stone above the text, so the empty cart is not bare text.
+ *
+ * The whole message fades in gently (issue #252) instead of snapping
+ * in. Quiet and short: one 0.4s fade, easeOut, inside the house limit.
  *
  * Reduced motion: this is a client component, so it can read the OS
  * preference with useReducedMotion (the #240 pattern). When reduced
- * motion is preferred the drawing renders statically with no motion
- * props at all — a true no-op, not an instant fade. MotionConfig
- * reducedMotion="user" alone is not enough: framer-motion would still
- * run the fade, just instantly. The guard is the missing animation.
+ * motion is preferred the fade is skipped entirely (initial={false}),
+ * so the message renders statically — a true no-op, not an instant
+ * fade. MotionConfig reducedMotion="user" alone is not enough:
+ * framer-motion would still run the fade, just instantly. The guard
+ * is the missing animation.
  *
  * The drawing is an inline SVG, not an image asset: one pebble
  * outline plus a single facet line, stroked in the subtle foreground
@@ -48,18 +51,14 @@ const EmptyCartMessage = () => {
   )
 
   return (
-    <div className="py-48 px-2 flex flex-col justify-center items-start" data-testid="empty-cart-message">
-      {prefersReducedMotion ? (
-        illustration
-      ) : (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-        >
-          {illustration}
-        </motion.div>
-      )}
+    <motion.div
+      className="py-48 px-2 flex flex-col justify-center items-start"
+      data-testid="empty-cart-message"
+      initial={prefersReducedMotion ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+    >
+      {illustration}
       <Heading
         level="h1"
         className="flex flex-row text-3xl-regular gap-x-2 items-baseline"
@@ -73,7 +72,7 @@ const EmptyCartMessage = () => {
       <div>
         <InteractiveLink href="/store">Explore products</InteractiveLink>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
