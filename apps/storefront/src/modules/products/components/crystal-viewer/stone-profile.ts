@@ -267,3 +267,30 @@ export function getStoneProfile(title = "", handle = ""): StoneProfile {
   }
   return { ...CLEAR_QUARTZ, name: title.trim() || "Clear quartz" }
 }
+
+/**
+ * Whether a product has a REAL 3D model asset (Fix 5, issue #312).
+ *
+ * getStoneProfile above is NOT a model-existence signal: it always
+ * returns a procedural profile for any title/handle, falling back to
+ * clear quartz, and CrystalViewer renders that procedural study — no
+ * product carries an actual model file. A real model exists only when
+ * the product's metadata names one in one of these fields, with a
+ * non-empty URL string. No product sets any of them today, so this
+ * returns false for every current product and the gallery must not
+ * offer a "View in 3D" toggle for them. The viewer code itself is
+ * kept intact for a product that genuinely gains a model.
+ */
+const MODEL_URL_FIELDS = ["model_url", "model_3d_url", "glb_url"] as const
+
+export function hasReal3DModel(
+  metadata: Record<string, unknown> | null | undefined
+): boolean {
+  if (!metadata) {
+    return false
+  }
+  return MODEL_URL_FIELDS.some((field) => {
+    const value = metadata[field]
+    return typeof value === "string" && value.trim().length > 0
+  })
+}

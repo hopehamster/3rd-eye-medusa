@@ -3,6 +3,7 @@ import Image from "next/image"
 import { HttpTypes } from "@medusajs/types"
 
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import ShelfCount from "@modules/store/components/shelf-count"
 import ShelfProductCard from "@modules/store/components/shelf-product-card"
 import {
   filterShelfProductsByForm,
@@ -118,22 +119,19 @@ export default function ShelfTemplate({
 
       {/* Products */}
       <section className="content-container relative z-[2] pb-14">
-        <div className="flex items-baseline justify-between pb-4 pt-2">
-          <h2 className="font-display text-3xl font-light">
+        <div className="bg-paper-surface border border-paper-border rounded-specimen px-6 py-5 mb-8 flex items-baseline justify-between">
+          <h2 className="font-display text-[24px] sm:text-[28px] font-normal text-paper-text inline-block mr-3">
             The {shelf.label.toLowerCase()} shelf
           </h2>
-          <span
-            className="font-humanist text-sm text-paper-muted"
-            data-testid="shelf-count"
-          >
-            {isFiltering
-              ? `${visible.length} of ${products.length} ${
-                  products.length === 1 ? "piece" : "pieces"
-                }`
-              : `${products.length} ${
-                  products.length === 1 ? "piece" : "pieces"
-                }`}
-          </span>
+          {/* Piece count (issue #217): a client component so the number
+              counts up or down to its new value when a filter changes
+              it, instead of swapping instantly. The template stays a
+              server component. */}
+          <ShelfCount
+            visible={visible.length}
+            total={products.length}
+            isFiltering={isFiltering}
+          />
         </div>
         <div className="paper-hairline" />
 
@@ -196,20 +194,20 @@ export default function ShelfTemplate({
         <Form
           action={`/store/shelf/${shelf.intent}`}
           key={`${form ?? ""}|${sort}|${maxPrice ?? ""}`}
-          className="mt-6 flex flex-wrap items-end gap-4"
+          className="mt-6 bg-paper-raised border border-paper-border rounded-specimen px-4 py-3 mb-8 flex flex-wrap items-center justify-between gap-4"
           data-testid="shelf-controls"
         >
           {form && <input type="hidden" name="form" value={form} />}
           {maxPrice !== null && !showPriceFilter && (
             <input type="hidden" name="maxPrice" value={String(maxPrice)} />
           )}
-          <label className="font-humanist text-sm text-paper-muted">
+          <label className="font-humanist text-[11px] uppercase tracking-wider font-semibold text-paper-faint mr-2">
             Sort
             <select
               name="sort"
               defaultValue={sort}
               data-testid="shelf-sort"
-              className="ml-2 border border-paper-border bg-paper-surface px-3 py-2 font-humanist text-sm text-paper-text"
+              className="ml-2 border border-paper-border bg-paper-bg rounded-specimen px-3 py-1.5 text-[12px] font-medium font-humanist text-paper-text hover:border-paper-accent"
             >
               {SHELF_SORTS.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -219,13 +217,13 @@ export default function ShelfTemplate({
             </select>
           </label>
           {showPriceFilter && (
-            <label className="font-humanist text-sm text-paper-muted">
+            <label className="font-humanist text-[11px] uppercase tracking-wider font-semibold text-paper-faint mr-2">
               Price
               <select
                 name="maxPrice"
                 defaultValue={maxPrice === null ? "" : String(maxPrice)}
                 data-testid="shelf-price-filter"
-                className="ml-2 border border-paper-border bg-paper-surface px-3 py-2 font-humanist text-sm text-paper-text"
+                className="ml-2 border border-paper-border bg-paper-bg rounded-specimen px-3 py-1.5 text-[12px] font-medium font-humanist text-paper-text hover:border-paper-accent"
               >
                 <option value="">Any price</option>
                 {priceCutoffs.map((cutoff) => (
@@ -251,7 +249,7 @@ export default function ShelfTemplate({
         </Form>
 
         {visible.length ? (
-          <ul className="mt-8 grid w-full grid-cols-2 gap-x-6 gap-y-8 small:grid-cols-3 medium:grid-cols-4">
+          <ul className="mt-8 grid w-full min-h-[420px] grid-cols-2 gap-x-6 gap-y-8 small:grid-cols-3 medium:grid-cols-4">
             {/* Keyed by product id, never by position: the key is what
                 keeps each card's identity across a filter/sort change,
                 so the cards glide to their new spots instead of
@@ -267,7 +265,7 @@ export default function ShelfTemplate({
           </ul>
         ) : products.length ? (
           <p
-            className="mt-8 font-humanist text-paper-muted"
+            className="my-12 border border-paper-border bg-paper-surface rounded-specimen p-12 text-center font-humanist text-paper-muted max-w-lg mx-auto"
             data-testid="shelf-no-results"
           >
             No pieces match these filters.{" "}
@@ -280,7 +278,7 @@ export default function ShelfTemplate({
             .
           </p>
         ) : (
-          <p className="mt-8 font-humanist text-paper-muted">
+          <p className="my-12 border border-paper-border bg-paper-surface rounded-specimen p-12 text-center font-humanist text-paper-muted max-w-lg mx-auto">
             This shelf is being restocked. The{" "}
             <LocalizedClientLink
               href="/store"

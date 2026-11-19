@@ -63,8 +63,8 @@ export default function ShrinkingHeader({
       transition={{ duration: 0.3, ease: "easeOut" }}
       className={`relative h-16 mx-auto border-b duration-200 ${
         shrunk
-          ? "bg-cosmos-bg border-cosmos-borderSoft"
-          : "bg-cosmos-bg/90 backdrop-blur-md border-cosmos-borderSoft"
+          ? "bg-paper-bg border-paper-border"
+          : "bg-paper-bg/95 backdrop-blur-sm border-paper-border"
       }`}
     >
       {children}

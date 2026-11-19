@@ -2,6 +2,7 @@ import { getBaseURL } from "@lib/util/env"
 import { Metadata } from "next"
 import { Fraunces, Inter } from "next/font/google"
 import FilmGrain from "@modules/common/components/film-grain"
+import ScrollProgress from "@modules/common/components/scroll-progress"
 import ScrollReset from "@modules/common/components/scroll-reset"
 import PostHogProvider from "@modules/analytics/components/posthog-provider"
 import "styles/globals.css"
@@ -53,6 +54,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
         <PostHogProvider>
           <ScrollReset />
           <FilmGrain />
+          <ScrollProgress />
           {/*
             Issue #149: the app shell is a height-locked flex column. <main> is
             the only scroll area and takes whatever height the consent band

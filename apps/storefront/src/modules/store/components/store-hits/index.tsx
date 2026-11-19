@@ -68,10 +68,19 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
       {showSkeleton ? (
         <SkeletonProductGrid numberOfProducts={hitsPerPage} />
       ) : !items.length ? (
-        <div
-          className="py-16 text-center text-ui-fg-subtle"
+        <motion.div
+          className="border border-paper-border bg-paper-surface rounded-specimen p-12 text-center text-paper-muted max-w-lg mx-auto my-12"
           data-testid="no-products"
+          initial={prefersReducedMotion ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
         >
+          {/* The no-matching-products message fades in gently (issue
+              #252) instead of snapping in. Quiet and short: one 0.4s
+              fade, easeOut, inside the house limit. With reduced motion
+              preferred, no entrance at all: initial={false} renders it
+              immediately (the #240 pattern) — a true no-op, not an
+              instant fade. */}
           {/* Two very different situations used to look identical here: a
               filter that matched nothing, and a search index that was never
               built (no VOYAGE_API_KEY => /store renders empty while the
@@ -94,10 +103,10 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
               </Text>
             </>
           )}
-        </div>
+        </motion.div>
       ) : (
         <ul
-          className="grid grid-cols-2 w-full small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8"
+          className="grid grid-cols-2 w-full min-h-[420px] small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8"
           data-testid="products-list"
         >
           {items.map((hit, index) =>
@@ -107,7 +116,10 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
                   href={`/products/${hit.handle}`}
                   className="group"
                 >
-                  <div data-testid="product-wrapper">
+                  <div
+                    data-testid="product-wrapper"
+                    className="bg-paper-raised border border-paper-border rounded-specimen p-3.5 transition-colors duration-150 group-hover:border-paper-accent"
+                  >
                     {/* Tiles fade in and rise a few pixels, staggered down
                         the grid (issue #203). Same quiet pattern as Reveal:
                         opacity + a small rise, easeOut, under half a
@@ -129,10 +141,15 @@ const StoreHits = ({ hitsPerPage, currencyCode }: StoreHitsProps) => {
                           : Math.min(index * 0.03, 0.3),
                       }}
                     >
-                      <Thumbnail thumbnail={hit.thumbnail} size="full" />
-                      <div className="flex txt-compact-medium mt-4 justify-between">
+                      <Thumbnail
+                        thumbnail={hit.thumbnail}
+                        size="full"
+                        className="!bg-paper-surface !shadow-none rounded-soft overflow-hidden border border-paper-borderSoft"
+                        imageClassName="object-contain p-4"
+                      />
+                      <div className="flex mt-3 justify-between items-baseline gap-3">
                         <Text
-                          className="text-base text-ui-fg-subtle"
+                          className="font-display text-[16px] leading-snug text-paper-text"
                           data-testid="product-title"
                         >
                           {hit.title}

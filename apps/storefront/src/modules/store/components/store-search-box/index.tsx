@@ -45,8 +45,8 @@ const StoreSearchBox = () => {
      300ms, under the half-second house rule; reduced-motion visitors
      get the same state instantly via motion-reduce. */
   return (
-    <div className="mb-6 flex items-center gap-x-3 border-b border-ui-border-base transition-[border-color,box-shadow] duration-300 ease-out focus-within:border-paper-accent focus-within:ring focus-within:ring-paper-accent/15 motion-reduce:transition-none">
-      <MagnifyingGlass className="shrink-0 text-ui-fg-muted" />
+    <div className="mb-6 flex items-center gap-x-3 border-b border-paper-border transition-[border-color,box-shadow] duration-300 ease-out focus-within:border-paper-accent focus-within:ring focus-within:ring-paper-accent/15 motion-reduce:transition-none">
+      <MagnifyingGlass className="shrink-0 text-paper-muted" />
       <input
         type="search"
         value={inputValue}
@@ -56,7 +56,7 @@ const StoreSearchBox = () => {
         }}
         placeholder="Search products"
         aria-label="Search products"
-        className="text-base w-full bg-transparent py-3 text-ui-fg-base outline-none placeholder:text-ui-fg-muted [&::-webkit-search-cancel-button]:hidden"
+        className="text-base w-full bg-transparent py-3 text-paper-text outline-none placeholder:text-paper-faint [&::-webkit-search-cancel-button]:hidden"
         data-testid="store-search-input"
       />
       {inputValue && (
@@ -64,7 +64,7 @@ const StoreSearchBox = () => {
           type="button"
           onClick={clear}
           aria-label="Clear search"
-          className="shrink-0 text-ui-fg-muted hover:text-ui-fg-base"
+          className="shrink-0 text-paper-muted hover:text-paper-text"
           data-testid="store-search-clear"
         >
           <XMarkMini />

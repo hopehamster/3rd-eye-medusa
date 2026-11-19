@@ -8,22 +8,10 @@ import QuickAdd from "@modules/products/components/quick-add"
 import ProductPreviewMotion from "./product-preview-motion"
 
 /**
- * Tile photo zoom on hover (issue #213): the photo grows to about 105%
- * inside its frame while the pointer is over the tile, and settles back
- * on mouse-out. The motion lives in the "use client"
- * ProductPreviewMotion wrapper, which carries whileHover on the tile
- * and the scale variants on the photo.
- *
- * Reduced motion: this file is an async server component, so the
- * useReducedMotion hook cannot run here (it needs useState, which
- * does not exist in a server render). ProductPreviewMotion calls the
- * hook and leaves whileHover off when the visitor prefers reduced
- * motion, so there is no zoom at all for them — the same hook-gated
- * pattern the best-sellers row (issue #215) uses. Do not "fix" this
- * by wrapping the tile in MotionConfig reducedMotion="user" instead:
- * that only forces the transition type to false for transform values,
- * which applies the final scale keyframe immediately, so the photo
- * would still jump to 105% on hover, instantly.
+ * Card hover is zero-motion (appearance addendum, Delta 4): the
+ * earlier issue #213 tile photo zoom, card lift and hover shadow are
+ * removed. The only hover effect is the card border colour transition,
+ * which lives in the "use client" ProductPreviewMotion wrapper.
  */
 export default async function ProductPreview({
   product,
@@ -48,13 +36,14 @@ export default async function ProductPreview({
               images={product.images}
               size="full"
               isFeatured={isFeatured}
-              className="!bg-cosmos-raised !shadow-none rounded-base overflow-hidden"
+              className="!bg-paper-surface !shadow-none rounded-soft overflow-hidden border border-paper-borderSoft"
+              imageClassName="object-contain p-4"
             />
           }
         >
-          <div className="flex txt-compact-medium mt-4 justify-between items-baseline px-1 pb-1">
+          <div className="flex mt-3 justify-between items-baseline gap-3 px-1 pb-1">
             <Text
-              className="text-cosmos-text font-display text-[17px] tracking-wide group-hover:text-cosmos-goldBright transition-colors duration-300"
+              className="text-paper-text font-display text-[16px] leading-snug"
               data-testid="product-title"
             >
               {product.title}

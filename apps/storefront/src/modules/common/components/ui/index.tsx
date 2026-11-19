@@ -82,14 +82,16 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || isLoading}
         className={clsx(
-          "inline-flex gap-2 items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-          variant === "primary" && "bg-black text-white hover:bg-gray-800",
+          "inline-flex gap-2 items-center justify-center rounded-specimen font-humanist font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-paper-accent focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+          variant === "primary" &&
+            "bg-paper-accent text-paper-raised text-[13px] font-semibold uppercase tracking-[0.08em] border border-[#24422D] hover:bg-[#24422D] hover:shadow-[0_2px_6px_rgba(46,83,57,0.25)] active:translate-y-[1px]",
           variant === "secondary" &&
-            "bg-white text-black border border-gray-200 hover:bg-gray-50",
-          variant === "transparent" && "bg-transparent hover:bg-gray-100",
-          size === "small" && "h-8 px-3 text-sm",
-          size === "medium" && "h-10 px-4",
-          size === "large" && "h-12 px-6 text-lg",
+            "bg-paper-raised text-paper-text text-[13px] font-semibold uppercase tracking-[0.08em] border border-paper-border hover:bg-paper-surface hover:border-paper-text",
+          variant === "transparent" &&
+            "bg-transparent text-paper-text text-[13px] hover:bg-paper-surface",
+          size === "small" && "h-9 px-4",
+          size === "medium" && "h-11 px-6",
+          size === "large" && "h-12 px-8",
           className
         )}
         {...props}
@@ -130,7 +132,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
       <span
         ref={ref}
         className={clsx(
-          "inline-flex items-center rounded-full px-2 py-1 text-xs font-medium",
+          "inline-flex items-center rounded-specimen px-2 py-1 text-xs font-medium",
           color === "green" && "bg-green-100 text-green-700",
           color === "red" && "bg-red-100 text-red-700",
           color === "blue" && "bg-blue-100 text-blue-700",
@@ -157,7 +159,7 @@ export const IconBadge = forwardRef<HTMLSpanElement, IconBadgeProps>(
       <span
         ref={ref}
         className={clsx(
-          "inline-flex items-center justify-center rounded-full bg-gray-100 p-1",
+          "inline-flex items-center justify-center rounded-specimen bg-paper-surface p-1",
           className
         )}
         {...props}
@@ -178,7 +180,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
       <button
         ref={ref}
         className={clsx(
-          "inline-flex items-center justify-center rounded-md p-2 hover:bg-gray-100 transition-colors focus-visible:outline-none focus-visible:ring-2",
+          "inline-flex items-center justify-center rounded-specimen p-2 text-paper-text hover:bg-paper-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-paper-accent",
           className
         )}
         {...props}
@@ -221,7 +223,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         <input
           ref={ref}
           className={clsx(
-            "flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+            "flex h-11 w-full rounded-specimen border border-paper-border bg-paper-raised px-3 py-2 text-sm text-paper-text placeholder:text-paper-faint focus:outline-none focus:ring-2 focus:ring-paper-accent focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
             className
           )}
           {...props}
@@ -384,7 +386,7 @@ const RadioGroupItem = forwardRef<HTMLInputElement, RadioGroupItemProps>(
           type="radio"
           id={id}
           className={clsx(
-            "h-4 w-4 border-gray-300 text-gray-900 focus:ring-gray-900",
+            "h-4 w-4 border-paper-border text-paper-accent focus:ring-paper-accent",
             className
           )}
           {...props}
@@ -414,7 +416,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           type="checkbox"
           id={id}
           className={clsx(
-            "h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900",
+            "h-4 w-4 rounded-specimen border-paper-border text-paper-accent focus:ring-paper-accent",
             className
           )}
           {...props}

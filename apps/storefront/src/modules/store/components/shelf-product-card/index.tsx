@@ -16,9 +16,9 @@ import Thumbnail from "@modules/products/components/thumbnail"
  * Glide on filter/sort (issue #201): the card is a motion element with
  * layout="position", so when the shelf reorders it glides to its new spot
  * instead of snapping there. The motion wrapper sits outside the link, so
- * the hover lift (Tailwind translate on the inner card) and the Quick Add
- * inside it are untouched — Framer Motion only writes transforms on the
- * wrapper. The glide only works because the shelf template keys each
+ * the card inside it and the Quick Add are untouched — Framer Motion
+ * only writes transforms on the wrapper. Card hover itself is
+ * zero-motion (appearance addendum, Delta 4): border colour only. The glide only works because the shelf template keys each
  * <li> by product id, so this component keeps its identity across a
  * filter/sort change instead of remounting.
  *
@@ -69,22 +69,25 @@ export default function ShelfProductCard({
         href={`/products/${product.handle}`}
         className="group block"
       >
-        <div className="specimen-card p-3 transition-all duration-300 group-hover:-translate-y-1 group-hover:border-paper-accent/50">
+        <div className="specimen-card p-3.5 transition-colors duration-150 group-hover:border-paper-accent">
           <Thumbnail
             thumbnail={product.thumbnail}
             images={product.images}
             size="full"
-            className="!bg-paper-surface !shadow-none !rounded-none overflow-hidden"
+            className="!bg-paper-surface !shadow-none rounded-soft overflow-hidden border border-paper-borderSoft"
+            imageClassName="object-contain p-4"
           />
-          <div className="specimen-label mt-3 flex items-baseline justify-between gap-3 px-1">
-            <span>{product.title}</span>
+          <div className="mt-3 flex items-baseline justify-between gap-3 px-1">
+            <span className="font-display text-[16px] leading-snug text-paper-text">
+              {product.title}
+            </span>
             {cheapestPrice && (
-              <span className="shrink-0 font-humanist text-[15px] font-semibold">
+              <span className="shrink-0 text-[14px] font-semibold text-paper-accent">
                 {cheapestPrice.calculated_price}
               </span>
             )}
           </div>
-          <p className="specimen-meta px-1 pt-2">
+          <p className="mt-2 inline-block font-humanist text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.18em] text-paper-accent bg-paper-raised border border-paper-border px-2 py-0.5 rounded-soft">
             {product.collection?.title ?? "Natural stone, as pictured"}
           </p>
           {/* Quick add (issue #187): the shelf product already carries its

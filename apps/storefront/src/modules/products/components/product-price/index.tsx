@@ -1,8 +1,6 @@
 "use client"
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
-import { clx } from "@modules/common/components/ui"
-
 import { getProductPrice } from "@lib/util/get-product-price"
 import SkeletonShimmer from "@modules/skeletons/components/skeleton-shimmer"
 import { HttpTypes } from "@medusajs/types"
@@ -13,6 +11,11 @@ import { HttpTypes } from "@medusajs/types"
 // crossfade (#200) shape: AnimatePresence with initial={false}, keyed
 // motion element, reduced motion respected.
 const PRICE_FADE_S = 0.3
+
+// Strike-through draw, seconds (issue #221). The line through the
+// original price draws itself left to right, under the half-second
+// house rule.
+const STRIKE_DRAW_S = 0.4
 
 /**
  * PDP price on the paper specimen panel.
@@ -31,8 +34,10 @@ const PRICE_FADE_S = 0.3
  * instantly. The price element is keyed by the displayed price string,
  * so the fade runs only on a real price change — same price, no motion —
  * and never on first load. With prefers-reduced-motion the swap is
- * instant, no fade. The compare-at block is not part of the fade;
- * it is owned by issue #221.
+ * instant, no fade. The compare-at block is not part of the fade; its
+ * strike-through draws itself left to right (issue #221), 0.4s, keyed
+ * by the original price so picking a different sale variant replays
+ * the draw. With prefers-reduced-motion the line is drawn instantly.
  */
 export default function ProductPrice({
   product,
@@ -63,12 +68,8 @@ export default function ProductPrice({
     selectedPrice.original_price_number > selectedPrice.calculated_price_number
 
   return (
-    <div className="flex flex-col text-paper-text">
-      <span
-        className={clx("text-xl-semi", {
-          "text-paper-accent": isSale,
-        })}
-      >
+    <div className="flex flex-col text-paper-text border-b border-paper-borderSoft pb-5">
+      <span className="text-[22px] font-semibold text-paper-accent">
         {!variant && "From "}
         <AnimatePresence initial={false} mode="popLayout">
           <motion.span
@@ -92,11 +93,23 @@ export default function ProductPrice({
           <p>
             <span className="text-paper-muted">Original: </span>
             <span
-              className="line-through"
+              className="relative inline-block"
               data-testid="original-product-price"
               data-value={selectedPrice.original_price_number}
             >
               {selectedPrice.original_price}
+              <motion.span
+                key={selectedPrice.original_price}
+                aria-hidden="true"
+                className="absolute left-0 top-1/2 h-px w-full bg-current"
+                initial={prefersReducedMotion ? false : { scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{
+                  duration: prefersReducedMotion ? 0 : STRIKE_DRAW_S,
+                  ease: "easeOut",
+                }}
+                style={{ transformOrigin: "left" }}
+              />
             </span>
           </p>
           <span className="text-paper-accent">

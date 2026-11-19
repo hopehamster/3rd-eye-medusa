@@ -25,9 +25,20 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
     new Set((option.values ?? []).map((v) => v.value))
   )
 
+  // Fix 6 (issue #312): a lone "Default" value is Medusa's placeholder
+  // for a product with no real variants — suppress the selector
+  // entirely instead of rendering it as a pill. A "Default" value
+  // alongside real values, and any real value on its own, still renders.
+  if (
+    filteredOptions.length === 1 &&
+    filteredOptions[0].toLowerCase() === "default"
+  ) {
+    return null
+  }
+
   return (
     <div className="flex flex-col gap-y-3">
-      <span className="text-sm">Select {title}</span>
+      <span className="text-sm font-humanist text-paper-text">Select {title}</span>
       <div
         className="flex flex-wrap justify-between gap-2"
         data-testid={dataTestId}
@@ -39,11 +50,11 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
               onClick={() => updateOption(option.id, v)}
               key={v}
               className={clx(
-                "border-ui-border-base bg-ui-bg-subtle border text-small-regular h-10 rounded-rounded p-2 flex-1 ",
+                "bg-paper-raised border-paper-border text-paper-muted border text-[12px] font-medium px-3 py-1.5 h-10 rounded-specimen flex-1 transition-colors",
                 {
-                  "border-ui-border-interactive": v === current,
-                  "hover:shadow-elevation-card-rest transition-shadow ease-in-out duration-150":
-                    v !== current,
+                  "bg-paper-accentSoft border-paper-accent text-paper-accent font-semibold":
+                    v === current,
+                  "hover:border-paper-text": v !== current,
                 }
               )}
               disabled={disabled}

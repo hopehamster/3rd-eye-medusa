@@ -200,11 +200,21 @@ export default function ProductActions({
     }
   }, [])
 
+  // Fix 6 (issue #312): a single variant titled "Default" is Medusa's
+  // placeholder, not a real choice — never render a selector for it.
+  // (The > 1 check below already excludes single-variant products;
+  // this names the brief's condition explicitly, and OptionSelect
+  // suppresses a lone "Default" option value at component level too.)
+  const isSingleDefaultVariant =
+    product.variants?.length === 1 &&
+    (product.variants[0].title ?? "").toLowerCase() === "default"
+
   return (
     <>
       <div className="flex flex-col gap-y-2" ref={actionsRef}>
         <div>
-          {(product.variants?.length ?? 0) > 1 && (
+          {!isSingleDefaultVariant &&
+            (product.variants?.length ?? 0) > 1 && (
             <div className="flex flex-col gap-y-4">
               {(product.options || []).map((option) => {
                 return (
@@ -227,46 +237,48 @@ export default function ProductActions({
 
         <ProductPrice product={product} variant={selectedVariant} />
 
-        {selectedVariant && (
-          <QuantityStepper
-            quantity={quantity}
-            onChange={setQuantity}
-            maxQuantity={maxQuantity}
-            disabled={!!disabled || isAdding || !inStock}
-          />
-        )}
-
-        <Button
-          onClick={handleAddToCart}
-          disabled={
-            !inStock ||
-            !selectedVariant ||
-            !!disabled ||
-            isAdding ||
-            !isValidVariant
-          }
-          variant="primary"
-          className={
-            justAdded
-              ? "w-full h-10 bg-green-700 hover:bg-green-700"
-              : "w-full h-10"
-          }
-          isLoading={isAdding}
-          data-testid="add-product-button"
-        >
-          {justAdded ? (
-            <>
-              <CheckCircleMiniSolid className="w-4 h-4" />
-              Added
-            </>
-          ) : !selectedVariant ? (
-            "Select variant"
-          ) : !inStock || !isValidVariant ? (
-            "Out of stock"
-          ) : (
-            "Add to cart"
+        <div className="flex gap-3 items-center">
+          {selectedVariant && (
+            <QuantityStepper
+              quantity={quantity}
+              onChange={setQuantity}
+              maxQuantity={maxQuantity}
+              disabled={!!disabled || isAdding || !inStock}
+            />
           )}
-        </Button>
+
+          <Button
+            onClick={handleAddToCart}
+            disabled={
+              !inStock ||
+              !selectedVariant ||
+              !!disabled ||
+              isAdding ||
+              !isValidVariant
+            }
+            variant="primary"
+            className={
+              justAdded
+                ? "flex-1 h-10 bg-paper-accent hover:bg-paper-accent"
+                : "flex-1 h-10"
+            }
+            isLoading={isAdding}
+            data-testid="add-product-button"
+          >
+            {justAdded ? (
+              <>
+                <CheckCircleMiniSolid className="w-4 h-4" />
+                Added
+              </>
+            ) : !selectedVariant ? (
+              "Select variant"
+            ) : !inStock || !isValidVariant ? (
+              "Out of stock"
+            ) : (
+              "Add to cart"
+            )}
+          </Button>
+        </div>
         <MobileActions
           product={product}
           variant={selectedVariant}

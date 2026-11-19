@@ -25,33 +25,34 @@ const FAQS = [
 
 const TrustFaq = () => {
   return (
-    <section className="bg-paper-bg paper-grain text-paper-text">
-      <div className="content-container relative z-[2] py-16 small:py-24">
-        <div className="grid grid-cols-1 gap-10 small:grid-cols-[1fr_1.4fr] small:gap-16">
-          <div>
-            <h2 className="font-display text-4xl font-light tracking-tight text-paper-text">
-              Asked at every crystal counter, ever.
-            </h2>
-            <p className="mt-4 max-w-md font-humanist text-base leading-7 text-paper-muted">
-              This shop works with suppliers and ships directly to you, and
-              we would rather say that plainly than dress it up. What you
-              are buying is natural stone, chosen on purpose, with a person
-              accountable for it on this end.
-            </p>
-          </div>
+    <section className="border-y border-paper-border bg-paper-surface paper-grain text-paper-text">
+      <div className="content-container relative z-[2] py-16">
+        <div className="mb-10">
+          <h2 className="text-center font-display text-[28px] text-paper-text">
+            Asked at every crystal counter, ever.
+          </h2>
+          <p className="mx-auto mt-4 max-w-md text-center font-humanist text-base leading-7 text-paper-muted">
+            This shop works with suppliers and ships directly to you, and
+            we would rather say that plainly than dress it up. What you
+            are buying is natural stone, chosen on purpose, with a person
+            accountable for it on this end.
+          </p>
+        </div>
 
-          <div className="divide-y divide-paper-borderSoft border-y border-paper-borderSoft">
-            {FAQS.map((item) => (
-              <details key={item.q} className="group py-5">
-                <summary className="cursor-pointer list-none font-display text-xl text-paper-text marker:hidden [&::-webkit-details-marker]:hidden">
-                  {item.q}
-                </summary>
-                <p className="mt-3 max-w-xl font-humanist text-base leading-7 text-paper-muted">
-                  {item.a}
-                </p>
-              </details>
-            ))}
-          </div>
+        <div className="mx-auto max-w-3xl">
+          {FAQS.map((item) => (
+            <details
+              key={item.q}
+              className="group mb-3 overflow-hidden rounded-specimen border border-paper-border bg-paper-raised"
+            >
+              <summary className="flex w-full cursor-pointer list-none items-center justify-between px-5 py-4 text-left font-display text-[16px] text-paper-text marker:hidden [&::-webkit-details-marker]:hidden">
+                {item.q}
+              </summary>
+              <p className="border-t border-paper-borderSoft bg-paper-raised px-5 pb-5 pt-4 font-humanist text-[14px] leading-relaxed text-paper-muted">
+                {item.a}
+              </p>
+            </details>
+          ))}
         </div>
       </div>
     </section>

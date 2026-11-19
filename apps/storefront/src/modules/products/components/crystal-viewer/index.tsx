@@ -12,9 +12,11 @@ import {
   type ReactNode,
 } from "react"
 import {
+  animate,
   useMotionValue,
   useReducedMotion,
   useSpring,
+  type AnimationPlaybackControls,
 } from "framer-motion"
 import { getStoneProfile } from "./stone-profile"
 
@@ -94,6 +96,15 @@ type CrystalViewerProps = {
 const MAX_TILT_X = 0.1
 const MAX_TILT_Y = 0.12
 
+/**
+ * Idle turntable (issue #229): the slow turn OrbitControls already does
+ * (autoRotateSpeed 0.9). On release the stone briefly turns a little
+ * faster, then eases back to the slow turn in half a second — never a snap.
+ */
+const IDLE_TURN_SPEED = 0.9
+const RELEASE_TURN_SPEED = 2.0
+const RELEASE_EASE_SECONDS = 0.5
+
 const CrystalViewer = ({ title, handle, fallbackImage }: CrystalViewerProps) => {
   const webgl = useWebGLAvailable()
   const profile = getStoneProfile(title, handle)
@@ -109,17 +120,47 @@ const CrystalViewer = ({ title, handle, fallbackImage }: CrystalViewerProps) => 
   const tiltY = useSpring(rotateY, { stiffness: 140, damping: 18, mass: 0.4 })
   const draggingRef = useRef(false)
 
+  // The turntable speed lives in a motion value (Framer Motion), read once
+  // per frame inside the Canvas (CrystalScene) — same pattern as the tilt,
+  // so speed changes never re-render the viewer. Reduced motion means no
+  // turn at all: the value starts at 0 and the release boost is skipped.
+  const rotateSpeed = useMotionValue(
+    prefersReducedMotion ? 0 : IDLE_TURN_SPEED
+  )
+  const easeBackRef = useRef<AnimationPlaybackControls | null>(null)
+
+  // If reduced motion is switched on mid-session, stop the turn outright.
+  useEffect(() => {
+    if (!prefersReducedMotion) return
+    easeBackRef.current?.stop()
+    rotateSpeed.set(0)
+  }, [prefersReducedMotion, rotateSpeed])
+
   // While the visitor drags, OrbitControls owns the stone: the tilt
   // eases back to level and pointer moves are ignored until release.
+  // The turntable stops under the hand, then on release briefly runs a
+  // little faster and eases back to its slow turn in half a second.
   const handleDragChange = useCallback(
     (dragging: boolean) => {
       draggingRef.current = dragging
       if (dragging) {
+        easeBackRef.current?.stop()
+        rotateSpeed.set(0)
         rotateX.set(0)
         rotateY.set(0)
+        return
       }
+      if (prefersReducedMotion) {
+        rotateSpeed.set(0)
+        return
+      }
+      rotateSpeed.set(RELEASE_TURN_SPEED)
+      easeBackRef.current = animate(rotateSpeed, IDLE_TURN_SPEED, {
+        duration: RELEASE_EASE_SECONDS,
+        ease: "easeOut",
+      })
     },
-    [rotateX, rotateY]
+    [prefersReducedMotion, rotateSpeed, rotateX, rotateY]
   )
 
   const handlePointerMove = useCallback(
@@ -179,6 +220,7 @@ const CrystalViewer = ({ title, handle, fallbackImage }: CrystalViewerProps) => 
               profile={profile}
               tiltX={tiltX}
               tiltY={tiltY}
+              rotateSpeed={rotateSpeed}
               onDragChange={handleDragChange}
             />
           </Suspense>

@@ -42,8 +42,8 @@ const Hero = ({ product }: { product: HttpTypes.StoreProduct | null }) => {
   const material = product?.material?.trim() || "natural stone"
 
   return (
-    <section className="bg-paper-bg paper-grain text-paper-text">
-      <div className="content-container relative z-[2] grid grid-cols-1 items-center gap-10 py-16 small:grid-cols-2 small:gap-14 small:py-24">
+    <section className="border-b border-paper-border bg-paper-bg paper-grain text-paper-text">
+      <div className="content-container relative z-[2] grid grid-cols-1 items-center gap-10 py-20 small:grid-cols-2 small:gap-14 sm:py-28">
         <div>
           <motion.div
             initial={
@@ -52,12 +52,12 @@ const Hero = ({ product }: { product: HttpTypes.StoreProduct | null }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
           >
-            <h1 className="font-display text-5xl font-light leading-[1.05] tracking-tight text-paper-text small:text-6xl">
+            <h1 className="font-display text-[48px] font-normal leading-[1.05] tracking-tight text-paper-text sm:text-[64px]">
               Real stones.
               <br />
               Plain talk.
             </h1>
-            <p className="mt-6 max-w-md font-humanist text-lg leading-8 text-paper-muted">
+            <p className="mt-6 max-w-md font-humanist text-[16px] leading-relaxed text-paper-muted sm:text-[18px]">
               Nothing promised but the stone itself. Bracelets, sets, and small
               ritual objects in natural stone. Every piece is described the way
               it actually is — color, cut, weight, and what people have
@@ -74,17 +74,17 @@ const Hero = ({ product }: { product: HttpTypes.StoreProduct | null }) => {
               ease: "easeOut",
               delay: prefersReducedMotion ? 0 : 0.5,
             }}
-            className="mt-9 flex flex-col gap-3 xsmall:flex-row xsmall:items-center"
+            className="mt-9 flex flex-wrap items-center gap-4"
           >
             <LocalizedClientLink
               href="/store"
-              className="inline-flex items-center justify-center bg-paper-accent px-7 py-3.5 font-humanist text-sm font-semibold tracking-wide text-paper-raised transition-colors duration-200 hover:bg-paper-accentBright"
+              className="inline-flex h-12 items-center justify-center rounded-specimen bg-paper-accent px-8 font-humanist text-[12px] font-semibold uppercase tracking-wider text-paper-raised transition-colors duration-200 hover:bg-[#24422D]"
             >
               Browse the shelves
             </LocalizedClientLink>
             <LocalizedClientLink
               href="/oracle"
-              className="inline-flex items-center justify-center border border-paper-border px-7 py-3.5 font-humanist text-sm font-semibold tracking-wide text-paper-text transition-colors duration-200 hover:border-paper-accent hover:text-paper-accent"
+              className="font-humanist text-[13px] font-semibold text-paper-accent underline decoration-paper-border underline-offset-4 hover:decoration-paper-accent"
             >
               Not sure where to begin?
             </LocalizedClientLink>
