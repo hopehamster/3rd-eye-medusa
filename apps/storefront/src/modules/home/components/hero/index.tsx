@@ -34,6 +34,15 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
  * runs on the photo wrapper inside the overflow-hidden card, so the
  * edges crop slightly as it grows. No glow effects. With reduced
  * motion the drift is off — the photo stays at 100%.
+ *
+ * Fountain background (issue #331, Michael's call): a generated video
+ * of a zen stone fountain — running water, ripples — plays behind the
+ * whole hero. The camera in the clip never moves and the end is
+ * blended into the start, so the loop has no visible seam. A paper
+ * overlay, stronger on the text side, keeps the headline readable.
+ * The headline, copy, buttons, and product card are unchanged. With
+ * reduced motion the video never plays — its still poster frame
+ * stands as the background instead.
  */
 const Hero = ({ product }: { product: HttpTypes.StoreProduct | null }) => {
   const prefersReducedMotion = useReducedMotion()
@@ -42,7 +51,37 @@ const Hero = ({ product }: { product: HttpTypes.StoreProduct | null }) => {
   const material = product?.material?.trim() || "natural stone"
 
   return (
-    <section className="bg-paper-bg paper-grain text-paper-text">
+    <section className="relative overflow-hidden bg-paper-bg paper-grain text-paper-text">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0"
+      >
+        {prefersReducedMotion ? (
+          <Image
+            src="/videos/zen-fountain-poster.jpg"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover"
+          />
+        ) : (
+          <video
+            className="h-full w-full object-cover"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            poster="/videos/zen-fountain-poster.jpg"
+          >
+            <source
+              src="/videos/zen-fountain-hero-loop.mp4"
+              type="video/mp4"
+            />
+          </video>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-r from-paper-bg/85 via-paper-bg/60 to-paper-bg/35" />
+      </div>
       <div className="content-container relative z-[2] grid grid-cols-1 items-center gap-10 py-16 small:grid-cols-2 small:gap-14 small:py-24">
         <div>
           <motion.div
