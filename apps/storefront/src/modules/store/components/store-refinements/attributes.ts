@@ -7,6 +7,20 @@ export const LABELS_ATTRIBUTE = "labels"
 // Metaphysical intent tags from product metadata (Oracle taxonomy).
 export const INTENTS_ATTRIBUTE = "intents"
 
+/**
+ * Display names for facet names and facet values at render time. The search
+ * index holds some raw supplier strings verbatim (ingested CJ Dropshipping
+ * titles); those must never surface in the sidebar as-is. This map is a
+ * presentation cleanup only — the indexed data itself is unchanged, and
+ * unknown names pass through untouched.
+ */
+export const FACET_DISPLAY_NAMES: Record<string, string> = {
+  "12 Zodiac Animal Small Round Pendant Cattle": "Zodiac Pendants",
+}
+
+export const facetDisplayName = (name: string): string =>
+  FACET_DISPLAY_NAMES[name] ?? name
+
 export const getSortOptions = (currencyCode: string) => {
   const minPrice = priceAttribute("min_price", currencyCode)
 

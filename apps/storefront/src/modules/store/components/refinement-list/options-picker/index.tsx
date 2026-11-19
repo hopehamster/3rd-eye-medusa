@@ -59,7 +59,7 @@ const OptionsPicker = ({
   return (
     <div className="flex flex-col gap-y-4">
       <div className="flex items-center justify-between px-1">
-        <span className="txt-compact-small-plus text-ui-fg-subtle">
+        <span className="txt-compact-small-plus font-humanist text-paper-muted">
           Options
         </span>
       </div>
@@ -108,16 +108,16 @@ const OptionsPicker = ({
               <Accordion.Header>
                 <Accordion.Trigger className="flex w-full items-center justify-between py-3 text-left">
                   <div className="flex items-center gap-2">
-                    <span className="txt-compact-small-plus text-ui-fg-base">
+                    <span className="txt-compact-small-plus font-humanist text-paper-text">
                       {option.title || "Option"}
                     </span>
-                    <span className="txt-compact-small-plus text-ui-fg-muted">
+                    <span className="txt-compact-small-plus text-paper-faint">
                       ({selectedCount})
                     </span>
                   </div>
                   <span
                     className={clsx(
-                      "flex h-7 w-7 items-center justify-center text-ui-fg-muted transition-transform duration-150",
+                      "flex h-7 w-7 items-center justify-center text-paper-muted transition-transform duration-150",
                       {
                         "rotate-180": isOpen,
                       }
@@ -137,12 +137,11 @@ const OptionsPicker = ({
                         key={value.id}
                         onClick={() => toggleValue(value.id)}
                         className={clsx(
-                          "border-ui-border-base border text-small-regular h-10 rounded-rounded px-3 flex items-center relative overflow-hidden transition-colors duration-150",
+                          "bg-paper-raised border-paper-border text-paper-muted border text-[12px] font-medium px-3 py-1.5 rounded-specimen flex items-center gap-x-1.5 transition-colors relative overflow-hidden",
                           {
-                            "border-ui-border-interactive text-ui-fg-base":
+                            "bg-paper-accentSoft border-paper-accent text-paper-accent font-semibold hover:border-paper-accent":
                               isSelected,
-                            "text-ui-fg-muted hover:text-ui-fg-base":
-                              !isSelected,
+                            "hover:border-paper-text": !isSelected,
                           }
                         )}
                         aria-pressed={isSelected}
@@ -159,7 +158,7 @@ const OptionsPicker = ({
                          */}
                         <motion.span
                           aria-hidden="true"
-                          className="absolute inset-0 bg-ui-bg-base-hover"
+                          className="absolute inset-0 bg-paper-accentSoft"
                           initial={false}
                           animate={{ scaleX: isSelected ? 1 : 0 }}
                           style={{ transformOrigin: "left center" }}

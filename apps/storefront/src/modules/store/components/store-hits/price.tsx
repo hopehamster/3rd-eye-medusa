@@ -37,15 +37,15 @@ const HitPrice = ({ hit, currencyCode }: HitPriceProps) => {
     <div className="flex items-center gap-x-2" data-testid="product-price">
       {!isRange && on_sale && original_price !== null && (
         <Text
-          className="line-through text-ui-fg-muted"
+          className="line-through text-paper-faint text-[14px]"
           data-testid="original-price"
         >
           {format(original_price)}
         </Text>
       )}
       <Text
-        className={clx("text-ui-fg-muted", {
-          "text-ui-tag-red-text": on_sale,
+        className={clx("text-[14px] font-semibold text-paper-accent", {
+          "text-paper-accent": on_sale,
         })}
         data-testid="price"
       >
