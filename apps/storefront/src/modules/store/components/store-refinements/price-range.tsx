@@ -55,7 +55,7 @@ const PriceRange = ({ currencyCode }: { currencyCode: string }) => {
 
   return (
     <div className="flex flex-col gap-y-4">
-      <span className="text-sm font-medium text-ui-fg-subtle">Price</span>
+      <span className="text-sm font-medium font-humanist text-paper-muted">Price</span>
 
       <div className="flex flex-col gap-y-3 pr-6">
         <Slider.Root
@@ -72,23 +72,23 @@ const PriceRange = ({ currencyCode }: { currencyCode: string }) => {
           aria-label="Price range"
           data-testid="price-range"
         >
-          <Slider.Track className="relative h-0.5 w-full grow rounded-full bg-ui-border-base">
-            <Slider.Range className="absolute h-full rounded-full bg-ui-fg-interactive" />
+          <Slider.Track className="relative h-0.5 w-full grow rounded-full bg-paper-border">
+            <Slider.Range className="absolute h-full rounded-full bg-paper-accent" />
           </Slider.Track>
           {value.map((_, index) => (
             <Slider.Thumb
               key={index}
-              className="block h-4 w-4 rounded-full border border-ui-border-interactive bg-ui-bg-base shadow-elevation-card-rest outline-none focus-visible:ring-2 focus-visible:ring-ui-fg-interactive"
+              className="block h-4 w-4 rounded-full border border-paper-accent bg-paper-raised shadow-elevation-card-rest outline-none focus-visible:ring-2 focus-visible:ring-paper-accent"
               aria-label={index === 0 ? "Minimum price" : "Maximum price"}
             />
           ))}
         </Slider.Root>
 
         <div className="flex items-center justify-between">
-          <span className="text-sm text-ui-fg-subtle">
+          <span className="text-sm text-paper-muted">
             {format(value[0])}
           </span>
-          <span className="text-sm text-ui-fg-subtle">
+          <span className="text-sm text-paper-muted">
             {format(value[1])}
           </span>
         </div>
