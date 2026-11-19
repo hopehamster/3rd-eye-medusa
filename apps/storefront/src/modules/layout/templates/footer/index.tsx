@@ -3,6 +3,7 @@ import { listCollections } from "@lib/data/collections"
 import { Text, clx } from "@modules/common/components/ui"
 import { MotionConfig } from "framer-motion"
 
+import BackToTop from "@modules/layout/templates/footer/back-to-top"
 import FooterLiftLink from "./footer-lift-link"
 
 /**
@@ -29,29 +30,29 @@ export default async function Footer() {
 
   return (
     <MotionConfig reducedMotion="user">
-      <footer className="border-t border-cosmos-borderSoft w-full bg-cosmos-surface">
+      <footer className="bg-paper-surface border-t border-paper-border pt-16 pb-12 px-6 sm:px-12 w-full">
         <div className="content-container flex flex-col w-full">
-          <div className="flex flex-col gap-y-10 xsmall:flex-row items-start justify-between py-20">
+          <div className="flex flex-col gap-y-10 xsmall:flex-row items-start justify-between">
             <div className="max-w-xs">
               <FooterLiftLink
                 href="/"
-                className="font-display text-lg tracking-[0.18em] text-cosmos-text hover:text-cosmos-goldBright transition-colors"
+                className="font-display text-[20px] tracking-tight font-medium text-paper-text hover:text-paper-accent transition-colors"
               >
-                3RD EYE <span className="text-cosmos-gold">SUPPLY</span>
+                3RD EYE <span className="text-paper-accent">SUPPLY</span>
               </FooterLiftLink>
-              <Text className="mt-4 text-sm leading-relaxed text-cosmos-muted">
+              <Text className="mt-4 font-humanist text-sm leading-relaxed text-paper-muted">
                 Curated crystals, ritual objects, and spiritual goods — chosen
                 for intention and beauty, shipped directly to you.
               </Text>
             </div>
-            <div className="text-small-regular gap-10 md:gap-x-16 grid grid-cols-2 sm:grid-cols-3">
+            <div className="font-humanist gap-10 md:gap-x-16 grid grid-cols-2 sm:grid-cols-3">
               {productCategories && productCategories?.length > 0 && (
-                <div className="flex flex-col gap-y-2">
-                  <span className="txt-small-plus text-cosmos-text">
+                <div className="flex flex-col">
+                  <span className="font-display text-[15px] font-normal text-paper-text mb-4 pb-2 border-b border-paper-border">
                     Categories
                   </span>
                   <ul
-                    className="grid grid-cols-1 gap-2"
+                    className="grid grid-cols-1"
                     data-testid="footer-categories"
                   >
                     {productCategories?.slice(0, 6).map((c) => {
@@ -67,14 +68,11 @@ export default async function Footer() {
                         })) || null
 
                       return (
-                        <li
-                          className="flex flex-col gap-2 text-cosmos-muted txt-small"
-                          key={c.id}
-                        >
+                        <li className="flex flex-col" key={c.id}>
                           <FooterLiftLink
                             className={clx(
-                              "hover:text-cosmos-goldBright transition-colors",
-                              children && "txt-small-plus"
+                              "font-humanist text-[13px] text-paper-muted leading-relaxed block hover:text-paper-accent hover:translate-x-0.5 transition-all mb-2.5",
+                              children && "font-semibold"
                             )}
                             href={`/categories/${c.handle}`}
                             data-testid="category-link"
@@ -82,12 +80,12 @@ export default async function Footer() {
                             {c.name}
                           </FooterLiftLink>
                           {children && (
-                            <ul className="grid grid-cols-1 ml-3 gap-2">
+                            <ul className="grid grid-cols-1 ml-3">
                               {children &&
                                 children.map((child) => (
                                   <li key={child.id}>
                                     <FooterLiftLink
-                                      className="hover:text-cosmos-goldBright transition-colors"
+                                      className="font-humanist text-[13px] text-paper-muted leading-relaxed block hover:text-paper-accent hover:translate-x-0.5 transition-all mb-2.5"
                                       href={`/categories/${child.handle}`}
                                       data-testid="category-link"
                                     >
@@ -104,22 +102,19 @@ export default async function Footer() {
                 </div>
               )}
               {collections && collections.length > 0 && (
-                <div className="flex flex-col gap-y-2">
-                  <span className="txt-small-plus text-cosmos-text">
+                <div className="flex flex-col">
+                  <span className="font-display text-[15px] font-normal text-paper-text mb-4 pb-2 border-b border-paper-border">
                     Collections
                   </span>
                   <ul
-                    className={clx(
-                      "grid grid-cols-1 gap-2 text-cosmos-muted txt-small",
-                      {
-                        "grid-cols-2": (collections?.length || 0) > 3,
-                      }
-                    )}
+                    className={clx("grid grid-cols-1", {
+                      "grid-cols-2": (collections?.length || 0) > 3,
+                    })}
                   >
                     {collections?.slice(0, 6).map((c) => (
                       <li key={c.id}>
                         <FooterLiftLink
-                          className="hover:text-cosmos-goldBright transition-colors"
+                          className="font-humanist text-[13px] text-paper-muted leading-relaxed block hover:text-paper-accent hover:translate-x-0.5 transition-all mb-2.5"
                           href={`/collections/${c.handle}`}
                         >
                           {c.title}
@@ -129,13 +124,15 @@ export default async function Footer() {
                   </ul>
                 </div>
               )}
-              <div className="flex flex-col gap-y-2">
-                <span className="txt-small-plus text-cosmos-text">Explore</span>
-                <ul className="grid grid-cols-1 gap-y-2 text-cosmos-muted txt-small">
+              <div className="flex flex-col">
+                <span className="font-display text-[15px] font-normal text-paper-text mb-4 pb-2 border-b border-paper-border">
+                  Explore
+                </span>
+                <ul className="grid grid-cols-1">
                   <li>
                     <FooterLiftLink
                       href="/oracle"
-                      className="hover:text-cosmos-goldBright transition-colors"
+                      className="font-humanist text-[13px] text-paper-muted leading-relaxed block hover:text-paper-accent hover:translate-x-0.5 transition-all mb-2.5"
                     >
                       The Oracle
                     </FooterLiftLink>
@@ -143,7 +140,7 @@ export default async function Footer() {
                   <li>
                     <FooterLiftLink
                       href="/ritual-builder"
-                      className="hover:text-cosmos-goldBright transition-colors"
+                      className="font-humanist text-[13px] text-paper-muted leading-relaxed block hover:text-paper-accent hover:translate-x-0.5 transition-all mb-2.5"
                     >
                       Ritual Builder
                     </FooterLiftLink>
@@ -151,20 +148,22 @@ export default async function Footer() {
                   <li>
                     <FooterLiftLink
                       href="/guides"
-                      className="hover:text-cosmos-goldBright transition-colors"
+                      className="font-humanist text-[13px] text-paper-muted leading-relaxed block hover:text-paper-accent hover:translate-x-0.5 transition-all mb-2.5"
                     >
-                      Guides
+                      Canon
                     </FooterLiftLink>
                   </li>
                 </ul>
               </div>
-              <div className="flex flex-col gap-y-2">
-                <span className="txt-small-plus text-cosmos-text">Studio</span>
-                <ul className="grid grid-cols-1 gap-y-2 text-cosmos-muted txt-small">
+              <div className="flex flex-col">
+                <span className="font-display text-[15px] font-normal text-paper-text mb-4 pb-2 border-b border-paper-border">
+                  Studio
+                </span>
+                <ul className="grid grid-cols-1">
                   <li>
                     <FooterLiftLink
                       href="/store"
-                      className="hover:text-cosmos-goldBright transition-colors"
+                      className="font-humanist text-[13px] text-paper-muted leading-relaxed block hover:text-paper-accent hover:translate-x-0.5 transition-all mb-2.5"
                     >
                       Shop all
                     </FooterLiftLink>
@@ -172,7 +171,7 @@ export default async function Footer() {
                   <li>
                     <FooterLiftLink
                       href="/account"
-                      className="hover:text-cosmos-goldBright transition-colors"
+                      className="font-humanist text-[13px] text-paper-muted leading-relaxed block hover:text-paper-accent hover:translate-x-0.5 transition-all mb-2.5"
                     >
                       Account
                     </FooterLiftLink>
@@ -180,16 +179,18 @@ export default async function Footer() {
                   <li>
                     <FooterLiftLink
                       href="/cart"
-                      className="hover:text-cosmos-goldBright transition-colors"
+                      className="font-humanist text-[13px] text-paper-muted leading-relaxed block hover:text-paper-accent hover:translate-x-0.5 transition-all mb-2.5"
                     >
                       Cart
                     </FooterLiftLink>
                   </li>
                 </ul>
               </div>
-              <div className="flex flex-col gap-y-2">
-                <span className="txt-small-plus text-cosmos-text">Policies</span>
-                <ul className="grid grid-cols-1 gap-y-2 text-cosmos-muted txt-small">
+              <div className="flex flex-col">
+                <span className="font-display text-[15px] font-normal text-paper-text mb-4 pb-2 border-b border-paper-border">
+                  Policies
+                </span>
+                <ul className="grid grid-cols-1">
                   {[
                     { href: "/shipping", label: "Shipping" },
                     { href: "/returns", label: "Returns" },
@@ -200,7 +201,7 @@ export default async function Footer() {
                     <li key={link.href}>
                       <FooterLiftLink
                         href={link.href}
-                        className="hover:text-cosmos-goldBright transition-colors"
+                        className="font-humanist text-[13px] text-paper-muted leading-relaxed block hover:text-paper-accent hover:translate-x-0.5 transition-all mb-2.5"
                       >
                         {link.label}
                       </FooterLiftLink>
@@ -210,17 +211,17 @@ export default async function Footer() {
               </div>
             </div>
           </div>
-          <div className="gold-hairline w-full" aria-hidden="true" />
-          <div className="flex w-full my-8 justify-between text-cosmos-faint items-center">
-            <Text className="txt-compact-small">
+          <div className="flex w-full mt-12 pt-6 border-t border-paper-borderSoft justify-between items-center font-humanist text-[11px] text-paper-faint">
+            <Text>
               © {new Date().getFullYear()} 3rd Eye Supply · Las Vegas, NV. All
               rights reserved.
             </Text>
-            <Text className="txt-compact-small hidden small:block">
+            <Text className="hidden small:block">
               Intention · Craft · Beauty
             </Text>
           </div>
         </div>
+        <BackToTop />
       </footer>
     </MotionConfig>
   )
