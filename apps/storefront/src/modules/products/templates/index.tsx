@@ -1,6 +1,7 @@
 import React, { Suspense } from "react"
 
 import ImageGallery from "@modules/products/components/image-gallery"
+import { hasReal3DModel } from "@modules/products/components/crystal-viewer/stone-profile"
 import BuyBoxTrust from "@modules/products/components/buy-box-trust"
 import ProductActions from "@modules/products/components/product-actions"
 import ProductTabs from "@modules/products/components/product-tabs"
@@ -53,28 +54,40 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
         title={product.title}
         handle={product.handle ?? undefined}
       />
-      <div className="content-container py-6 small:py-10" data-testid="product-container">
-        <div className="flex flex-col small:flex-row items-start gap-10 small:gap-14">
-          <div className="order-2 w-full min-w-0 small:order-1 small:flex-1">
+      <div className="max-w-6xl mx-auto px-6 py-12" data-testid="product-container">
+        <div className="grid grid-cols-1 small:grid-cols-12 gap-12 items-start">
+          <div className="order-2 w-full min-w-0 small:order-1 small:col-span-7 small:sticky small:top-24">
+            {/* Keyed by handle so a soft navigation to another product
+                remounts the gallery fresh instead of carrying the old
+                thumbnail selection over (issue #227). */}
             <ImageGallery
+              key={product.handle}
               images={images}
               title={product.title}
               handle={product.handle ?? ""}
+              has3DModel={hasReal3DModel(
+                (product.metadata ?? null) as Record<
+                  string,
+                  unknown
+                > | null
+              )}
             />
           </div>
-          <div className="order-1 w-full small:order-2 small:w-[380px] medium:w-[420px] shrink-0 small:sticky small:top-28 flex flex-col gap-y-8">
-            <ProductInfo product={product} part="summary" />
-            <Suspense
-              fallback={
-                <ProductActions
-                  disabled={true}
-                  product={product}
-                  region={region}
-                />
-              }
-            >
-              <ProductActionsWrapper id={product.id} region={region} />
-            </Suspense>
+          <div className="order-1 w-full small:order-2 small:col-span-5 flex flex-col gap-y-8">
+            <div className="bg-paper-raised border border-paper-border rounded-specimen p-6 flex flex-col gap-y-8">
+              <ProductInfo product={product} part="summary" />
+              <Suspense
+                fallback={
+                  <ProductActions
+                    disabled={true}
+                    product={product}
+                    region={region}
+                  />
+                }
+              >
+                <ProductActionsWrapper id={product.id} region={region} />
+              </Suspense>
+            </div>
             <BuyBoxTrust />
             <ProductInfo product={product} part="details" />
             <TrustNotes />

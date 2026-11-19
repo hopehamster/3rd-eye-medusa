@@ -118,7 +118,7 @@ export default function QuickAdd({
         type="button"
         disabled
         variant="primary"
-        className="w-full h-9 mt-3"
+        className="w-full mt-3"
         data-testid={testId}
       >
         Out of stock
@@ -166,7 +166,7 @@ export default function QuickAdd({
       onClick={handleClick}
       disabled={isAdding || !countryCode}
       variant="primary"
-      className="w-full h-9 mt-3"
+      className="w-full mt-3"
       isLoading={isAdding}
       data-testid={testId}
     >

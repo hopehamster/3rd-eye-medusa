@@ -27,11 +27,11 @@ const SearchForm = ({ countryCode, defaultValue, className }: SearchFormProps) =
       name="q"
       defaultValue={defaultValue}
       placeholder="Search products"
-      className="flex-1 h-10 px-4 border rounded-md border-ui-border-base bg-ui-bg-field txt-compact-medium"
+      className="flex-1 h-11 px-4 border rounded-specimen border-paper-border bg-paper-raised text-paper-text placeholder:text-paper-faint txt-compact-medium"
     />
     <button
       type="submit"
-      className="h-10 px-5 rounded-full bg-cosmos-gold text-cosmos-bg text-sm font-medium tracking-wide hover:bg-cosmos-goldBright transition-colors"
+      className="h-11 px-6 rounded-specimen bg-paper-accent text-paper-raised border border-[#24422D] text-[13px] font-semibold uppercase tracking-[0.08em] hover:bg-[#24422D] hover:shadow-[0_2px_6px_rgba(46,83,57,0.25)] active:translate-y-[1px] transition-all"
     >
       Search
     </button>
