@@ -13,11 +13,17 @@ import { useReducedMotion } from "framer-motion"
  * was upscaled to 4K (3840x2160) with Topaz on fal; large screens get
  * the 4K file, everything else the 1080p file.
  *
- * Readability: a paper wash sits over the video everywhere, and every
- * homepage section band is translucent paper over that wash, so no
- * text ever sits raw on moving water. Cards keep their solid raised
- * surfaces. With reduced motion the video never plays — its still
- * poster frame stands as the background instead.
+ * Visibility rework (issue #335, Platter & Aperture): the paper wash
+ * that used to sit over the video is GONE — it choked the fountain
+ * down to a faint smudge everywhere, even where no words are. The
+ * only layer over the video now is a whisper of the shop's green
+ * (accent at 10%) to tie the footage to the palette. Text safety no
+ * longer lives here: it lives in the sections, where every piece of
+ * copy now sits on a solid paper platter (card or plaque) and the
+ * bands between them are transparent, so the water runs at full
+ * strength around the words and never under them. With reduced
+ * motion the video never plays — its still poster frame stands as
+ * the background instead.
  *
  * Stacking: this layer is fixed at z-0. The homepage sections ride in
  * a relative z-[5] wrapper, and the layout blocks that share the
@@ -65,8 +71,7 @@ const FountainBackground = () => {
           preload="auto"
         />
       )}
-      <div className="absolute inset-0 bg-paper-bg/45" />
-      <div className="absolute inset-0 bg-gradient-to-b from-paper-bg/60 via-transparent to-paper-bg/40" />
+      <div className="absolute inset-0 bg-[#2E5339]/10" />
     </div>
   )
 }

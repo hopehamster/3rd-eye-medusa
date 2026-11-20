@@ -25,9 +25,9 @@ const FAQS = [
 
 const TrustFaq = () => {
   return (
-    <section className="border-y border-paper-border bg-paper-surface/85 paper-grain text-paper-text">
+    <section className="border-y border-paper-border paper-grain text-paper-text">
       <div className="content-container relative z-[2] py-16">
-        <div className="mb-10">
+        <div className="mx-auto mb-10 w-fit max-w-2xl rounded-specimen border border-paper-border bg-paper-raised px-6 py-5">
           <h2 className="text-center font-display text-[28px] text-paper-text">
             Asked at every crystal counter, ever.
           </h2>

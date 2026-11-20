@@ -10,9 +10,9 @@
  */
 const ReviewWall = () => {
   return (
-    <section className="border-y border-paper-borderSoft bg-paper-surface/85 paper-grain text-paper-text">
+    <section className="border-y border-paper-borderSoft paper-grain text-paper-text">
       <div className="content-container relative z-[2] py-16 small:py-20">
-        <div className="max-w-2xl">
+        <div className="mx-auto max-w-3xl rounded-specimen border border-paper-border bg-paper-surface p-8">
           <h2 className="font-display text-4xl font-light tracking-tight text-paper-text">
             What people say after the box opens
           </h2>

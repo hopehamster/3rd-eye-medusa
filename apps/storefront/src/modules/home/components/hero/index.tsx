@@ -36,10 +36,13 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
  * motion the drift is off — the photo stays at 100%.
  *
  * Fountain (issue #331): the zen fountain video runs behind the whole
- * homepage (modules/home/components/fountain-background). The hero
- * itself only adds a paper gradient, stronger on the text side, so
- * the headline stays crisp over the moving water. The headline, copy,
- * buttons, and product card are unchanged.
+ * homepage (modules/home/components/fountain-background).
+ *
+ * Platter & Aperture (issue #335): the paper gradient scrim the hero
+ * used to lay over the water is gone. The copy column now sits on a
+ * solid paper plaque, so the headline stays crisp, and the right
+ * side of the hero is open water around the product card. The
+ * headline, copy, buttons, and product card are unchanged.
  */
 const Hero = ({ product }: { product: HttpTypes.StoreProduct | null }) => {
   const prefersReducedMotion = useReducedMotion()
@@ -49,12 +52,8 @@ const Hero = ({ product }: { product: HttpTypes.StoreProduct | null }) => {
 
   return (
     <section className="relative border-b border-paper-border paper-grain text-paper-text">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-r from-paper-bg/85 via-paper-bg/60 to-paper-bg/30"
-      />
       <div className="content-container relative z-[2] grid grid-cols-1 items-center gap-10 py-20 small:grid-cols-2 small:gap-14 sm:py-28">
-        <div>
+        <div className="rounded-specimen border border-paper-border bg-paper-bg/95 p-8 sm:p-12">
           <motion.div
             initial={
               prefersReducedMotion ? false : { opacity: 0, y: 8 }
