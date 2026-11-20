@@ -30,7 +30,7 @@ export default async function Footer() {
 
   return (
     <MotionConfig reducedMotion="user">
-      <footer className="bg-paper-surface border-t border-paper-border pt-16 pb-12 px-6 sm:px-12 w-full">
+      <footer className="relative z-[5] bg-paper-surface border-t border-paper-border pt-16 pb-12 px-6 sm:px-12 w-full">
         <div className="content-container flex flex-col w-full">
           <div className="flex flex-col gap-y-10 xsmall:flex-row items-start justify-between">
             <div className="max-w-xs">

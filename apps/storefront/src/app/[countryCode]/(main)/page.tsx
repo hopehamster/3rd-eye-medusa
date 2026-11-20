@@ -1,6 +1,7 @@
 import { Metadata } from "next"
 
 import BestSellers from "@modules/home/components/best-sellers"
+import FountainBackground from "@modules/home/components/fountain-background"
 import Hero from "@modules/home/components/hero"
 import HostVoice from "@modules/home/components/host-voice"
 import IntentionShelves from "@modules/home/components/intention-shelves"
@@ -55,7 +56,13 @@ export default async function Home(props: {
   }
 
   return (
-    <>
+    <div className="relative">
+      {/* Zen fountain behind the whole homepage (issue #331). The
+          sections below sit on translucent paper bands over its
+          wash, so the water shows through the page and every word
+          stays readable. */}
+      <FountainBackground />
+      <div className="relative z-[5]">
       <Hero product={featured} />
       <QuizGreeter />
       <IntentionShelves region={region} />
@@ -78,6 +85,7 @@ export default async function Home(props: {
       <Reveal duration={0.5}>
         <HostVoice />
       </Reveal>
-    </>
+      </div>
+    </div>
   )
 }
