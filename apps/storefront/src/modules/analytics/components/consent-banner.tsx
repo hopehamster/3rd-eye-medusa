@@ -52,7 +52,7 @@ export default function ConsentBanner({
       role="dialog"
       aria-label="Analytics consent"
       data-testid="consent-banner"
-      className="shrink-0 border-t border-paper-border bg-paper-surface px-6 py-4"
+      className="relative z-[5] shrink-0 border-t border-paper-border bg-paper-surface px-6 py-4"
     >
       <div className="mx-auto flex max-w-4xl flex-col gap-3 small:flex-row small:items-center small:justify-between small:gap-6">
         <p className="font-humanist text-[13px] leading-5 text-paper-text small:text-sm small:leading-6">

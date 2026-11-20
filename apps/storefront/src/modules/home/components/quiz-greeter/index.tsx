@@ -17,7 +17,7 @@ const STARTERS = [
 
 const QuizGreeter = () => {
   return (
-    <section className="border-y border-paper-borderSoft bg-paper-surface paper-grain text-paper-text">
+    <section className="border-y border-paper-borderSoft bg-paper-surface/85 paper-grain text-paper-text">
       <div className="content-container relative z-[2] py-16 small:py-20">
         <div className="grid grid-cols-1 gap-10 small:grid-cols-[1fr_1.2fr] small:gap-16">
           <div>

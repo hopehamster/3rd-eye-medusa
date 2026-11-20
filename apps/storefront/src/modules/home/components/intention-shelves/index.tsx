@@ -30,7 +30,7 @@ export default async function IntentionShelves({
   } = await listAllProducts({ regionId: region.id })
 
   return (
-    <section className="bg-paper-bg paper-grain text-paper-text">
+    <section className="bg-paper-bg/80 paper-grain text-paper-text">
       <div className="content-container relative z-[2] py-16 small:py-24">
         <div className="mb-10 max-w-2xl">
           <h2 className="font-display text-4xl font-light tracking-tight text-paper-text small:text-5xl">

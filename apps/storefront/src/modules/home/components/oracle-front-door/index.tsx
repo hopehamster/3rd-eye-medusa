@@ -16,7 +16,7 @@ const SAMPLE_QUESTIONS = [
 
 const OracleFrontDoor = () => {
   return (
-    <section className="bg-paper-accent text-paper-raised">
+    <section className="bg-paper-accent/90 text-paper-raised">
       <div className="content-container py-16 small:py-24">
         <div className="grid grid-cols-1 gap-10 small:grid-cols-2 small:gap-16">
           <div>

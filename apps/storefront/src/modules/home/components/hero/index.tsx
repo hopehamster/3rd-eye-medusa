@@ -34,6 +34,12 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
  * runs on the photo wrapper inside the overflow-hidden card, so the
  * edges crop slightly as it grows. No glow effects. With reduced
  * motion the drift is off — the photo stays at 100%.
+ *
+ * Fountain (issue #331): the zen fountain video runs behind the whole
+ * homepage (modules/home/components/fountain-background). The hero
+ * itself only adds a paper gradient, stronger on the text side, so
+ * the headline stays crisp over the moving water. The headline, copy,
+ * buttons, and product card are unchanged.
  */
 const Hero = ({ product }: { product: HttpTypes.StoreProduct | null }) => {
   const prefersReducedMotion = useReducedMotion()
@@ -42,7 +48,11 @@ const Hero = ({ product }: { product: HttpTypes.StoreProduct | null }) => {
   const material = product?.material?.trim() || "natural stone"
 
   return (
-    <section className="border-b border-paper-border bg-paper-bg paper-grain text-paper-text">
+    <section className="relative border-b border-paper-border paper-grain text-paper-text">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-r from-paper-bg/85 via-paper-bg/60 to-paper-bg/30"
+      />
       <div className="content-container relative z-[2] grid grid-cols-1 items-center gap-10 py-20 small:grid-cols-2 small:gap-14 sm:py-28">
         <div>
           <motion.div

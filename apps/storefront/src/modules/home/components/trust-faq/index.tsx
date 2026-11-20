@@ -25,7 +25,7 @@ const FAQS = [
 
 const TrustFaq = () => {
   return (
-    <section className="border-y border-paper-border bg-paper-surface paper-grain text-paper-text">
+    <section className="border-y border-paper-border bg-paper-surface/85 paper-grain text-paper-text">
       <div className="content-container relative z-[2] py-16">
         <div className="mb-10">
           <h2 className="text-center font-display text-[28px] text-paper-text">

@@ -13,7 +13,7 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
  */
 const HostVoice = () => {
   return (
-    <section className="bg-paper-bg paper-grain text-paper-text">
+    <section className="bg-paper-bg/80 paper-grain text-paper-text">
       <div className="content-container relative z-[2] py-16 small:py-24">
         <div className="grid grid-cols-1 gap-10 small:grid-cols-[1.3fr_1fr] small:gap-16">
           <div>
