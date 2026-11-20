@@ -17,8 +17,9 @@ const STARTERS = [
 
 const QuizGreeter = () => {
   return (
-    <section className="border-y border-paper-borderSoft bg-paper-surface/85 paper-grain text-paper-text">
+    <section className="border-y border-paper-borderSoft paper-grain text-paper-text">
       <div className="content-container relative z-[2] py-16 small:py-20">
+        <div className="mx-auto max-w-3xl rounded-specimen border border-paper-border bg-paper-raised p-8">
         <div className="grid grid-cols-1 gap-10 small:grid-cols-[1fr_1.2fr] small:gap-16">
           <div>
             <h2 className="font-display text-4xl font-light tracking-tight text-paper-text">
@@ -59,6 +60,7 @@ const QuizGreeter = () => {
               internet.
             </p>
           </div>
+        </div>
         </div>
       </div>
     </section>

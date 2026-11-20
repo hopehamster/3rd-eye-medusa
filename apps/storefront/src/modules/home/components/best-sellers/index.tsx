@@ -77,9 +77,9 @@ export default async function BestSellers({
   return (
     <>
       {specimenPieces.length > 0 && (
-        <section className="border-y border-paper-borderSoft bg-paper-surface/85 paper-grain text-paper-text">
+        <section className="border-y border-paper-borderSoft paper-grain text-paper-text">
           <div className="content-container relative z-[2] py-16 small:py-24">
-            <div className="mb-10 flex flex-wrap items-baseline justify-between gap-4">
+            <div className="mb-10 flex flex-wrap items-baseline justify-between gap-4 rounded-specimen border border-paper-border bg-paper-raised px-6 py-5">
               <h2 className="font-display text-4xl font-light tracking-tight text-paper-text small:text-5xl">
                 From the shelves
               </h2>
@@ -97,9 +97,9 @@ export default async function BestSellers({
       )}
 
       {pocketPieces.length > 0 && (
-        <section className="border-b border-paper-borderSoft bg-paper-surface/85 paper-grain text-paper-text">
+        <section className="border-b border-paper-borderSoft paper-grain text-paper-text">
           <div className="content-container relative z-[2] py-16 small:py-24">
-            <div className="mb-10 flex flex-wrap items-baseline justify-between gap-4">
+            <div className="mb-10 flex flex-wrap items-baseline justify-between gap-4 rounded-specimen border border-paper-border bg-paper-raised px-6 py-5">
               <h2 className="font-display text-4xl font-light tracking-tight text-paper-text small:text-5xl">
                 Cabinet Pieces &amp; Pocket Stones
               </h2>

@@ -30,9 +30,9 @@ export default async function IntentionShelves({
   } = await listAllProducts({ regionId: region.id })
 
   return (
-    <section className="bg-paper-bg/80 paper-grain text-paper-text">
+    <section className="paper-grain text-paper-text">
       <div className="content-container relative z-[2] py-16 small:py-24">
-        <div className="mb-10 max-w-2xl">
+        <div className="mb-10 inline-block max-w-2xl rounded-specimen border border-paper-border bg-paper-raised px-6 py-5">
           <h2 className="font-display text-4xl font-light tracking-tight text-paper-text small:text-5xl">
             Start with the problem. We will point at the stone.
           </h2>
