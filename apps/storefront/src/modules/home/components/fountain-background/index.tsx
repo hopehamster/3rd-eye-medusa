@@ -25,17 +25,11 @@ import { useReducedMotion } from "framer-motion"
  * carry relative z-[5] too, so they paint above the water while the
  * free-shipping popup (z-10) and the nav (z-40) stay above them.
  *
- * The files are served from fal's CDN for now, because the repo's
- * binary-file route is broken (issue #331 notes). Moving them into
- * the repo later only means swapping these three URLs for local
- * /videos/ paths.
+ * The files live in the repo under public/videos/.
  */
-const VIDEO_1080 =
-  "https://v3b.fal.media/files/b/0ab32734/EFRuZ3e1e2jCHrZr1dLj7_zen-fountain-hero-loop-1080.mp4"
-const VIDEO_4K =
-  "https://v3b.fal.media/files/b/0ab32734/3qtnraGRA3k1tCr8jOgx0_zen-fountain-hero-loop-4k.mp4"
-const POSTER =
-  "https://v3b.fal.media/files/b/0ab32735/N8bzqig8zvMr4EixtsCNr_zen-fountain-poster-1920.jpg"
+const VIDEO_1080 = "/videos/zen-fountain-hero-loop-1080.mp4"
+const VIDEO_4K = "/videos/zen-fountain-hero-loop-4k.mp4"
+const POSTER = "/videos/zen-fountain-poster-1920.jpg"
 
 const FountainBackground = () => {
   const prefersReducedMotion = useReducedMotion()
