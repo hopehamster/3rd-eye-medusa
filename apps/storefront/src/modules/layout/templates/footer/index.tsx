@@ -34,6 +34,12 @@ export default async function Footer() {
         <div className="content-container flex flex-col w-full">
           <div className="flex flex-col gap-y-10 xsmall:flex-row items-start justify-between">
             <div className="max-w-xs">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/logo.png"
+                alt="3rd Eye Supply"
+                className="h-24 w-auto mb-5"
+              />
               <FooterLiftLink
                 href="/"
                 className="font-display text-[20px] tracking-tight font-medium text-paper-text hover:text-paper-accent transition-colors"

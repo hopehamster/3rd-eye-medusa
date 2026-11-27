@@ -77,9 +77,15 @@ export default async function Nav() {
           <div className="flex items-center h-full">
             <LocalizedClientLink
               href="/"
-              className="font-display text-[20px] tracking-tight font-medium text-paper-text hover:text-paper-accent transition-colors"
+              className="flex items-center gap-2.5 font-display text-[20px] tracking-tight font-medium text-paper-text hover:text-paper-accent transition-colors"
               data-testid="nav-store-link"
             >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/logo-mark.png"
+                alt=""
+                className="h-9 w-auto shrink-0"
+              />
               3RD EYE <span className="text-paper-accent">SUPPLY</span>
             </LocalizedClientLink>
           </div>
