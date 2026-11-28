@@ -22,6 +22,8 @@ const STATIC_PATHS: {
   { path: "/store", changeFrequency: "daily", priority: 0.8 },
   { path: "/oracle", changeFrequency: "weekly", priority: 0.8 },
   { path: "/guides", changeFrequency: "weekly", priority: 0.7 },
+  { path: "/about", changeFrequency: "monthly", priority: 0.5 },
+  { path: "/faq", changeFrequency: "monthly", priority: 0.5 },
   { path: "/shipping", changeFrequency: "monthly", priority: 0.5 },
   { path: "/returns", changeFrequency: "monthly", priority: 0.5 },
   { path: "/terms", changeFrequency: "monthly", priority: 0.5 },
