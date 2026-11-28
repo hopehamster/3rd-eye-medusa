@@ -40,6 +40,10 @@ export default async function IntentionShelves({
             The shelves are organized the way people actually ask for help —
             by what they are dealing with, not by mineral names.
           </p>
+          <p className="mt-4 font-humanist text-base leading-7 text-paper-muted">
+            The shelves are the slow way in. The Oracles are the fast way.
+            Both end at the same stones.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 gap-5 xsmall:grid-cols-2 small:grid-cols-3">

@@ -41,8 +41,9 @@ export default async function Footer() {
                 3RD EYE <span className="text-paper-accent">SUPPLY</span>
               </FooterLiftLink>
               <Text className="mt-4 font-humanist text-sm leading-relaxed text-paper-muted">
-                Curated crystals, ritual objects, and spiritual goods — chosen
-                for intention and beauty, shipped directly to you.
+                3rd Eye Supply is an AI-guided crystal shop: four AI Oracles,
+                a Ritual Builder, and real stones, plainly described, shipped
+                from our supplier partners.
               </Text>
             </div>
             <div className="font-humanist gap-10 md:gap-x-16 grid grid-cols-2 sm:grid-cols-3">

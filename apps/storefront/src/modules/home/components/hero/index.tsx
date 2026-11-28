@@ -9,7 +9,12 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
  * Homepage hero — Bright Apothecary (issue #21).
  *
  * Daylight photo of a real stone, plain headline, one specific claim.
- * No eyebrow caption, no centered cosmic type, no glow effects.
+ * No centered cosmic type, no glow effects.
+ *
+ * Positioning (2026-11-28): the eyebrow carries the store's claim —
+ * where AI meets the metaphysical arts — above
+ * the unchanged headline. The Oracles are the primary button now;
+ * the shelves are the second door.
  *
  * Headline is two deliberate lines at every width (issue #144). It used to
  * run three lines at 1440 and five at 390 and push the CTA to the fold edge.
@@ -61,15 +66,22 @@ const Hero = ({ product }: { product: HttpTypes.StoreProduct | null }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
           >
+            <p className="mb-5 font-humanist text-[12px] font-semibold uppercase tracking-[0.18em] text-paper-accent">
+              Where AI meets the metaphysical arts — a wellness shop unlike any other.
+            </p>
             <h1 className="font-display text-[48px] font-normal leading-[1.05] tracking-tight text-paper-text sm:text-[64px]">
               Real stones.
               <br />
               Plain talk.
             </h1>
             <p className="mt-6 max-w-md font-humanist text-[16px] leading-relaxed text-paper-muted sm:text-[18px]">
-              Nothing promised but the stone itself. Bracelets, sets, and small
-              ritual objects in natural stone. Every piece is described the way
-              it actually is — color, cut, weight, and what people have
+              Nothing promised but the stone itself. And something no other
+              crystal shop has: a counter staffed by AI guides who know
+              every stone on our shelves. Tell them what is going on in
+              your own words — they will point you at the right stone, and
+              tell you which ones to skip. Bracelets, sets, and small ritual
+              objects in natural stone, every piece described the way it
+              actually is — color, cut, weight, and what people have
               traditionally reached for it for.
             </p>
           </motion.div>
@@ -86,16 +98,16 @@ const Hero = ({ product }: { product: HttpTypes.StoreProduct | null }) => {
             className="mt-9 flex flex-wrap items-center gap-4"
           >
             <LocalizedClientLink
-              href="/store"
+              href="/oracle"
               className="inline-flex h-12 items-center justify-center rounded-specimen bg-paper-accent px-8 font-humanist text-[12px] font-semibold uppercase tracking-wider text-paper-raised transition-colors duration-200 hover:bg-[#24422D]"
             >
-              Browse the shelves
+              Ask the Oracles
             </LocalizedClientLink>
             <LocalizedClientLink
-              href="/oracle"
+              href="/store"
               className="font-humanist text-[13px] font-semibold text-paper-accent underline decoration-paper-border underline-offset-4 hover:decoration-paper-accent"
             >
-              Not sure where to begin?
+              Browse the shelves
             </LocalizedClientLink>
           </motion.div>
         </div>

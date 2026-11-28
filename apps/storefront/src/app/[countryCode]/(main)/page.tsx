@@ -1,12 +1,15 @@
 import { Metadata } from "next"
 
+import AiSearch from "@modules/home/components/ai-search"
 import BestSellers from "@modules/home/components/best-sellers"
 import FountainBackground from "@modules/home/components/fountain-background"
 import Hero from "@modules/home/components/hero"
 import HostVoice from "@modules/home/components/host-voice"
 import IntentionShelves from "@modules/home/components/intention-shelves"
+import MeetTheOracles from "@modules/home/components/meet-the-oracles"
 import OracleFrontDoor from "@modules/home/components/oracle-front-door"
 import QuizGreeter from "@modules/home/components/quiz-greeter"
+import RitualBuilderHome from "@modules/home/components/ritual-builder-home"
 import ReviewWall from "@modules/home/components/review-wall"
 import TrustFaq from "@modules/home/components/trust-faq"
 import Reveal from "@modules/common/components/reveal"
@@ -15,9 +18,9 @@ import { getProductByHandle } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
 
 export const metadata: Metadata = {
-  title: "3rd Eye Supply — Real Crystals, Ritual Goods & the Oracle",
+  title: "3rd Eye Supply — Real Crystals, Ritual Goods & the AI Oracles",
   description:
-    "Natural crystals and ritual goods, chosen by hand and organized by what you're dealing with. Ask the Oracle where to begin. Shipped directly to you.",
+    "Where AI meets the metaphysical arts — a wellness shop unlike any other. Four AI guides who know every stone on the shelf, a Ritual Builder, and real stones described plainly. Nothing promised but the stone itself.",
 }
 
 /**
@@ -27,6 +30,12 @@ export const metadata: Metadata = {
  * Conscious Items): daylight hero, quiz greeter, intention shelves,
  * best sellers, trust furniture (FAQ + review wall), Oracle front
  * door, host voice.
+ *
+ * Positioning (2026-11-28): Meet the Oracles sits directly under the
+ * hero — the four AI guides named where the traffic lands — and the
+ * AI search and Ritual Builder sections join the tool story after
+ * best sellers. The Oracle front door band stays as the deep-green
+ * closing pitch.
  *
  * Retired from the homepage (components still in the repo): the dark
  * hero, IntentionGrid, Interweave, FeaturedProducts (collection rails),
@@ -64,6 +73,7 @@ export default async function Home(props: {
       <FountainBackground />
       <div className="relative z-[5]">
       <Hero product={featured} />
+      <MeetTheOracles />
       <QuizGreeter />
       <IntentionShelves region={region} />
       {/* Home sections fade in on scroll (#230) — one Reveal per section,
@@ -72,6 +82,12 @@ export default async function Home(props: {
           already reveal card by card. */}
       <Reveal duration={0.5}>
         <BestSellers region={region} />
+      </Reveal>
+      <Reveal duration={0.5}>
+        <AiSearch />
+      </Reveal>
+      <Reveal duration={0.5}>
+        <RitualBuilderHome />
       </Reveal>
       <Reveal duration={0.5}>
         <TrustFaq />
