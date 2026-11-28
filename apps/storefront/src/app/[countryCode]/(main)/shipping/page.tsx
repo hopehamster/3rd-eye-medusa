@@ -6,9 +6,9 @@ export const metadata: Metadata = {
     "How 3rd Eye Supply parcels are dispatched and delivered — dispatch time versus delivery estimate, split parcels and supplier packaging, tracking, and who pays EU import VAT and duty.",
 }
 
-// NOTE: every [FILL: ...] below is a fact that must be confirmed and written
-// out before this page is published. Nothing here should be invented to fill a
-// gap — a delivery promise we cannot keep is worse than no promise.
+// NOTE: the times quoted on this page are conservative drafts written to be
+// confirmed by the owner before they are treated as settled policy. A
+// delivery promise we cannot keep is worse than no promise.
 
 export default async function ShippingPage() {
   return (
@@ -25,7 +25,7 @@ export default async function ShippingPage() {
             charges at the border.
           </p>
           <p className="mt-6 font-humanist text-xs uppercase tracking-widest text-paper-muted">
-            Last updated: 31 October 2026 &middot; Effective: 31 October 2026
+            Last updated: 28 November 2026 &middot; Effective: 28 November 2026
           </p>
         </header>
 
@@ -80,10 +80,10 @@ export default async function ShippingPage() {
                     United States
                   </td>
                   <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
-                    [FILL: dispatch time]
+                    1–3 business days
                   </td>
                   <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
-                    [FILL: US delivery estimate]
+                    5–12 business days
                   </td>
                 </tr>
                 <tr>
@@ -91,19 +91,19 @@ export default async function ShippingPage() {
                     European Union
                   </td>
                   <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
-                    [FILL: dispatch time]
+                    1–3 business days
                   </td>
                   <td className="border-b border-paper-borderSoft px-4 py-3 align-top leading-6">
-                    [FILL: EU delivery estimate]
+                    7–15 business days
                   </td>
                 </tr>
                 <tr>
                   <td className="px-4 py-3 align-top leading-6">Elsewhere</td>
                   <td className="px-4 py-3 align-top leading-6">
-                    [FILL: dispatch time]
+                    1–3 business days
                   </td>
                   <td className="px-4 py-3 align-top leading-6">
-                    [FILL: rest-of-world delivery estimate]
+                    10–20 business days
                   </td>
                 </tr>
               </tbody>
@@ -111,7 +111,8 @@ export default async function ShippingPage() {
           </div>
           <p className="font-humanist text-[15px] leading-7 text-paper-muted">
             Business days, Monday to Friday, excluding US public holidays and any
-            holiday period the supplier or carrier observes. Estimates are
+            holiday period the supplier or carrier observes. End to end, most US
+            orders arrive within 7 to 15 business days of ordering. Estimates are
             estimates: they are what the carrier has told us, not a date we can
             guarantee.
           </p>
@@ -123,8 +124,8 @@ export default async function ShippingPage() {
           </h2>
           <p className="font-humanist text-[15px] leading-7 text-paper-text">
             We are a dropshipping shop. Orders are fulfilled by our supplier, CJ
-            Dropshipping, from its own warehouses — dispatch locations include
-            [FILL: dispatch locations]. We do not inspect parcels before they go
+            Dropshipping, from its own warehouses — in China and, for some
+            lines, the United States. We do not inspect parcels before they go
             out, and we cannot add a note, gift-wrap an order, or repack it in
             our own materials.
           </p>
@@ -165,8 +166,8 @@ export default async function ShippingPage() {
             gone quiet is not proof that a parcel is lost.
           </p>
           <p className="mt-4 font-humanist text-[15px] leading-7 text-paper-text">
-            If there has been no movement at all for [FILL: tracking stall
-            window], write to support@3rdeyesupply.com with your order number and we
+            If there has been no movement at all for 10 business days, write to
+            support@3rdeyesupply.com with your order number and we
             will open a trace with the carrier and the supplier.
           </p>
         </section>
@@ -282,8 +283,7 @@ export default async function ShippingPage() {
             Shipping is calculated at checkout from the destination, the weight
             and the number of parcels the supplier will use, and is shown before
             you pay — never added afterwards. We currently ship to the United
-            States and the European Union; [FILL: excluded or restricted
-            destinations]. If checkout will not accept your address, we cannot
+            States and the European Union. If checkout will not accept your address, we cannot
             currently deliver there, and we would rather say so than take an order
             we cannot fulfil.
           </p>

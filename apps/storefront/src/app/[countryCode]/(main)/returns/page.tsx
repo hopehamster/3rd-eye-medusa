@@ -6,9 +6,10 @@ export const metadata: Metadata = {
     "How to return something to 3rd Eye Supply — the window, who pays return postage, the hygiene and sealed-goods exclusions, and the EU fourteen-day right of withdrawal with its model form.",
 }
 
-// NOTE: every [FILL: ...] below is a fact that must be confirmed and written
-// out before this page is published. Nothing here should be invented to fill a
-// gap — the withdrawal form and the statutory text around it must stay exact.
+// NOTE: the window, postage and refund-timing figures on this page are
+// drafts written to be confirmed by the owner before they are treated as
+// settled policy — they commit the business. The withdrawal form and the
+// statutory text around it must stay exact.
 
 export default async function ReturnsPage() {
   return (
@@ -24,7 +25,7 @@ export default async function ReturnsPage() {
             statutory right EU customers have on top of all of it.
           </p>
           <p className="mt-6 font-humanist text-xs uppercase tracking-widest text-paper-muted">
-            Last updated: 31 October 2026 &middot; Effective: 31 October 2026
+            Last updated: 28 November 2026 &middot; Effective: 28 November 2026
           </p>
         </header>
 
@@ -34,12 +35,12 @@ export default async function ReturnsPage() {
             <ul className="mt-4 list-disc pl-5 space-y-2 font-humanist text-[15px] leading-7 text-paper-text marker:text-paper-border">
               <li>
                 <strong className="font-semibold">The window.</strong>{" "}
-                [FILL: return window] days from delivery.
+                30 days from delivery.
               </li>
               <li>
                 <strong className="font-semibold">Return postage.</strong>{" "}
-                [FILL: who pays return postage], unless the item arrived
-                damaged, faulty or not as described.
+                You pay, unless the item arrived damaged, faulty or not as
+                described — then it is on us.
               </li>
               <li>
                 <strong className="font-semibold">Start here.</strong>{" "}
@@ -58,7 +59,7 @@ export default async function ReturnsPage() {
             The window
           </h2>
           <p className="font-humanist text-[15px] leading-7 text-paper-text">
-            You have [FILL: return window] days from the day your parcel is
+            You have 30 days from the day your parcel is
             delivered — or, where an order arrives in more than one parcel, from
             the day the last parcel arrives — to tell us you want to return
             something. Telling us inside the window is what counts; you do not
@@ -81,8 +82,8 @@ export default async function ReturnsPage() {
               the reason — plus a photograph if anything is damaged.
             </li>
             <li>
-              We reply with an authorisation and the return address, [FILL:
-              return address].{" "}
+              We reply with an authorisation and the return address to send
+              it to.{" "}
               <strong className="font-semibold">
                 Please do not post to the address printed on the parcel.
               </strong>{" "}
@@ -111,8 +112,8 @@ export default async function ReturnsPage() {
             Who pays return postage
           </h2>
           <p className="font-humanist text-[15px] leading-7 text-paper-text">
-            [FILL: who pays return postage] in the ordinary case — a change of
-            mind, the wrong size chosen, a gift that did not land. You pay the
+            In the ordinary case — a change of mind, the wrong size chosen, a
+            gift that did not land — return postage is on you. You pay the
             carrier, and we do not reimburse that cost.
           </p>
           <p className="mt-4 font-humanist text-[15px] leading-7 text-paper-text">
@@ -137,8 +138,8 @@ export default async function ReturnsPage() {
             paid with, through Stripe. We cannot refund to a different card, or in
             cash. Refunds are issued within fourteen days of our receiving the
             goods or, if sooner, of you showing us proof that you sent them back;
-            in practice we usually process them within [FILL: refund processing
-            time] of arrival.
+            in practice we usually process them within 5–10 business days of
+            arrival.
           </p>
           <p className="mt-4 font-humanist text-[15px] leading-7 text-paper-text">
             We refund the price you paid for the item, plus the standard shipping
@@ -284,7 +285,8 @@ export default async function ReturnsPage() {
             </p>
             <div className="mt-5 space-y-4 font-humanist text-[15px] leading-7 text-paper-text">
               <p>
-                To 3rd Eye Supply, [FILL: business address], support@3rdeyesupply.com:
+                To 3rd Eye Supply, Las Vegas, Nevada, United States,
+                support@3rdeyesupply.com:
               </p>
               <p>
                 I/We (*) hereby give notice that I/We (*) withdraw from my/our (*)

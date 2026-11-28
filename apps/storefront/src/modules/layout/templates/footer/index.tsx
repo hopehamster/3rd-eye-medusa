@@ -153,6 +153,22 @@ export default async function Footer() {
                       Canon
                     </FooterLiftLink>
                   </li>
+                  <li>
+                    <FooterLiftLink
+                      href="/about"
+                      className="font-humanist text-[13px] text-paper-muted leading-relaxed block hover:text-paper-accent hover:translate-x-0.5 transition-all mb-2.5"
+                    >
+                      About &amp; Our Promise
+                    </FooterLiftLink>
+                  </li>
+                  <li>
+                    <FooterLiftLink
+                      href="/faq"
+                      className="font-humanist text-[13px] text-paper-muted leading-relaxed block hover:text-paper-accent hover:translate-x-0.5 transition-all mb-2.5"
+                    >
+                      FAQ
+                    </FooterLiftLink>
+                  </li>
                 </ul>
               </div>
               <div className="flex flex-col">
