@@ -20,7 +20,7 @@ import { getRegion } from "@lib/data/regions"
 export const metadata: Metadata = {
   title: "3rd Eye Supply — Real Crystals, Ritual Goods & the AI Oracles",
   description:
-    "The first and only AI-powered metaphysical wellness store. Four AI guides who know every stone on the shelf, a Ritual Builder, and real stones described plainly. Nothing promised but the stone itself.",
+    "Where AI meets the metaphysical arts — a wellness shop unlike any other. Four AI guides who know every stone on the shelf, a Ritual Builder, and real stones described plainly. Nothing promised but the stone itself.",
 }
 
 /**

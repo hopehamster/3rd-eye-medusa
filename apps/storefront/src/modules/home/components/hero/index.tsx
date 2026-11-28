@@ -12,7 +12,7 @@ import LocalizedClientLink from "@modules/common/components/localized-client-lin
  * No centered cosmic type, no glow effects.
  *
  * Positioning (2026-11-28): the eyebrow carries the store's claim —
- * the first and only AI-powered metaphysical wellness store — above
+ * where AI meets the metaphysical arts — above
  * the unchanged headline. The Oracles are the primary button now;
  * the shelves are the second door.
  *
@@ -67,7 +67,7 @@ const Hero = ({ product }: { product: HttpTypes.StoreProduct | null }) => {
             transition={{ duration: 0.5, ease: "easeOut" }}
           >
             <p className="mb-5 font-humanist text-[12px] font-semibold uppercase tracking-[0.18em] text-paper-accent">
-              The first and only AI-powered metaphysical wellness store.
+              Where AI meets the metaphysical arts — a wellness shop unlike any other.
             </p>
             <h1 className="font-display text-[48px] font-normal leading-[1.05] tracking-tight text-paper-text sm:text-[64px]">
               Real stones.
