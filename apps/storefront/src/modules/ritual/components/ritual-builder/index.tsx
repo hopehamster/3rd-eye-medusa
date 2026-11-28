@@ -16,31 +16,35 @@ const INTENTIONS: Intention[] = [
   {
     id: "protection",
     label: "Protection",
-    description: "Shield your space and energy from negativity",
+    description:
+      "The stones people have traditionally kept close for protection and grounding",
     intents: ["protection", "grounding", "cleansing-purification"],
   },
   {
     id: "abundance",
     label: "Abundance",
-    description: "Open the flow of prosperity and opportunity",
+    description:
+      "The stones tradition reaches for when the subject is prosperity and new opportunity",
     intents: ["abundance-prosperity", "creativity-inspiration"],
   },
   {
     id: "calm",
     label: "Calm & Sleep",
-    description: "Quiet the mind and invite restful nights",
+    description:
+      "Pieces people have long kept by the bed, for the wind-down at the end of the day",
     intents: ["calm-soothing", "sleep-dreams"],
   },
   {
     id: "love",
     label: "Love",
-    description: "Soften the heart — for yourself or another",
+    description:
+      "The stones people have traditionally reached for when the subject is love — for yourself or another",
     intents: ["love-self", "love-romantic"],
   },
   {
     id: "clarity",
     label: "Clarity",
-    description: "Cut through fog and see your path",
+    description: "The stones tradition pairs with clear thinking and focus",
     intents: ["clarity-focus", "intuition-third-eye"],
   },
   {
