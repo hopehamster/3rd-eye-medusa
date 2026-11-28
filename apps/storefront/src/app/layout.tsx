@@ -27,11 +27,11 @@ export const metadata: Metadata = {
     template: "%s | 3rd Eye Supply",
   },
   description:
-    "Curated crystals, ritual objects, and spiritual goods. Chosen for intention and beauty, shipped directly to you.",
+    "The first and only AI-powered metaphysical wellness store. Four AI guides who know every stone on the shelf, a Ritual Builder, and real stones described plainly. Nothing promised but the stone itself.",
   openGraph: {
     title: "3rd Eye Supply — Crystals, Ritual Objects & Spiritual Goods",
     description:
-      "Curated crystals, ritual objects, and spiritual goods. Chosen for intention and beauty, shipped directly to you.",
+      "The first and only AI-powered metaphysical wellness store. Four AI guides who know every stone on the shelf, a Ritual Builder, and real stones described plainly. Nothing promised but the stone itself.",
     siteName: "3rd Eye Supply",
     type: "website",
   },
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "3rd Eye Supply — Crystals, Ritual Objects & Spiritual Goods",
     description:
-      "Curated crystals, ritual objects, and spiritual goods. Chosen for intention and beauty, shipped directly to you.",
+      "The first and only AI-powered metaphysical wellness store. Four AI guides who know every stone on the shelf, a Ritual Builder, and real stones described plainly. Nothing promised but the stone itself.",
   },
 }
 

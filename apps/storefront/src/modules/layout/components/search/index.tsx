@@ -72,6 +72,11 @@ const SearchPanel = ({ onNavigate }: { onNavigate: () => void }) => {
         />
       </div>
 
+      <Text className="border-b border-ui-border-base px-4 py-3 text-ui-fg-muted">
+        Searching by stone name works. Searching by what you need works too
+        — that is what the AI is for.
+      </Text>
+
       <div className="flex-1 overflow-y-auto">
         {!hasInput ? (
           <Text

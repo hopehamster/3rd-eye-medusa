@@ -1,8 +1,9 @@
 /**
  * Trust furniture (issue #21) — the questions a crystal-shop skeptic
  * asks, answered on the homepage instead of buried in a footer.
- * Copy: Agent Voice (issue #26) approved set. No medical claims, no
- * false sourcing or shipping claims.
+ * Copy: Agent Voice (issue #26) approved set, plus the Oracle
+ * honesty entry added with the AI positioning (2026-11-28). No
+ * medical claims, no false sourcing or shipping claims.
  */
 const FAQS = [
   {
@@ -20,6 +21,10 @@ const FAQS = [
   {
     q: "What if my stone arrives damaged, or it is just not for me?",
     a: "Write to us. A chipped or broken piece gets replaced or refunded. And if a stone simply is not the one, the return policy in the footer applies — no hard feelings, no ritual required.",
+  },
+  {
+    q: "Is the Oracle a real person?",
+    a: "No — and we would rather say so than dress it up. The four guides are AI, trained on this shop's own shelves and guides. The person accountable for everything they recommend is Michael, whose note is at the bottom of this page.",
   },
 ]
 

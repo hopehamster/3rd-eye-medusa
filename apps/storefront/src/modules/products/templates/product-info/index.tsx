@@ -162,7 +162,7 @@ const ProductInfo = ({ product, part = "all" }: ProductInfoProps) => {
         href={`/oracle?about=${product.handle}`}
         className="text-sm font-medium text-paper-accent hover:text-paper-accentBright transition-colors"
       >
-        Ask the Oracle about this piece
+        Not sure it is the right one? Ask the Oracles about this stone
         <span aria-hidden="true"> &#8594;</span>
       </LocalizedClientLink>
     </>

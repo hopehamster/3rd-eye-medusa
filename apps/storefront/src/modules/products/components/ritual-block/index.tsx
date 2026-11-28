@@ -1,4 +1,5 @@
 import { HttpTypes } from "@medusajs/types"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 type RitualBlockProps = {
   product: HttpTypes.StoreProduct
@@ -22,6 +23,11 @@ const RitualBlock = ({ product }: RitualBlockProps) => {
   const story = str(metadata.story)
   const ritual = str(metadata.ritual)
   const care = str(metadata.care)
+  // A product "fits a ritual" when the Ritual Builder can match it:
+  // the builder keys on metadata.intents, so the link only appears
+  // where the builder will actually pick the piece up.
+  const fitsRitual =
+    Array.isArray(metadata.intents) && metadata.intents.length > 0
 
   const RITUAL_FALLBACK =
     "Start simple. Hold the piece for a moment and set your intention in plain words: what you want more of, or less of. Then keep it where you will see it every day — worn, on your desk, or by your bed. The ritual is the attention."
@@ -57,6 +63,15 @@ const RitualBlock = ({ product }: RitualBlockProps) => {
             <p className="mt-4 text-[15px] leading-relaxed text-paper-muted whitespace-pre-line">
               {ritual ?? RITUAL_FALLBACK}
             </p>
+            {fitsRitual && (
+              <LocalizedClientLink
+                href="/ritual-builder"
+                className="mt-4 inline-block text-sm font-medium text-paper-accent hover:text-paper-accentBright transition-colors"
+              >
+                See it in the Ritual Builder
+                <span aria-hidden="true"> &#8594;</span>
+              </LocalizedClientLink>
+            )}
           </div>
         )}
       </div>

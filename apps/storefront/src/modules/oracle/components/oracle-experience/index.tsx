@@ -38,6 +38,11 @@ export default function OracleExperience({
             and let the Oracle read between the lines. Four guides keep the
             counter here, each with a different way of seeing.
           </p>
+          <p className="mt-4 font-humanist text-paper-muted leading-7">
+            All four are AI. The knowledge is ours — every answer comes from
+            this shop&apos;s shelves and guides, and a person stands behind
+            what they recommend.
+          </p>
           {isSignedIn ? (
             <div
               className="mt-8 flex gap-8 border-b border-paper-border"

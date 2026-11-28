@@ -49,7 +49,7 @@ export default async function Nav() {
                 <span className="inline-block font-humanist text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.18em] text-paper-accent bg-paper-raised border border-paper-border px-2 py-0.5 rounded-soft mr-1.5">
                   II.
                 </span>{" "}
-                Oracle
+                Ask the Oracles
               </NavLink>
               <NavLink
                 className="font-humanist text-[12px] font-semibold uppercase tracking-[0.14em] text-paper-muted hover:text-paper-accent px-3 py-2 transition-colors"
